@@ -54,7 +54,8 @@ Connect the visual cart components to the actual state.
 Make the headers search bar functional.
 
 #### [MODIFY] [Navbar.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/components/Navbar.tsx)
-- [ ] Implement a search dropdown/modal that filters products in real-time or redirects to the `Shop` page with search queries.
+- [x] Implement a search dropdown/modal that filters products in real-time or redirects to the `Shop` page with search queries.
+- [x] Added price range filtering and URL-based search to `Shop.tsx`.
 
 ---
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Heart, ShoppingCart, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { CartSheet } from "./CartSheet";
 
 const navLinks = [
@@ -41,9 +42,27 @@ const Navbar = () => {
 
         {/* Desktop Actions */}
         <div className="hidden items-center gap-3 md:flex">
-          <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Search">
-            <Search className="h-5 w-5" />
-          </button>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const query = formData.get("search") as string;
+              if (query) {
+                window.location.href = `/shop?q=${encodeURIComponent(query)}`;
+              }
+            }}
+            className="relative flex items-center"
+          >
+            <Input
+              name="search"
+              type="search"
+              placeholder="Search..."
+              className="h-9 w-40 bg-secondary pr-8 transition-all focus:w-60"
+            />
+            <button type="submit" className="absolute right-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Search">
+              <Search className="h-4 w-4" />
+            </button>
+          </form>
           <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Wishlist">
             <Heart className="h-5 w-5" />
           </button>

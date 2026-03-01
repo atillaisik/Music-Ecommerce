@@ -12,18 +12,26 @@ const sortOptions = ["Popular", "Price: Low", "Price: High", "Newest"];
 const Shop = () => {
   const [searchParams] = useSearchParams();
   const initialCat = searchParams.get("category") || "All";
+  const initialSearch = searchParams.get("q") || "";
+
   const [selectedCategory, setSelectedCategory] = useState(initialCat);
   const [sort, setSort] = useState("Popular");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
 
   const filtered = useMemo(() => {
     let list = [...products];
     if (selectedCategory !== "All") list = list.filter((p) => p.category === selectedCategory);
     if (search) list = list.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+
+    // Price filtering
+    list = list.filter((p) => p.price >= priceRange.min && p.price <= priceRange.max);
+
     if (sort === "Price: Low") list.sort((a, b) => a.price - b.price);
     if (sort === "Price: High") list.sort((a, b) => b.price - a.price);
+    if (sort === "Newest") list.sort((a, b) => b.id.localeCompare(a.id)); // Simple mock for newest
     return list;
-  }, [selectedCategory, sort, search]);
+  }, [selectedCategory, sort, search, priceRange]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,6 +57,27 @@ const Shop = () => {
                 </Button>
               ))}
             </div>
+            <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Price Range</h3>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  className="h-8 bg-secondary text-xs"
+                  value={priceRange.min || ""}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
+                />
+                <span className="text-muted-foreground">-</span>
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  className="h-8 bg-secondary text-xs"
+                  value={priceRange.max || ""}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
+                />
+              </div>
+            </div>
+
             <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Sort</h3>
             <div className="flex flex-wrap gap-2 lg:flex-col">
               {sortOptions.map((s) => (

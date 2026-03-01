@@ -7,9 +7,9 @@
 - [x] Update contact email domain if necessary (e.g., `hello@arasounds.com`).
 
 ## Phase 2: Product Data & Content Fixes
-- [ ] Replace broken or missing Bass product images in `mock.ts` with new high-quality URLs.
-- [ ] Add 6 additional products to `mock.ts` to support the 10-card Best Sellers showcase.
-- [ ] Verify Bass product images are appearing correctly on the `/instruments` and `/shop` pages.
+- [x] Replace broken or missing Bass product images in `mock.ts` with new high-quality URLs.
+- [x] Add 6 additional products to `mock.ts` to support the 10-card Best Sellers showcase.
+- [x] Verify Bass product images are appearing correctly on the `/instruments` and `/shop` pages.
 
 ## Phase 3: Dynamic Logic & Brand Filtering
 - [ ] Update category product counts to be dynamic (reflecting actual product quantities in each category).

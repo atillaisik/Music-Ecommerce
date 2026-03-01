@@ -45,14 +45,20 @@ export const products: Product[] = [
   { id: "2", name: "Gibson Les Paul Standard", brand: "Gibson", category: "Guitars", price: 2499, rating: 4.9, reviews: 218, image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=400&h=400&fit=crop" },
   { id: "3", name: "Roland TD-27KV", brand: "Roland", category: "Drums", price: 3299, rating: 4.7, reviews: 156, image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=400&fit=crop", badge: "New" },
   { id: "4", name: "Yamaha P-125 Digital Piano", brand: "Yamaha", category: "Keyboards", price: 649, rating: 4.6, reviews: 489, image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=400&fit=crop" },
-  { id: "5", name: "Fender Jazz Bass", brand: "Fender", category: "Bass", price: 1199, rating: 4.7, reviews: 267, image: "https://images.unsplash.com/photo-1612225330812-01a9c1b0f8b8?w=400&h=400&fit=crop" },
+  { id: "5", name: "Fender Jazz Bass", brand: "Fender", category: "Bass", price: 1199, rating: 4.7, reviews: 267, image: "https://images.unsplash.com/photo-1541252260731-50da692945d8?w=400&h=400&fit=crop" },
   { id: "6", name: "Pioneer DDJ-1000", brand: "Pioneer", category: "DJ Equipment", price: 1299, rating: 4.8, reviews: 134, image: "https://images.unsplash.com/photo-1571327073757-71d13c24de30?w=400&h=400&fit=crop", badge: "Hot" },
   { id: "7", name: "Taylor 814ce", brand: "Taylor", category: "Guitars", price: 3499, rating: 4.9, reviews: 98, image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=400&fit=crop" },
   { id: "8", name: "Nord Stage 3", brand: "Nord", category: "Keyboards", price: 4999, rating: 4.9, reviews: 76, image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=400&fit=crop", badge: "Premium" },
-  { id: "9", name: "Ibanez SR505", brand: "Ibanez", category: "Bass", price: 799, originalPrice: 999, rating: 4.5, reviews: 201, image: "https://images.unsplash.com/photo-1612225330812-01a9c1b0f8b8?w=400&h=400&fit=crop", badge: "Sale" },
+  { id: "9", name: "Ibanez SR505", brand: "Ibanez", category: "Bass", price: 799, originalPrice: 999, rating: 4.5, reviews: 201, image: "https://images.unsplash.com/photo-1598110603038-a9603ae044aa?w=400&h=400&fit=crop", badge: "Sale" },
   { id: "10", name: "Pearl Export EXX", brand: "Pearl", category: "Drums", price: 849, originalPrice: 1099, rating: 4.6, reviews: 312, image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=400&fit=crop", badge: "Sale" },
   { id: "11", name: "Korg Minilogue XD", brand: "Korg", category: "Keyboards", price: 649, originalPrice: 799, rating: 4.7, reviews: 189, image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=400&fit=crop", badge: "Sale" },
   { id: "12", name: "Martin D-28", brand: "Martin", category: "Guitars", price: 2999, rating: 4.9, reviews: 145, image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=400&fit=crop" },
+  { id: "13", name: "Gretsch Renown Drum Set", brand: "Gretsch", category: "Drums", price: 1799, rating: 4.8, reviews: 42, image: "https://images.unsplash.com/photo-1543443374-b6fe10a6ab7b?w=400&h=400&fit=crop" },
+  { id: "14", name: "Yamaha HS8 Studio Monitor", brand: "Yamaha", category: "Studio Gear", price: 399, rating: 4.9, reviews: 156, image: "https://images.unsplash.com/photo-1594122230689-45899d9e6f69?w=400&h=400&fit=crop" },
+  { id: "15", name: "Focusrite Scarlett 2i2", brand: "Focusrite", category: "Studio Gear", price: 189, rating: 4.8, reviews: 521, image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=400&fit=crop" },
+  { id: "16", name: "Pioneer DJM-900NXS2", brand: "Pioneer", category: "DJ Equipment", price: 2199, rating: 4.9, reviews: 89, image: "https://images.unsplash.com/photo-1571327073757-71d13c24de30?w=400&h=400&fit=crop" },
+  { id: "17", name: "Fender Am Pro II Telecaster", brand: "Fender", category: "Guitars", price: 1699, rating: 4.9, reviews: 124, image: "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400&h=400&fit=crop", badge: "New" },
+  { id: "18", name: "Roland JUPITER-X", brand: "Roland", category: "Keyboards", price: 2499, rating: 4.8, reviews: 34, image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=400&fit=crop" },
 ];
 
 export const brands: Brand[] = [
@@ -68,6 +74,8 @@ export const brands: Brand[] = [
   { name: "Korg", logo: "K" },
   { name: "Nord", logo: "N" },
   { name: "Boss", logo: "B" },
+  { name: "Gretsch", logo: "Gr" },
+  { name: "Focusrite", logo: "Fo" },
 ];
 
 export const articles: Article[] = [

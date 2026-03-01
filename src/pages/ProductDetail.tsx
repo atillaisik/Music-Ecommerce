@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { toast } from "sonner";
+import { useCartStore } from "@/lib/store";
 
 const ProductDetail = () => {
     const { id } = useParams<{ id: string }>();
@@ -28,8 +29,13 @@ const ProductDetail = () => {
         .filter((p) => p.category === product.category && p.id !== product.id)
         .slice(0, 4);
 
+    const addToCart = useCartStore((state) => state.addToCart);
+
     const handleAddToCart = () => {
-        toast.success(`${product.name} added to cart!`);
+        addToCart(product);
+        toast.success(`${product.name} added to cart!`, {
+            description: "You can view your cart in the navigation bar.",
+        });
     };
 
     return (

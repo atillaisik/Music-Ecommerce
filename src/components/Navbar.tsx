@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Heart, ShoppingCart, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CartSheet } from "./CartSheet";
 
 const navLinks = [
   { label: "Shop", path: "/shop" },
@@ -30,9 +31,8 @@ const Navbar = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`text-sm font-medium uppercase tracking-wide transition-colors hover:text-primary ${
-                location.pathname === link.path ? "text-primary" : "text-muted-foreground"
-              }`}
+              className={`text-sm font-medium uppercase tracking-wide transition-colors hover:text-primary ${location.pathname === link.path ? "text-primary" : "text-muted-foreground"
+                }`}
             >
               {link.label}
             </Link>
@@ -47,12 +47,7 @@ const Navbar = () => {
           <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Wishlist">
             <Heart className="h-5 w-5" />
           </button>
-          <button className="relative p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Cart">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-              3
-            </span>
-          </button>
+          <CartSheet />
           <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Account">
             <User className="h-5 w-5" />
           </button>
@@ -76,9 +71,8 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 onClick={() => setMobileOpen(false)}
-                className={`text-sm font-medium uppercase tracking-wide transition-colors hover:text-primary ${
-                  location.pathname === link.path ? "text-primary" : "text-muted-foreground"
-                }`}
+                className={`text-sm font-medium uppercase tracking-wide transition-colors hover:text-primary ${location.pathname === link.path ? "text-primary" : "text-muted-foreground"
+                  }`}
               >
                 {link.label}
               </Link>

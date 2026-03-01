@@ -8,12 +8,12 @@ This plan outlines the steps to transform the current SOUNDSCAPE static mockup i
 Establish a global state to handle the shopping cart and user sessions.
 
 #### [NEW] [store.ts](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/lib/store.ts)
-- [ ] Implement **Zustand** for lightweight, persistent global state.
-- [ ] Define `CartItem` type and `CartState` interface.
-- [ ] Implement actions: `addToCart`, `removeFromCart`, `updateQuantity`, and `clearCart`.
+- [x] Implement **Zustand** for lightweight, persistent global state.
+- [x] Define `CartItem` type and `CartState` interface.
+- [x] Implement actions: `addToCart`, `removeFromCart`, `updateQuantity`, and `clearCart`.
 
 #### [MODIFY] [App.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/App.tsx)
-- [ ] Re-evaluate provider wrapping for global state if necessary (though Zustand doesn't require it).
+- [x] Re-evaluate provider wrapping for global state if necessary (though Zustand doesn't require it).
 
 ---
 
@@ -36,17 +36,17 @@ Enable users to view individual product information.
 Connect the visual cart components to the actual state.
 
 #### [NEW] [CartSheet.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/components/CartSheet.tsx)
-- [ ] A side-drawer component using `shadcn-ui`'s Sheet.
-- [ ] Display list of `CartItem`s with quantity controls.
-- [ ] Calculate and show Subtotal, Tax, and Total.
+- [x] A side-drawer component using `shadcn-ui`'s Sheet.
+- [x] Display list of `CartItem`s with quantity controls.
+- [x] Calculate and show Subtotal, Tax, and Total.
 
 #### [MODIFY] [Navbar.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/components/Navbar.tsx)
-- [ ] Integrate `CartSheet` trigger into the ShoppingCart icon.
-- [ ] Update the cart badge count dynamically from the global state.
+- [x] Integrate `CartSheet` trigger into the ShoppingCart icon.
+- [x] Update the cart badge count dynamically from the global state.
 
 #### [MODIFY] [ProductCard.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/components/ProductCard.tsx)
-- [ ] Connect the "Add to Cart" button to the Zustand `addToCart` action.
-- [ ] Trigger a "Success" toast using `sonner` when an item is added.
+- [x] Connect the "Add to Cart" button to the Zustand `addToCart` action.
+- [x] Trigger a "Success" toast using `sonner` when an item is added.
 
 ---
 

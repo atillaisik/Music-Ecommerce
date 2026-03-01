@@ -31,18 +31,6 @@ export interface Article {
   readTime: string;
 }
 
-export const categories: Category[] = [
-  { name: "Guitars", image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=300&fit=crop", count: 0 },
-  { name: "Drums", image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=300&fit=crop", count: 0 },
-  { name: "Keyboards", image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=300&fit=crop", count: 0 },
-  { name: "Bass", image: "https://images.unsplash.com/photo-1612225330812-01a9c1b0f8b8?w=400&h=300&fit=crop", count: 0 },
-  { name: "DJ Equipment", image: "https://images.unsplash.com/photo-1571327073757-71d13c24de30?w=400&h=300&fit=crop", count: 0 },
-  { name: "Studio Gear", image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=300&fit=crop", count: 0 },
-].map(cat => ({
-  ...cat,
-  count: products.filter(p => p.category === cat.name).length
-}));
-
 export const products: Product[] = [
   { id: "1", name: "Fender Stratocaster", brand: "Fender", category: "Guitars", price: 1499, rating: 4.8, reviews: 342, image: "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400&h=400&fit=crop", badge: "Best Seller" },
   { id: "2", name: "Gibson Les Paul Standard", brand: "Gibson", category: "Guitars", price: 2499, rating: 4.9, reviews: 218, image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=400&h=400&fit=crop" },
@@ -63,6 +51,18 @@ export const products: Product[] = [
   { id: "17", name: "Fender Am Pro II Telecaster", brand: "Fender", category: "Guitars", price: 1699, rating: 4.9, reviews: 124, image: "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400&h=400&fit=crop", badge: "New" },
   { id: "18", name: "Roland JUPITER-X", brand: "Roland", category: "Keyboards", price: 2499, rating: 4.8, reviews: 34, image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=400&fit=crop" },
 ];
+
+export const categories: Category[] = [
+  { name: "Guitars", image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=300&fit=crop", count: 0 },
+  { name: "Drums", image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=300&fit=crop", count: 0 },
+  { name: "Keyboards", image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=400&fit=crop", count: 0 },
+  { name: "Bass", image: "https://images.unsplash.com/photo-1612225330812-01a9c1b0f8b8?w=400&h=300&fit=crop", count: 0 },
+  { name: "DJ Equipment", image: "https://images.unsplash.com/photo-1571327073757-71d13c24de30?w=400&h=300&fit=crop", count: 0 },
+  { name: "Studio Gear", image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=300&fit=crop", count: 0 },
+].map(cat => ({
+  ...cat,
+  count: products.filter(p => p.category === cat.name).length
+}));
 
 export const brands: Brand[] = [
   { name: "Fender", logo: "F" },

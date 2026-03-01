@@ -19,10 +19,10 @@
 - [x] Update the `/brands` page and sidebar/homepage brand links to use `?brand=BrandName`.
 
 ## Phase 4: Magic UI Marquee Integration
-- [ ] Add Magic UI `Marquee` component to the codebase (`src/components/magicui/Marquee.tsx`).
-- [ ] Replace the hardcoded "Best Sellers" grid on the homepage with the scrolling Marquee.
-- [ ] Configure Marquee behavior: autonomous movement, infinite loop, and `pauseOnHover={true}`.
-- [ ] Ensure 10 total product cards are rendered within the Marquee.
+- [x] Add Magic UI `Marquee` component to the codebase (`src/components/magicui/Marquee.tsx`).
+- [x] Replace the hardcoded "Best Sellers" grid on the homepage with the scrolling Marquee.
+- [x] Configure Marquee behavior: autonomous movement, infinite loop, and `pauseOnHover={true}`.
+- [x] Ensure 10 total product cards are rendered within the Marquee.
 
 ## Phase 5: Verification & Testing
 - [ ] Cross-browser check for rebranding consistency.

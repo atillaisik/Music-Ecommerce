@@ -7,6 +7,7 @@ import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { categories, products } from "@/data/mock";
+import { Marquee } from "@/components/magicui/Marquee";
 
 const stats = [
   { label: "Products", value: "50K+" },
@@ -115,10 +116,14 @@ const Index = () => {
                 <Link to="/shop">View All <ArrowRight className="ml-1 h-4 w-4" /></Link>
               </Button>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {products.slice(0, 4).map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
+            <div className="mt-8">
+              <Marquee pauseOnHover className="[--duration:30s]">
+                {products.slice(0, 10).map((p) => (
+                  <div key={p.id} className="w-[300px] flex-shrink-0 px-2">
+                    <ProductCard product={p} />
+                  </div>
+                ))}
+              </Marquee>
             </div>
           </div>
         </section>

@@ -38,7 +38,7 @@ const Index = () => {
             <motion.div initial="hidden" animate="visible" className="max-w-2xl">
               <motion.div variants={fadeUp} custom={0}>
                 <Badge variant="outline" className="border-primary text-primary mb-4 font-display uppercase tracking-widest">
-                  New Arrivals 2024
+                  New Arrivals 2026
                 </Badge>
               </motion.div>
               <motion.h1

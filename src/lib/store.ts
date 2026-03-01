@@ -56,7 +56,7 @@ export const useCartStore = create<CartState>()(
             },
         }),
         {
-            name: 'soundscape-cart',
+            name: 'arasounds-cart',
         }
     )
 );

@@ -29,7 +29,7 @@ const Contact = () => (
           {[
             { icon: MapPin, title: "Visit Us", text: "123 Music Avenue, Nashville, TN 37203" },
             { icon: Phone, title: "Call Us", text: "+1 (800) 555-MUSIC" },
-            { icon: Mail, title: "Email Us", text: "hello@soundscape.com" },
+            { icon: Mail, title: "Email Us", text: "hello@arasounds.com" },
             { icon: Clock, title: "Hours", text: "Mon–Sat: 9AM–8PM | Sun: 10AM–6PM" },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className="flex items-start gap-4">

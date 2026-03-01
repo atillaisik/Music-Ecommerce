@@ -23,7 +23,7 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="font-display text-2xl font-bold tracking-wider text-foreground">
-          SOUNDSCAPE
+          ARASOUNDS
         </Link>
 
         {/* Desktop Nav */}

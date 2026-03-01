@@ -1,4 +1,5 @@
 import { Star, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/data/mock";
 
@@ -8,20 +9,24 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => (
   <div className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-    <div className="relative aspect-square overflow-hidden bg-secondary">
-      <img
-        src={product.image}
-        alt={product.name}
-        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        loading="lazy"
-      />
-      {product.badge && (
-        <Badge className="absolute left-3 top-3 bg-primary text-primary-foreground">{product.badge}</Badge>
-      )}
-    </div>
+    <Link to={`/product/${product.id}`} className="block">
+      <div className="relative aspect-square overflow-hidden bg-secondary">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+        {product.badge && (
+          <Badge className="absolute left-3 top-3 bg-primary text-primary-foreground">{product.badge}</Badge>
+        )}
+      </div>
+    </Link>
     <div className="p-4">
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{product.brand}</p>
-      <h3 className="mt-1 font-medium text-foreground">{product.name}</h3>
+      <Link to={`/product/${product.id}`} className="block">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">{product.brand}</p>
+        <h3 className="mt-1 font-medium text-foreground transition-colors hover:text-primary">{product.name}</h3>
+      </Link>
       <div className="mt-2 flex items-center gap-1">
         <Star className="h-3.5 w-3.5 fill-primary text-primary" />
         <span className="text-sm text-foreground">{product.rating}</span>

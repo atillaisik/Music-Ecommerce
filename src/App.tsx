@@ -12,6 +12,8 @@ import Deals from "./pages/Deals";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
+import ProductDetail from "./pages/ProductDetail";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -23,6 +25,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/instruments" element={<Instruments />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/learn" element={<Learn />} />

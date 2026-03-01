@@ -21,14 +21,14 @@ Establish a global state to handle the shopping cart and user sessions.
 Enable users to view individual product information.
 
 #### [NEW] [ProductDetail.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/pages/ProductDetail.tsx)
-- [ ] Create a new page component to display detailed product info, specifications, and a "Related Products" section.
-- [ ] Use `useParams` from `react-router-dom` to fetch product data from `mock.ts` based on ID.
+- [x] Create a new page component to display detailed product info, specifications, and a "Related Products" section.
+- [x] Use `useParams` from `react-router-dom` to fetch product data from `mock.ts` based on ID.
 
 #### [MODIFY] [App.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/App.tsx)
-- [ ] Add route: `<Route path="/product/:id" element={<ProductDetail />} />`.
+- [x] Add route: `<Route path="/product/:id" element={<ProductDetail />} />`.
 
 #### [MODIFY] [ProductCard.tsx](file:///Users/atillaisik/CODES/MUSIC-ECOMMERCE/Music-Ecommerce/src/components/ProductCard.tsx)
-- [ ] Wrap the image and title in a `Link` to the new product detail page.
+- [x] Wrap the image and title in a `Link` to the new product detail page.
 
 ---
 

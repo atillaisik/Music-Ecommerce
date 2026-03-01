@@ -1,0 +1,79 @@
+import { useState, useMemo } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
+import { products, categories } from "@/data/mock";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useSearchParams } from "react-router-dom";
+
+const sortOptions = ["Popular", "Price: Low", "Price: High", "Newest"];
+
+const Shop = () => {
+  const [searchParams] = useSearchParams();
+  const initialCat = searchParams.get("category") || "All";
+  const [selectedCategory, setSelectedCategory] = useState(initialCat);
+  const [sort, setSort] = useState("Popular");
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    let list = [...products];
+    if (selectedCategory !== "All") list = list.filter((p) => p.category === selectedCategory);
+    if (search) list = list.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+    if (sort === "Price: Low") list.sort((a, b) => a.price - b.price);
+    if (sort === "Price: High") list.sort((a, b) => b.price - a.price);
+    return list;
+  }, [selectedCategory, sort, search]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main className="container py-10">
+        <h1 className="font-display text-4xl font-bold uppercase tracking-tight">Shop</h1>
+
+        <div className="mt-6 flex flex-col gap-8 lg:flex-row">
+          {/* Sidebar */}
+          <aside className="w-full shrink-0 lg:w-56">
+            <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 bg-secondary" />
+            <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Category</h3>
+            <div className="flex flex-wrap gap-2 lg:flex-col">
+              {["All", ...categories.map((c) => c.name)].map((c) => (
+                <Button
+                  key={c}
+                  variant={selectedCategory === c ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(c)}
+                  className="justify-start text-xs uppercase tracking-wider"
+                >
+                  {c}
+                </Button>
+              ))}
+            </div>
+            <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Sort</h3>
+            <div className="flex flex-wrap gap-2 lg:flex-col">
+              {sortOptions.map((s) => (
+                <Button key={s} variant={sort === s ? "default" : "ghost"} size="sm" onClick={() => setSort(s)} className="justify-start text-xs">
+                  {s}
+                </Button>
+              ))}
+            </div>
+          </aside>
+
+          {/* Grid */}
+          <div className="flex-1">
+            <p className="mb-4 text-sm text-muted-foreground">{filtered.length} products</p>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {filtered.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+            {filtered.length === 0 && <p className="mt-12 text-center text-muted-foreground">No products found.</p>}
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Shop;

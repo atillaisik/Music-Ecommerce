@@ -12,11 +12,11 @@
 - [x] Verify Bass product images are appearing correctly on the `/instruments` and `/shop` pages.
 
 ## Phase 3: Dynamic Logic & Brand Filtering
-- [ ] Update category product counts to be dynamic (reflecting actual product quantities in each category).
-- [ ] Add "Our Brands" section to the Shop sidebar.
-- [ ] Implement brand filtering logic in `Shop.tsx` via URL query parameters.
-- [ ] Update the "Trusted by Top Brands" section on the homepage to link directly to filtered brand results.
-- [ ] Update the `/brands` page and sidebar/homepage brand links to use `?brand=BrandName`.
+- [x] Update category product counts to be dynamic (reflecting actual product quantities in each category).
+- [x] Add "Our Brands" section to the Shop sidebar.
+- [x] Implement brand filtering logic in `Shop.tsx` via URL query parameters.
+- [x] Update the "Trusted by Top Brands" section on the homepage to link directly to filtered brand results.
+- [x] Update the `/brands` page and sidebar/homepage brand links to use `?brand=BrandName`.
 
 ## Phase 4: Magic UI Marquee Integration
 - [ ] Add Magic UI `Marquee` component to the codebase (`src/components/magicui/Marquee.tsx`).

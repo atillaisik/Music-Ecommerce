@@ -13,8 +13,10 @@ const Shop = () => {
   const [searchParams] = useSearchParams();
   const initialCat = searchParams.get("category") || "All";
   const initialSearch = searchParams.get("q") || "";
+  const initialBrand = searchParams.get("brand") || "All";
 
   const [selectedCategory, setSelectedCategory] = useState(initialCat);
+  const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sort, setSort] = useState("Popular");
   const [search, setSearch] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
@@ -22,6 +24,7 @@ const Shop = () => {
   const filtered = useMemo(() => {
     let list = [...products];
     if (selectedCategory !== "All") list = list.filter((p) => p.category === selectedCategory);
+    if (selectedBrand !== "All") list = list.filter((p) => p.brand === selectedBrand);
     if (search) list = list.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
     // Price filtering
@@ -57,7 +60,20 @@ const Shop = () => {
                 </Button>
               ))}
             </div>
-            <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Price Range</h3>
+            <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Our Brands</h3>
+            <div className="flex flex-wrap gap-2 lg:flex-col">
+              {["All", ...Array.from(new Set(products.map((p) => p.brand)))].map((b) => (
+                <Button
+                  key={b}
+                  variant={selectedBrand === b ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setSelectedBrand(b)}
+                  className="justify-start text-xs uppercase tracking-wider"
+                >
+                  {b}
+                </Button>
+              ))}
+            </div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <Input

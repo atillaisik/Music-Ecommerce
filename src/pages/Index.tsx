@@ -128,9 +128,13 @@ const Index = () => {
           <h2 className="font-display text-3xl font-bold uppercase tracking-tight">Trusted by Top Brands</h2>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-8">
             {["Fender", "Gibson", "Yamaha", "Roland", "Taylor", "Martin"].map((b) => (
-              <span key={b} className="font-display text-2xl font-bold text-muted-foreground/40 transition-colors hover:text-foreground">
+              <Link
+                key={b}
+                to={`/shop?brand=${b}`}
+                className="font-display text-2xl font-bold text-muted-foreground/40 transition-colors hover:text-foreground"
+              >
                 {b}
-              </span>
+              </Link>
             ))}
           </div>
         </section>

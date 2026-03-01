@@ -19,7 +19,7 @@ const Brands = () => (
             transition={{ delay: i * 0.05 }}
           >
             <Link
-              to={`/shop?category=All`}
+              to={`/shop?brand=${brand.name}`}
               className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-8 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5"
             >
               <span className="font-display text-4xl font-bold text-muted-foreground">{brand.logo}</span>

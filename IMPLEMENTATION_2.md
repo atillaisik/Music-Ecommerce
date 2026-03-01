@@ -25,6 +25,6 @@
 - [x] Ensure 10 total product cards are rendered within the Marquee.
 
 ## Phase 5: Verification & Testing
-- [ ] Cross-browser check for rebranding consistency.
-- [ ] Verify brand filtering works correctly from all entry points (Sidebar, Brands Page, Homepage).
-- [ ] Confirm Marquee interaction and performance.
+- [x] Cross-browser check for rebranding consistency.
+- [x] Verify brand filtering works correctly from all entry points (Sidebar, Brands Page, Homepage).
+- [x] Confirm Marquee interaction and performance.

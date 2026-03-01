@@ -40,45 +40,50 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden items-center gap-3 md:flex">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const query = formData.get("search") as string;
-              if (query) {
-                window.location.href = `/shop?q=${encodeURIComponent(query)}`;
-              }
-            }}
-            className="relative flex items-center"
-          >
-            <Input
-              name="search"
-              type="search"
-              placeholder="Search..."
-              className="h-9 w-40 bg-secondary pr-8 transition-all focus:w-60"
-            />
-            <button type="submit" className="absolute right-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Search">
-              <Search className="h-4 w-4" />
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-3 md:flex">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const query = formData.get("search") as string;
+                if (query) {
+                  window.location.href = `/shop?q=${encodeURIComponent(query)}`;
+                }
+              }}
+              className="relative flex items-center"
+            >
+              <Input
+                name="search"
+                type="search"
+                placeholder="Search..."
+                className="h-9 w-40 bg-secondary pr-8 transition-all focus:w-60"
+              />
+              <button type="submit" className="absolute right-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Search">
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
+            <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Wishlist">
+              <Heart className="h-5 w-5" />
             </button>
-          </form>
-          <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Wishlist">
-            <Heart className="h-5 w-5" />
-          </button>
+            <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Account">
+              <User className="h-5 w-5" />
+            </button>
+          </div>
+
           <CartSheet />
-          <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Account">
-            <User className="h-5 w-5" />
-          </button>
-          <Button asChild size="sm" className="ml-2 font-display uppercase tracking-wider">
+
+          {/* Desktop Shop Button */}
+          <Button asChild size="sm" className="ml-2 hidden font-display uppercase tracking-wider md:inline-flex">
             <Link to="/shop">Shop Instruments</Link>
           </Button>
-        </div>
 
-        {/* Mobile toggle */}
-        <button className="p-2 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+          {/* Mobile toggle */}
+          <button className="p-2 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Nav */}

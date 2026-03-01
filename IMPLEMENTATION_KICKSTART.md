@@ -62,11 +62,11 @@ Make the headers search bar functional.
 ## Verification Plan
 
 ### Automated Tests
-- [ ] Run `npm run test` to ensure existing components still render correctly.
-- [ ] (Recommended) Add Vitest unit tests for the Zustand store logic.
+- [x] Run `npm run test` to ensure existing components still render correctly.
+- [x] (Recommended) Add Vitest unit tests for the Zustand store logic.
 
 ### Manual Verification
-- [ ] **Cart Logic**: Add 3 different items, increase quantity of one, remove another, and verify the badge and total update correctly.
-- [ ] **Persistence**: Refresh the browser and verify the cart contents remain.
-- [ ] **Navigation**: Click a product card from the home page and verify it lands on the correct dynamic detail page.
-- [ ] **Responsiveness**: Verify the `CartSheet` works intuitively on mobile screens.
+- [x] **Cart Logic**: Add 3 different items, increase quantity of one, remove another, and verify the badge and total update correctly.
+- [x] **Persistence**: Refresh the browser and verify the cart contents remain.
+- [x] **Navigation**: Click a product card from the home page and verify it lands on the correct dynamic detail page.
+- [x] **Responsiveness**: Verify the `CartSheet` works intuitively on mobile screens.

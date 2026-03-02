@@ -8,7 +8,11 @@ const Footer = () => (
       <div className="grid gap-8 md:grid-cols-4">
         {/* Brand */}
         <div>
-          <h3 className="font-display text-xl font-bold tracking-wider">ARASOUNDS</h3>
+          <img
+            src="/ArasSounds.jpg"
+            alt="ARASOUNDS"
+            className="h-6 w-auto object-contain brightness-0 invert"
+          />
           <p className="mt-3 text-sm text-muted-foreground">
             Your one-stop destination for premium musical instruments and gear.
           </p>

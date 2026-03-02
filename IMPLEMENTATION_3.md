@@ -34,7 +34,7 @@ Giving the site a "premium" feel.
 ## Verification Plan
 
 ### Manual Verification
-- **Full Flow**: Add item -> Checkout -> Enter fake card -> Verify success message and empty cart.
-- **Persistence**: Log in, add to wishlist, refresh, and verify the item is still there.
-- **Theme Check**: Toggle dark mode and verify all components (Navbar, Footer, Cards) adapt correctly.
-- **Search Logic**: Use the live search to find a specific bass guitar and click the result.
+- [x] **Full Flow**: Add item -> Checkout -> Enter fake card -> Verify success message and empty cart.
+- [x] **Persistence**: Log in, add to wishlist, refresh, and verify the item is still there.
+- [x] **Theme Check**: Toggle dark mode and verify all components (Navbar, Footer, Cards) adapt correctly.
+- [x] **Search Logic**: Use the live search to find a specific bass guitar and click the result.

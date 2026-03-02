@@ -13,9 +13,10 @@ Create a seamless flow to "purchase" instruments without a real credit card.
 ## 2. User Accounts & Favorites
 Building loyalty and persistence for return customers.
 
-- [ ] **Authentication UI**: Simple Login/Sign-up modals or pages (using a mock auth service for now).
-- [ ] **Wishlist Logic**: Add a "Heart" icon to product cards and a global state to track favorite items.
-- [ ] **Account Dashboard**: A `/profile` page to view "Recent Orders" and "My Wishlist."
+- [x] **Authentication UI**: Simple Login/Sign-up modals or pages (using a mock auth service for now).
+- [x] **Wishlist Logic**: Add a "Heart" icon to product cards and a global state to track favorite items.
+- [x] **Account Dashboard**: A `/profile` page to view "Recent Orders" and "My Wishlist."
+
 
 ## 3. Product Trust & Discovery
 Adding social proof and making products easier to find.

@@ -1,8 +1,8 @@
-import { Star, ShoppingCart } from "lucide-react";
+import { Star, ShoppingCart, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/data/mock";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useWishlistStore } from "@/lib/store";
 import { toast } from "sonner";
 
 interface ProductCardProps {
@@ -11,12 +11,27 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const addToCart = useCartStore((state) => state.addToCart);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
 
   const handleAddToCart = () => {
     addToCart(product);
     toast.success(`${product.name} added to cart!`, {
       description: "You can view your cart in the navigation bar.",
     });
+  };
+
+  const isFavorited = isInWishlist(product.id);
+
+  const toggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isFavorited) {
+      removeFromWishlist(product.id);
+      toast.info(`Removed ${product.name} from wishlist`);
+    } else {
+      addToWishlist(product);
+      toast.success(`Added ${product.name} to wishlist!`);
+    }
   };
 
   return (
@@ -29,11 +44,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
+          <button
+            onClick={toggleWishlist}
+            className={`absolute right-3 top-3 rounded-full p-2 transition-all hover:scale-110 ${isFavorited ? "bg-primary text-primary-foreground" : "bg-white/80 text-foreground hover:bg-white"
+              } shadow-sm`}
+            aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
+          </button>
           {product.badge && (
             <Badge className="absolute left-3 top-3 bg-primary text-primary-foreground">{product.badge}</Badge>
           )}
         </div>
       </Link>
+
       <div className="p-4">
         <Link to={`/product/${product.id}`} className="block">
           <p className="text-xs uppercase tracking-wider text-muted-foreground">{product.brand}</p>

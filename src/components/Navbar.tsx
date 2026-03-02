@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Heart, ShoppingCart, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CartSheet } from "./CartSheet";
+import { AuthModal } from "./AuthModal";
+import { useAuthStore, useWishlistStore } from "@/lib/store";
+import { Badge } from "@/components/ui/badge";
 
 const navLinks = [
   { label: "Shop", path: "/shop" },
@@ -17,6 +20,9 @@ const navLinks = [
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuthStore();
+  const wishlistItems = useWishlistStore((state) => state.items);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -53,7 +59,7 @@ const Navbar = () => {
                 const formData = new FormData(e.currentTarget);
                 const query = formData.get("search") as string;
                 if (query) {
-                  window.location.href = `/shop?q=${encodeURIComponent(query)}`;
+                  navigate(`/shop?q=${encodeURIComponent(query)}`);
                 }
               }}
               className="relative flex items-center"
@@ -68,12 +74,33 @@ const Navbar = () => {
                 <Search className="h-4 w-4" />
               </button>
             </form>
-            <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Wishlist">
+
+            <Link to="/profile" className="relative p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Wishlist">
               <Heart className="h-5 w-5" />
-            </button>
-            <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Account">
-              <User className="h-5 w-5" />
-            </button>
+              {wishlistItems.length > 0 && (
+                <Badge className="absolute -right-1 -top-1 h-4 w-4 justify-center rounded-full p-0 text-[10px]">
+                  {wishlistItems.length}
+                </Badge>
+              )}
+            </Link>
+
+            {isAuthenticated ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/profile")}
+                className="text-muted-foreground hover:text-foreground"
+                title={`Logged in as ${user?.name}`}
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            ) : (
+              <AuthModal>
+                <button className="p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Account">
+                  <User className="h-5 w-5" />
+                </button>
+              </AuthModal>
+            )}
           </div>
 
           <CartSheet />
@@ -82,6 +109,7 @@ const Navbar = () => {
           <Button asChild size="sm" className="ml-2 hidden font-display uppercase tracking-wider md:inline-flex">
             <Link to="/shop">Shop Instruments</Link>
           </Button>
+
 
           {/* Mobile toggle */}
           <button className="p-2 md:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">

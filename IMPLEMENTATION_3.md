@@ -5,10 +5,10 @@ This plan transition ARASOUNDS from a product catalog to a functional ecommerce 
 ## 1. Simulated Checkout & Payments
 Create a seamless flow to "purchase" instruments without a real credit card.
 
-- [ ] **Checkout Page**: New route `/checkout` with a multi-step form (Shipping -> Payment -> Review).
-- [ ] **Simulated Payment Gateway**: A mock payment processor that validates "test card" numbers and simulates a 2-second processing delay.
-- [ ] **Order Confirmation**: A success page `/checkout/success` displaying a mock Order ID and summary.
-- [ ] **Cart Clearing**: Ensure the cart state is cleared upon successful "payment."
+- [x] **Checkout Page**: New route `/checkout` with a multi-step form (Shipping -> Payment -> Review).
+- [x] **Simulated Payment Gateway**: A mock payment processor that validates "test card" numbers and simulates a 2-second processing delay.
+- [x] **Order Confirmation**: A success page `/checkout/success` displaying a mock Order ID and summary.
+- [x] **Cart Clearing**: Ensure the cart state is cleared upon successful "payment."
 
 ## 2. User Accounts & Favorites
 Building loyalty and persistence for return customers.

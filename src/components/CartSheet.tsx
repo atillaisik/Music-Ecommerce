@@ -1,4 +1,5 @@
 import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -121,8 +122,10 @@ export function CartSheet() {
                                 </div>
                             </div>
                             <SheetFooter className="mt-2">
-                                <Button className="w-full font-display uppercase tracking-wider py-6">
-                                    Checkout Now
+                                <Button className="w-full font-display uppercase tracking-wider py-6" asChild>
+                                    <Link to="/checkout">
+                                        Checkout Now
+                                    </Link>
                                 </Button>
                             </SheetFooter>
                         </div>

@@ -24,7 +24,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <img
-            src="/ArasSounds.jpg"
+            src="/ArasSounds.svg"
             alt="ARASOUNDS"
             className="h-8 w-auto object-contain brightness-0 invert"
           />

@@ -9,7 +9,7 @@ const Footer = () => (
         {/* Brand */}
         <div>
           <img
-            src="/ArasSounds.jpg"
+            src="/ArasSounds.svg"
             alt="ARASOUNDS"
             className="h-6 w-auto object-contain brightness-0 invert"
           />

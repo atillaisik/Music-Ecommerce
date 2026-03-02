@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useState, useEffect } from "react";
 import { categories, products } from "@/data/mock";
 import { Marquee } from "@/components/magicui/Marquee";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 
 const stats = [
   { label: "Products", value: "50K+" },
@@ -21,8 +24,22 @@ const fadeUp = {
 };
 
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial data fetch
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>ARASOUNDS | Premium Musical Instruments</title>
+        <meta name="description" content="Discover premium instruments from the world's top brands. Guitars, Pianos, Drums and more at ARASOUNDS." />
+      </Helmet>
       <Navbar />
       <main>
         {/* Hero */}
@@ -118,11 +135,17 @@ const Index = () => {
             </div>
             <div className="mt-8">
               <Marquee pauseOnHover className="[--duration:30s]">
-                {products.slice(0, 10).map((p) => (
-                  <div key={p.id} className="w-[300px] flex-shrink-0 px-2">
-                    <ProductCard product={p} />
-                  </div>
-                ))}
+                {isLoading
+                  ? Array.from({ length: 6 }).map((_, i) => (
+                    <div key={`skeleton-${i}`} className="w-[300px] flex-shrink-0 px-2">
+                      <ProductCardSkeleton />
+                    </div>
+                  ))
+                  : products.slice(0, 10).map((p) => (
+                    <div key={p.id} className="w-[300px] flex-shrink-0 px-2">
+                      <ProductCard product={p} />
+                    </div>
+                  ))}
               </Marquee>
             </div>
           </div>

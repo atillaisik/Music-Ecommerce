@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { products, categories } from "@/data/mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const sortOptions = ["Popular", "Price: Low", "Price: High", "Newest"];
 
@@ -20,6 +22,15 @@ const Shop = () => {
   const [sort, setSort] = useState("Popular");
   const [search, setSearch] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [selectedCategory, selectedBrand, sort, search]);
 
   const filtered = useMemo(() => {
     let list = [...products];
@@ -38,6 +49,10 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Shop All Instruments | ARASOUNDS</title>
+        <meta name="description" content="Browse our full catalog of premium musical instruments. Filter by category, brand, and price." />
+      </Helmet>
       <Navbar />
       <main className="container py-10">
         <h1 className="font-display text-4xl font-bold uppercase tracking-tight">Shop</h1>
@@ -108,9 +123,11 @@ const Shop = () => {
           <div className="flex-1">
             <p className="mb-4 text-sm text-muted-foreground">{filtered.length} products</p>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={`skeleton-${i}`} />)
+                : filtered.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
             </div>
             {filtered.length === 0 && <p className="mt-12 text-center text-muted-foreground">No products found.</p>}
           </div>

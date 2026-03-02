@@ -8,6 +8,7 @@ import { AuthModal } from "./AuthModal";
 import { useAuthStore, useWishlistStore } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
 import { products, Product } from "@/data/mock";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navLinks = [
   { label: "Shop", path: "/shop" },
@@ -165,6 +166,8 @@ const Navbar = () => {
                 </Badge>
               )}
             </Link>
+
+            <ThemeToggle />
 
             {isAuthenticated ? (
               <Button

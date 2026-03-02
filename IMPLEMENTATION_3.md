@@ -27,9 +27,9 @@ Adding social proof and making products easier to find.
 ## 4. Professional UX Enhancements
 Giving the site a "premium" feel.
 
-- [ ] **Dark Mode Support**: Implement a theme toggle using `next-themes` or a custom CSS variable system.
-- [ ] **Skeleton Loaders**: Add loading skeletons for `ProductCard` and `ProductDetail` to handle "slow" data fetching states gracefully.
-- [ ] **SEO & Meta Tags**: Integrate `react-helmet-async` to provide unique titles and descriptions for every product page.
+- [x] **Dark Mode Support**: Implement a theme toggle using `next-themes` or a custom CSS variable system.
+- [x] **Skeleton Loaders**: Add loading skeletons for `ProductCard` and `ProductDetail` to handle "slow" data fetching states gracefully.
+- [x] **SEO & Meta Tags**: Integrate `react-helmet-async` to provide unique titles and descriptions for every product page.
 
 ## Verification Plan
 

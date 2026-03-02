@@ -9,6 +9,8 @@ import { useAuthStore, useWishlistStore } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
 import { products, Product } from "@/data/mock";
 import { ThemeToggle } from "./ThemeToggle";
+import { Logo } from "@/components/ui/Logo";
+
 
 const navLinks = [
   { label: "Shop", path: "/shop" },
@@ -67,12 +69,9 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img
-            src="/ArasSounds.png"
-            alt="ARASOUNDS Logo"
-            className="h-8 w-auto object-contain"
-          />
+          <Logo className="h-8 w-auto text-black dark:text-white transition-colors duration-300" />
         </Link>
+
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-6 md:flex">

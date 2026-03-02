@@ -22,12 +22,8 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
-          <img
-            src="/ArasSounds.jpg"
-            alt="ARASOUNDS"
-            className="h-8 w-auto object-contain brightness-0 invert"
-          />
+        <Link to="/" className="font-display text-2xl font-bold tracking-wider text-foreground">
+          ARASOUNDS
         </Link>
 
         {/* Desktop Nav */}

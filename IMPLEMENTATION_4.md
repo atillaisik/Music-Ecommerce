@@ -8,9 +8,9 @@ This phase focuses on refining the user experience with better navigation contro
     - [x] Integrate into `App.tsx`.
 
 ## 2. Product Data & Assets
-- [ ] **Bass Product Images**: Fix broken image URLs for bass guitars in `src/data/mock.ts`.
-    - [ ] Update Fender Jazz Bass (ID: 5).
-    - [ ] Update Ibanez SR505 (ID: 9).
+- [x] **Bass Product Images**: Fix broken image URLs for bass guitars in `src/data/mock.ts`.
+    - [x] Update Fender Jazz Bass (ID: 5).
+    - [x] Update Ibanez SR505 (ID: 9).
 
 ## 3. Contact Page Premium Polish
 - [ ] **Visual Hierarchy**: Improve layout and spacing.
@@ -20,5 +20,5 @@ This phase focuses on refining the user experience with better navigation contro
 
 ## Verification
 - [x] Verify scroll behavior on navigating between routes.
-- [ ] Verify bass product images load correctly in Shop and Deals.
+- [x] Verify bass product images load correctly in Shop and Deals.
 - [ ] Verify Contact page layout on desktop and mobile.

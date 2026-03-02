@@ -1,3 +1,11 @@
+export interface Review {
+  id: string;
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -7,6 +15,7 @@ export interface Product {
   originalPrice?: number;
   rating: number;
   reviews: number;
+  reviewsData?: Review[];
   image: string;
   badge?: string;
 }
@@ -32,9 +41,48 @@ export interface Article {
 }
 
 export const products: Product[] = [
-  { id: "1", name: "Fender Stratocaster", brand: "Fender", category: "Guitars", price: 1499, rating: 4.8, reviews: 342, image: "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400&h=400&fit=crop", badge: "Best Seller" },
-  { id: "2", name: "Gibson Les Paul Standard", brand: "Gibson", category: "Guitars", price: 2499, rating: 4.9, reviews: 218, image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=400&h=400&fit=crop" },
-  { id: "3", name: "Roland TD-27KV", brand: "Roland", category: "Drums", price: 3299, rating: 4.7, reviews: 156, image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=400&fit=crop", badge: "New" },
+  {
+    id: "1",
+    name: "Fender Stratocaster",
+    brand: "Fender",
+    category: "Guitars",
+    price: 1499,
+    rating: 4.8,
+    reviews: 342,
+    reviewsData: [
+      { id: "r1", user: "John D.", rating: 5, comment: "Best guitar I've ever owned. The tone is crystalline.", date: "2024-02-15" },
+      { id: "r2", user: "Sarah M.", rating: 4, comment: "Beautiful finish, plays like a dream. Minor tuning issues out of the box.", date: "2024-01-20" }
+    ],
+    image: "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400&h=400&fit=crop",
+    badge: "Best Seller"
+  },
+  {
+    id: "2",
+    name: "Gibson Les Paul Standard",
+    brand: "Gibson",
+    category: "Guitars",
+    price: 2499,
+    rating: 4.9,
+    reviews: 218,
+    reviewsData: [
+      { id: "r3", user: "Mike R.", rating: 5, comment: "A heavy beast with a heavy sound. Worth every penny.", date: "2024-02-10" }
+    ],
+    image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=400&h=400&fit=crop"
+  },
+  {
+    id: "3",
+    name: "Roland TD-27KV",
+    brand: "Roland",
+    category: "Drums",
+    price: 3299,
+    rating: 4.7,
+    reviews: 156,
+    reviewsData: [
+      { id: "r4", user: "Alex K.", rating: 5, comment: "Feels very close to an acoustic kit. The digital snare is amazing.", date: "2024-01-05" }
+    ],
+    image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=400&fit=crop",
+    badge: "New"
+  },
   { id: "4", name: "Yamaha P-125 Digital Piano", brand: "Yamaha", category: "Keyboards", price: 649, rating: 4.6, reviews: 489, image: "https://images.unsplash.com/photo-1552422535-c45813c61732?w=400&h=400&fit=crop" },
   { id: "5", name: "Fender Jazz Bass", brand: "Fender", category: "Bass", price: 1199, rating: 4.7, reviews: 267, image: "https://images.unsplash.com/photo-1541252260731-50da692945d8?w=400&h=400&fit=crop" },
   { id: "6", name: "Pioneer DDJ-1000", brand: "Pioneer", category: "DJ Equipment", price: 1299, rating: 4.8, reviews: 134, image: "https://images.unsplash.com/photo-1571327073757-71d13c24de30?w=400&h=400&fit=crop", badge: "Hot" },

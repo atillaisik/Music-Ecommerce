@@ -7,6 +7,7 @@ import { products } from "@/data/mock";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import ReviewSection from "@/components/ReviewSection";
 import { toast } from "sonner";
 import { useCartStore } from "@/lib/store";
 
@@ -135,6 +136,13 @@ const ProductDetail = () => {
                         </div>
                     </motion.div>
                 </div>
+
+                {/* Reviews Section */}
+                <ReviewSection
+                    reviews={product.reviewsData || []}
+                    averageRating={product.rating}
+                    totalReviews={product.reviews}
+                />
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (

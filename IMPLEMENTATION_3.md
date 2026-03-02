@@ -21,8 +21,8 @@ Building loyalty and persistence for return customers.
 ## 3. Product Trust & Discovery
 Adding social proof and making products easier to find.
 
-- [ ] **Reviews & Ratings**: Add a dedicated section on the `ProductDetail` page for user reviews (mock data).
-- [ ] **Live Search Autocomplete**: Update `Navbar.tsx` so the search bar shows immediate product results as the user types.
+- [x] **Reviews & Ratings**: Add a dedicated section on the `ProductDetail` page for user reviews (mock data).
+- [x] **Live Search Autocomplete**: Update `Navbar.tsx` so the search bar shows immediate product results as the user types.
 
 ## 4. Professional UX Enhancements
 Giving the site a "premium" feel.

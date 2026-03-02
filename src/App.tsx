@@ -25,7 +25,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="arasounds-theme">
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="arasounds-theme">
         <TooltipProvider>
           <Toaster />
           <Sonner />

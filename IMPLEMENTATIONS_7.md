@@ -25,10 +25,10 @@ This document outlines the decisions and implementation plan for the Product Car
 ## 4. Component Duplication
 **Decision:** Evaluate current usage: `ProductImageCarousel.tsx` vs. inline carousel in `ProductCard.tsx`. Keep what is used, discard what isn't, but avoid redundant components if they do the same thing.
 **Investigation Findings:** 
-- [ ] Both components are actively used, but for completely different contexts. 
-- [ ] `ProductImageCarousel.tsx` is used on the **Product Detail Page** (`ProductDetail.tsx`) and is a large, complex component featuring thumbnail image navigation, keyboard controls, and fade effects.
-- [ ] `ProductCard.tsx` is used on the **Shop & Home Pages** and requires a tiny, inline, thumbnail-less sliding carousel.
-- [ ] Since both serve completely distinct visual needs, we will **keep both**. We will integrate the lightweight `embla-carousel-react` into `ProductCard.tsx` to handle the side-by-side swiping without bloating it with the thumbnail logic from the detail page component.
+- [x] Both components are actively used, but for completely different contexts. 
+- [x] `ProductImageCarousel.tsx` is used on the **Product Detail Page** (`ProductDetail.tsx`) and is a large, complex component featuring thumbnail image navigation, keyboard controls, and fade effects.
+- [x] `ProductCard.tsx` is used on the **Shop & Home Pages** and requires a tiny, inline, thumbnail-less sliding carousel.
+- [x] Since both serve completely distinct visual needs, we will **keep both**. We will integrate the lightweight `embla-carousel-react` into `ProductCard.tsx` to handle the side-by-side swiping without bloating it with the thumbnail logic from the detail page component.
 
 ## 5. Carousel State Persistence
 **Decision:** Leave the carousel on the last picture the user viewed.

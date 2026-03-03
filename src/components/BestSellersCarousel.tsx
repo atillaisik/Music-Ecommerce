@@ -58,24 +58,22 @@ const BestSellersCarousel: React.FC<BestSellersCarouselProps> = ({ products }) =
                 </div>
             </div>
 
-            <div className="absolute -top-12 right-0 flex items-center gap-2">
-                <button
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition-all hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed"
-                    onClick={scrollPrev}
-                    disabled={!prevBtnEnabled}
-                    aria-label="Previous products"
-                >
-                    <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition-all hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed"
-                    onClick={scrollNext}
-                    disabled={!nextBtnEnabled}
-                    aria-label="Next products"
-                >
-                    <ChevronRight className="h-5 w-5" />
-                </button>
-            </div>
+            <button
+                className="absolute -left-4 md:-left-6 top-[40%] -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition-all hover:bg-accent hover:shadow-md disabled:opacity-30 disabled:cursor-not-allowed"
+                onClick={scrollPrev}
+                disabled={!prevBtnEnabled}
+                aria-label="Previous products"
+            >
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
+            <button
+                className="absolute -right-4 md:-right-6 top-[40%] -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm transition-all hover:bg-accent hover:shadow-md disabled:opacity-30 disabled:cursor-not-allowed"
+                onClick={scrollNext}
+                disabled={!nextBtnEnabled}
+                aria-label="Next products"
+            >
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
         </div>
     );
 };

@@ -27,9 +27,20 @@ import AdminEditProduct from "./pages/admin/products/AdminEditProduct";
 import AdminCategoryList from "./pages/admin/categories/AdminCategoryList";
 import AdminAddCategory from "./pages/admin/categories/AdminAddCategory";
 import AdminEditCategory from "./pages/admin/categories/AdminEditCategory";
+import AdminBrandList from "./pages/admin/brands/AdminBrandList";
+import AdminAddBrand from "./pages/admin/brands/AdminAddBrand";
+import AdminEditBrand from "./pages/admin/brands/AdminEditBrand";
+import AdminDiscountList from "./pages/admin/discounts/AdminDiscountList";
+import AdminAddDiscount from "./pages/admin/discounts/AdminAddDiscount";
+import AdminEditDiscount from "./pages/admin/discounts/AdminEditDiscount";
 import AdminOrderList from "./pages/admin/orders/AdminOrderList";
 import AdminOrderDetail from "./pages/admin/orders/AdminOrderDetail";
+import AdminCustomerList from "./pages/admin/customers/AdminCustomerList";
+import AdminCustomerDetail from "./pages/admin/customers/AdminCustomerDetail";
 import AdminAnalyticsDashboard from "./pages/admin/analytics/AdminAnalyticsDashboard";
+import AdminActivityLog from "./pages/admin/activity-log/AdminActivityLog";
+import AdminSettings from "./pages/admin/settings/AdminSettings";
+import AdminBackup from "./pages/admin/backup/AdminBackup";
 import AdminPlaceholder from "./components/admin/AdminPlaceholder";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -80,14 +91,20 @@ const App = () => (
                 <Route path="categories" element={<AdminCategoryList />} />
                 <Route path="categories/add" element={<AdminAddCategory />} />
                 <Route path="categories/edit/:id" element={<AdminEditCategory />} />
-                <Route path="brands" element={<AdminPlaceholder title="Brand Management" />} />
+                <Route path="brands" element={<AdminBrandList />} />
+                <Route path="brands/add" element={<AdminAddBrand />} />
+                <Route path="brands/edit/:id" element={<AdminEditBrand />} />
                 <Route path="orders" element={<AdminOrderList />} />
                 <Route path="orders/:id" element={<AdminOrderDetail />} />
-                <Route path="customers" element={<AdminPlaceholder title="Customer Management" />} />
+                <Route path="customers" element={<AdminCustomerList />} />
+                <Route path="customers/:email" element={<AdminCustomerDetail />} />
                 <Route path="analytics" element={<AdminAnalyticsDashboard />} />
-                <Route path="discounts" element={<AdminPlaceholder title="Discount Codes" />} />
-                <Route path="activity-log" element={<AdminPlaceholder title="System Activity Log" />} />
-                <Route path="settings" element={<AdminPlaceholder title="Admin Settings" />} />
+                <Route path="discounts" element={<AdminDiscountList />} />
+                <Route path="discounts/add" element={<AdminAddDiscount />} />
+                <Route path="discounts/edit/:id" element={<AdminEditDiscount />} />
+                <Route path="activity-log" element={<AdminActivityLog />} />
+                <Route path="settings" element={<AdminSettings />} />
+                <Route path="backup" element={<AdminBackup />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

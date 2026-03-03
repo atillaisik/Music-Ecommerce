@@ -11,6 +11,7 @@ import {
     Percent,
     History,
     Settings,
+    Database,
     LogOut,
     ChevronRight,
     Music
@@ -40,60 +41,77 @@ const menuItems = [
         label: "Dashboard",
         icon: LayoutDashboard,
         url: "/admin",
+        roles: ['super_admin', 'editor', 'viewer']
     },
     {
         title: "Inventory",
         label: "Products",
         icon: Package,
         url: "/admin/products",
+        roles: ['super_admin', 'editor', 'viewer']
     },
     {
         title: "Inventory",
         label: "Categories",
         icon: Layers,
         url: "/admin/categories",
+        roles: ['super_admin', 'editor']
     },
     {
         title: "Inventory",
         label: "Brands",
         icon: Tag,
         url: "/admin/brands",
+        roles: ['super_admin', 'editor']
     },
     {
         title: "Sales",
         label: "Orders",
         icon: ShoppingCart,
         url: "/admin/orders",
+        roles: ['super_admin', 'editor', 'viewer']
     },
     {
         title: "Sales",
         label: "Customers",
         icon: Users,
         url: "/admin/customers",
+        roles: ['super_admin', 'editor', 'viewer']
     },
     {
         title: "Reports",
         label: "Analytics",
         icon: BarChart3,
         url: "/admin/analytics",
+        roles: ['super_admin', 'viewer']
     },
     {
         title: "Marketing",
         label: "Discounts",
         icon: Percent,
         url: "/admin/discounts",
+        roles: ['super_admin', 'editor']
     },
     {
         title: "System",
         label: "Activity Log",
         icon: History,
         url: "/admin/activity-log",
+        roles: ['super_admin']
     },
     {
         title: "System",
         label: "Settings",
         icon: Settings,
         url: "/admin/settings",
+        roles: ['super_admin']
+    },
+    {
+        title: "System",
+        label: "Database Backup",
+        icon: Database,
+        url: "/admin/backup",
+        roles: ['super_admin']
     },
 ];
 
@@ -103,8 +121,13 @@ const AdminSidebar = () => {
     const { state } = useSidebar();
     const isCollapsed = state === 'collapsed';
 
+    // Filter menu items by user role
+    const filteredMenuItems = menuItems.filter(item =>
+        user && item.roles.includes(user.role)
+    );
+
     // Group menu items by title
-    const groupedItems = menuItems.reduce((acc, item) => {
+    const groupedItems = filteredMenuItems.reduce((acc, item) => {
         if (!acc[item.title]) acc[item.title] = [];
         acc[item.title].push(item);
         return acc;

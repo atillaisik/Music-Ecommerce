@@ -13,14 +13,21 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 import ProductDetail from "./pages/ProductDetail";
-import Checkout from "./pages/Checkout";
-import CheckoutSuccess from "./pages/CheckoutSuccess";
+import Checkout from "@/pages/Checkout";
+import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Profile from "./pages/Profile";
+
+// Admin Pages
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminPlaceholder from "./components/admin/AdminPlaceholder";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { HelmetProvider } from "react-helmet-async";
 
 import ScrollToTop from "./components/ScrollToTop";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +41,7 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/product/:id" element={<ProductDetail />} />
@@ -45,6 +53,29 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/profile" element={<Profile />} />
+
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminLayout />
+                  </ProtectedAdminRoute>
+                }
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="products" element={<AdminPlaceholder title="Product Management" />} />
+                <Route path="categories" element={<AdminPlaceholder title="Category Management" />} />
+                <Route path="brands" element={<AdminPlaceholder title="Brand Management" />} />
+                <Route path="orders" element={<AdminPlaceholder title="Order Management" />} />
+                <Route path="customers" element={<AdminPlaceholder title="Customer Management" />} />
+                <Route path="analytics" element={<AdminPlaceholder title="Advanced Analytics" />} />
+                <Route path="discounts" element={<AdminPlaceholder title="Discount Codes" />} />
+                <Route path="activity-log" element={<AdminPlaceholder title="System Activity Log" />} />
+                <Route path="settings" element={<AdminPlaceholder title="Admin Settings" />} />
+              </Route>
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
@@ -53,6 +84,5 @@ const App = () => (
     </HelmetProvider>
   </QueryClientProvider>
 );
-
 
 export default App;

@@ -21,6 +21,9 @@ import Profile from "./pages/Profile";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProductList from "./pages/admin/products/AdminProductList";
+import AdminAddProduct from "./pages/admin/products/AdminAddProduct";
+import AdminEditProduct from "./pages/admin/products/AdminEditProduct";
 import AdminPlaceholder from "./components/admin/AdminPlaceholder";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -65,7 +68,9 @@ const App = () => (
                 }
               >
                 <Route index element={<AdminDashboard />} />
-                <Route path="products" element={<AdminPlaceholder title="Product Management" />} />
+                <Route path="products" element={<AdminProductList />} />
+                <Route path="products/add" element={<AdminAddProduct />} />
+                <Route path="products/edit/:id" element={<AdminEditProduct />} />
                 <Route path="categories" element={<AdminPlaceholder title="Category Management" />} />
                 <Route path="brands" element={<AdminPlaceholder title="Brand Management" />} />
                 <Route path="orders" element={<AdminPlaceholder title="Order Management" />} />

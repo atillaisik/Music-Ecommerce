@@ -499,42 +499,42 @@ Implementation of advanced image gallery features and comprehensive admin dashbo
   - [x] Database query helper functions
 
 ### 9.2 React Query Integration
-- [ ] Create custom hooks for all API operations:
-  - [ ] `useProducts()`, `useProduct(id)`
-  - [ ] `useCategories()`, `useCategory(id)`
-  - [ ] `useBrands()`, `useBrand(id)`
-  - [ ] `useOrders()`, `useOrder(id)`
-  - [ ] `useCustomers()`, `useCustomer(id)`
-  - [ ] `useAnalytics()`, `useAnalyticsData(filters)`
-  - [ ] `useDiscounts()`, `useDiscount(id)`
+- [x] Create custom hooks for all API operations:
+  - [x] `useProducts()`, `useProduct(id)`
+  - [x] `useCategories()`, `useCategory(id)`
+  - [x] `useBrands()`, `useBrand(id)`
+  - [x] `useOrders()`, `useOrder(id)`
+  - [x] `useCustomers()`, `useCustomer(id)`
+  - [x] `useAnalytics()`, `useAnalyticsData(filters)`
+  - [x] `useDiscounts()`, `useDiscount(id)`
 
-- [ ] Implement mutations for:
-  - [ ] CRUD operations for all entities
-  - [ ] Optimistic updates
-  - [ ] Error handling and retry logic
-  - [ ] Cache invalidation patterns
+- [x] Implement mutations for:
+  - [x] CRUD operations for all entities
+  - [x] Optimistic updates
+  - [x] Error handling and retry logic
+  - [x] Cache invalidation patterns
 
 ### 9.3 Real-Time Subscriptions
-- [ ] Set up real-time listeners for:
-  - [ ] New orders (for notifications)
-  - [ ] Inventory updates
-  - [ ] Product changes
+- [x] Set up real-time listeners for:
+  - [x] New orders (for notifications)
+  - [x] Inventory updates
+  - [x] Product changes
 
 ### 9.4 Image Upload Handler
-- [ ] Create `imageUploader.ts` with:
-  - [ ] Upload to Supabase Storage
-  - [ ] Generate public URLs
-  - [ ] Batch upload support
-  - [ ] Progress tracking
-  - [ ] Error handling and retries
-  - [ ] File validation (format, size)
+- [x] Create `imageUploader.ts` with:
+  - [x] Upload to Supabase Storage
+  - [x] Generate public URLs
+  - [x] Batch upload support
+  - [x] Progress tracking
+  - [x] Error handling and retries
+  - [x] File validation (format, size)
 
 ### 9.5 Database Triggers and Functions
-- [ ] Create database trigger for:
-  - [ ] Auto-update product `updated_at` timestamp
-  - [ ] Create analytics snapshots daily
-  - [ ] Update order status history
-  - [ ] Track inventory changes
+- [x] Create database trigger for:
+  - [x] Auto-update product `updated_at` timestamp
+  - [x] Create analytics snapshots daily
+  - [x] Update order status history
+  - [x] Track inventory changes
 
 ---
 

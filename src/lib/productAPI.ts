@@ -35,6 +35,42 @@ export const useBrands = () => {
     });
 };
 
+export const useCategory = (id: string | undefined) => {
+    return useQuery({
+        queryKey: ['category', id],
+        queryFn: async () => {
+            if (!id) return null;
+            const { data, error } = await supabase
+                .from('categories')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+            return data as Category;
+        },
+        enabled: !!id
+    });
+};
+
+export const useBrand = (id: string | undefined) => {
+    return useQuery({
+        queryKey: ['brand', id],
+        queryFn: async () => {
+            if (!id) return null;
+            const { data, error } = await supabase
+                .from('brands')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+            return data as Brand;
+        },
+        enabled: !!id
+    });
+};
+
 // --- Products ---
 
 export const useProducts = (filters: {

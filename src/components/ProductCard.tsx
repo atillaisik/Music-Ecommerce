@@ -3,7 +3,7 @@ import { Star, ShoppingCart, Heart, ChevronLeft, ChevronRight } from "lucide-rea
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/data/mock";
-import { useCartStore, useWishlistStore } from "@/lib/store";
+import { useCartStore, useWishlistStore, useCarouselStore } from "@/lib/store";
 import { toast } from "sonner";
 import { optimizeImage } from "@/lib/image-utils";
 import useEmblaCarousel from "embla-carousel-react";
@@ -15,11 +15,19 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const addToCart = useCartStore((state) => state.addToCart);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Persist carousel state
+  const { indices, setIndex } = useCarouselStore();
+  const savedIndex = indices[product.id] || 0;
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(savedIndex);
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image];
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    startIndex: savedIndex
+  });
 
   const scrollPrev = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -35,11 +43,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
-    setCurrentImageIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi, setCurrentImageIndex]);
+    const newIndex = emblaApi.selectedScrollSnap();
+    setCurrentImageIndex(newIndex);
+    setIndex(product.id, newIndex);
+  }, [emblaApi, product.id, setIndex]);
 
   useEffect(() => {
     if (!emblaApi) return;
+
+    // Update if store changed externally or on mount
+    const currentIndex = emblaApi.selectedScrollSnap();
+    if (currentIndex !== savedIndex) {
+      emblaApi.scrollTo(savedIndex, true); // Jump without animation on mount if needed
+    }
+
     onSelect();
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
@@ -47,7 +64,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       emblaApi.off("select", onSelect);
       emblaApi.off("reInit", onSelect);
     };
-  }, [emblaApi, onSelect]);
+  }, [emblaApi, onSelect, savedIndex]);
 
   const handleAddToCart = () => {
     addToCart(product);

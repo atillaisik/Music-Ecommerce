@@ -122,3 +122,24 @@ export const useWishlistStore = create<WishlistState>()(
     )
 );
 
+interface CarouselState {
+    indices: Record<string, number>;
+    setIndex: (productId: string, index: number) => void;
+}
+
+export const useCarouselStore = create<CarouselState>()(
+    persist(
+        (set) => ({
+            indices: {},
+            setIndex: (productId, index) => {
+                set((state) => ({
+                    indices: { ...state.indices, [productId]: index }
+                }));
+            },
+        }),
+        {
+            name: 'arasounds-carousel',
+        }
+    )
+);
+

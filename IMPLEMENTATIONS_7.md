@@ -33,8 +33,8 @@ This document outlines the decisions and implementation plan for the Product Car
 ## 5. Carousel State Persistence
 **Decision:** Leave the carousel on the last picture the user viewed.
 **Plan:** 
-- [ ] If a user swipes or clicks to the 3rd image and scrolls away, the card will remain on the 3rd image.
-- [ ] Do not implement any logic to reset the current image index on `mouseLeave` or blur events.
+- [x] If a user swipes or clicks to the 3rd image and scrolls away, the card will remain on the 3rd image.
+- [x] Do not implement any logic to reset the current image index on `mouseLeave` or blur events.
 
 ## 6. Accessibility (a11y) - Added Detail
 **Plan:** 

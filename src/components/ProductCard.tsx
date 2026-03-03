@@ -97,7 +97,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 <div className="relative h-full w-full flex-[0_0_100%] min-w-0" key={index}>
                   <img
                     src={optimizeImage(imgSrc, 500, 500)}
-                    alt={product.name}
+                    alt={`${product.name} - Image ${index + 1}`}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading={index === 0 ? "eager" : "lazy"}
                   />

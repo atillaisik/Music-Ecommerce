@@ -38,8 +38,8 @@ This document outlines the decisions and implementation plan for the Product Car
 
 ## 6. Accessibility (a11y) - Added Detail
 **Plan:** 
-- [ ] Ensure we add dynamic `alt` tags to the images inside the card (e.g., `alt={`${product.name} - Image ${index + 1}`}`) so screen readers can interpret that there are multiple images for the product.
+- [x] Ensure we add dynamic `alt` tags to the images inside the card (e.g., `alt={`${product.name} - Image ${index + 1}`}`) so screen readers can interpret that there are multiple images for the product.
 
 ---
 ### Next Steps
-- [ ] Once this plan is approved, we will update `ProductCard.tsx` to incorporate the `embla-carousel-react` library for swipe support and side-by-side rendering. No backend or type transitions will be performed.
+- [x] Once this plan is approved, we will update `ProductCard.tsx` to incorporate the `embla-carousel-react` library for swipe support and side-by-side rendering. No backend or type transitions will be performed.

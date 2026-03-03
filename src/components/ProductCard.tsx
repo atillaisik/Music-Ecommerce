@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Star, ShoppingCart, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import type { Product } from "@/data/mock";
 import { useCartStore, useWishlistStore } from "@/lib/store";
 import { toast } from "sonner";
 import { optimizeImage } from "@/lib/image-utils";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface ProductCardProps {
   product: Product;
@@ -18,17 +19,35 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image];
 
-  const nextImage = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
-  const prevImage = (e: React.MouseEvent) => {
+  const scrollPrev = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCurrentImageIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi, setCurrentImageIndex]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -55,23 +74,31 @@ const ProductCard = ({ product }: ProductCardProps) => {
     <div className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-secondary">
-          <img
-            src={optimizeImage(images[currentImageIndex], 500, 500)}
-            alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
+          <div className="overflow-hidden h-full w-full" ref={emblaRef}>
+            <div className="flex h-full w-full touch-pan-y">
+              {images.map((imgSrc, index) => (
+                <div className="relative h-full w-full flex-[0_0_100%] min-w-0" key={index}>
+                  <img
+                    src={optimizeImage(imgSrc, 500, 500)}
+                    alt={product.name}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
           {images.length > 1 && (
             <>
               <button
-                onClick={prevImage}
+                onClick={scrollPrev}
                 className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-foreground shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
                 aria-label="Previous image"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
               <button
-                onClick={nextImage}
+                onClick={scrollNext}
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-foreground shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
                 aria-label="Next image"
               >

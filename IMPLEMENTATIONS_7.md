@@ -12,8 +12,8 @@ This document outlines the decisions and implementation plan for the Product Car
 ## 2. Mobile Experience and Touch Interactions
 **Decision:** Prioritize the mobile experience since the majority of users are on phones.
 **Plan:** 
-- [ ] The current manual state-based arrow navigation is not enough for touch devices.
-- [ ] Implement proper native swiping for the images in `ProductCard.tsx` so users can effortlessly swipe left/right on their phones.
+- [x] The current manual state-based arrow navigation is not enough for touch devices.
+- [x] Implement proper native swiping for the images in `ProductCard.tsx` so users can effortlessly swipe left/right on their phones.
 
 ## 3. Image Preloading and Performance
 **Decision:** Render images side-by-side for a seamless sliding effect if it isn't too heavy, and skip the manual preloading logic.

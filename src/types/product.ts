@@ -36,6 +36,7 @@ export interface Category {
     image_url?: string;
     parent_id?: string;
     display_order: number;
+    is_active: boolean;
     created_at: string;
 }
 
@@ -45,6 +46,7 @@ export interface Brand {
     slug: string;
     logo_url?: string;
     description?: string;
+    is_active: boolean;
     created_at: string;
 }
 

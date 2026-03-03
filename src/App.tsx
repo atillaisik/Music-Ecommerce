@@ -24,6 +24,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductList from "./pages/admin/products/AdminProductList";
 import AdminAddProduct from "./pages/admin/products/AdminAddProduct";
 import AdminEditProduct from "./pages/admin/products/AdminEditProduct";
+import AdminCategoryList from "./pages/admin/categories/AdminCategoryList";
+import AdminAddCategory from "./pages/admin/categories/AdminAddCategory";
+import AdminEditCategory from "./pages/admin/categories/AdminEditCategory";
 import AdminPlaceholder from "./components/admin/AdminPlaceholder";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -71,7 +74,9 @@ const App = () => (
                 <Route path="products" element={<AdminProductList />} />
                 <Route path="products/add" element={<AdminAddProduct />} />
                 <Route path="products/edit/:id" element={<AdminEditProduct />} />
-                <Route path="categories" element={<AdminPlaceholder title="Category Management" />} />
+                <Route path="categories" element={<AdminCategoryList />} />
+                <Route path="categories/add" element={<AdminAddCategory />} />
+                <Route path="categories/edit/:id" element={<AdminEditCategory />} />
                 <Route path="brands" element={<AdminPlaceholder title="Brand Management" />} />
                 <Route path="orders" element={<AdminPlaceholder title="Order Management" />} />
                 <Route path="customers" element={<AdminPlaceholder title="Customer Management" />} />

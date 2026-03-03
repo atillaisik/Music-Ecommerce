@@ -14,6 +14,7 @@ import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import ReviewSection from "@/components/ReviewSection";
 import { toast } from "sonner";
 import { useCartStore } from "@/lib/store";
+import ProductImageCarousel from "@/components/ProductImageCarousel";
 
 const ProductDetail = () => {
     const { id } = useParams<{ id: string }>();
@@ -75,22 +76,11 @@ const ProductDetail = () => {
                     {isLoading ? (
                         <div className="aspect-square rounded-xl bg-secondary animate-pulse" />
                     ) : (
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="relative aspect-square overflow-hidden rounded-xl bg-secondary"
-                        >
-                            <img
-                                src={product!.image}
-                                alt={product!.name}
-                                className="h-full w-full object-cover"
-                            />
-                            {product!.badge && (
-                                <Badge className="absolute left-6 top-6 px-3 py-1 text-sm bg-primary text-primary-foreground">
-                                    {product!.badge}
-                                </Badge>
-                            )}
-                        </motion.div>
+                        <ProductImageCarousel
+                            images={product!.images && product!.images.length > 0 ? product!.images : [product!.image]}
+                            name={product!.name}
+                            badge={product!.badge}
+                        />
                     )}
 
                     {/* Product Info */}

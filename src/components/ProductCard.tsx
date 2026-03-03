@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/data/mock";
 import { useCartStore, useWishlistStore } from "@/lib/store";
 import { toast } from "sonner";
+import { optimizeImage } from "@/lib/image-utils";
 
 interface ProductCardProps {
   product: Product;
@@ -39,7 +40,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-secondary">
           <img
-            src={product.image}
+            src={optimizeImage(product.image, 500, 500)}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"

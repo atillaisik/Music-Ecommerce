@@ -9,8 +9,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState, useEffect } from "react";
 import { categories, products } from "@/data/mock";
-import { Marquee } from "@/components/magicui/Marquee";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
+import BestSellersCarousel from "@/components/BestSellersCarousel";
 
 const stats = [
   { label: "Products", value: "50K+" },
@@ -134,19 +134,15 @@ const Index = () => {
               </Button>
             </div>
             <div className="mt-8">
-              <Marquee pauseOnHover className="[--duration:30s]">
-                {isLoading
-                  ? Array.from({ length: 6 }).map((_, i) => (
-                    <div key={`skeleton-${i}`} className="w-[300px] flex-shrink-0 px-2">
-                      <ProductCardSkeleton />
-                    </div>
-                  ))
-                  : products.slice(0, 10).map((p) => (
-                    <div key={p.id} className="w-[300px] flex-shrink-0 px-2">
-                      <ProductCard product={p} />
-                    </div>
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <ProductCardSkeleton key={`skeleton-${i}`} />
                   ))}
-              </Marquee>
+                </div>
+              ) : (
+                <BestSellersCarousel products={products.slice(0, 10)} />
+              )}
             </div>
           </div>
         </section>

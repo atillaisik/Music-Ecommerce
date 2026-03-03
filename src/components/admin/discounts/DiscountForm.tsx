@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { discountSchema } from '@/lib/schemas';
 import {
     Ticket,
     Calendar,
@@ -33,14 +34,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from '@/components/ui/card';
 import { DiscountCode, DiscountFormData } from '@/types/discount';
 
-const discountSchema = z.object({
-    code: z.string().min(3, 'Code must be at least 3 characters').transform(v => v.toUpperCase()),
-    discount_type: z.enum(['percentage', 'fixed']),
-    discount_value: z.coerce.number().min(0.01, 'Value must be at least 0.01'),
-    usage_limit: z.coerce.number().optional().nullable(),
-    expiry_date: z.string().optional().nullable(),
-    is_active: z.boolean().default(true),
-});
+// discountSchema moved to @/lib/schemas
 
 type FormValues = z.infer<typeof discountSchema>;
 

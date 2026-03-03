@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { categorySchema } from '@/lib/schemas';
 import {
     Form,
     FormControl,
@@ -26,15 +27,7 @@ import { Category } from '@/types/product';
 import { useCategories } from '@/lib/categoryAPI';
 import { Loader2, Save, X, Image as ImageIcon, LayoutGrid, Globe } from 'lucide-react';
 
-const categorySchema = z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    slug: z.string().min(2, 'Slug must be at least 2 characters'),
-    description: z.string().optional(),
-    parent_id: z.string().nullable().optional(),
-    display_order: z.number().int().default(0),
-    image_url: z.string().url('Invalid image URL').or(z.literal('')).optional(),
-    is_active: z.boolean().default(true),
-});
+// categorySchema moved to @/lib/schemas
 
 export type CategoryFormData = z.infer<typeof categorySchema>;
 

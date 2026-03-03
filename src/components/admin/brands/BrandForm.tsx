@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { brandSchema } from '@/lib/schemas';
 import {
     Image as ImageIcon,
     Upload,
@@ -28,13 +29,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Brand } from '@/types/product';
 import { uploadImage } from '@/lib/imageUploader';
 
-const brandSchema = z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    slug: z.string().min(2, 'Slug must be at least 2 characters'),
-    description: z.string().optional(),
-    logo_url: z.string().optional(),
-    is_active: z.boolean().default(true),
-});
+// brandSchema moved to @/lib/schemas
 
 type FormValues = z.infer<typeof brandSchema>;
 

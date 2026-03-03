@@ -82,7 +82,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     src={optimizeImage(imgSrc, 500, 500)}
                     alt={product.name}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
+                    loading={index === 0 ? "eager" : "lazy"}
                   />
                 </div>
               ))}

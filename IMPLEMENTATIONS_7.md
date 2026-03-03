@@ -18,9 +18,9 @@ This document outlines the decisions and implementation plan for the Product Car
 ## 3. Image Preloading and Performance
 **Decision:** Render images side-by-side for a seamless sliding effect if it isn't too heavy, and skip the manual preloading logic.
 **Plan:** 
-- [ ] Placing images side-by-side (in a flex row with `overflow-hidden`) solves the "blank flash" issue and allows for smooth sliding animations. 
-- [ ] It will **not** be too heavy for the project because we can still use `loading="lazy"` on those images. The browser will only fetch the image bits shortly before they slide into view.
-- [ ] Refactor the card image container into a sliding track rather than instantly swapping `src` states.
+- [x] Placing images side-by-side (in a flex row with `overflow-hidden`) solves the "blank flash" issue and allows for smooth sliding animations. 
+- [x] It will **not** be too heavy for the project because we can still use `loading="lazy"` on those images. The browser will only fetch the image bits shortly before they slide into view.
+- [x] Refactor the card image container into a sliding track rather than instantly swapping `src` states.
 
 ## 4. Component Duplication
 **Decision:** Evaluate current usage: `ProductImageCarousel.tsx` vs. inline carousel in `ProductCard.tsx`. Keep what is used, discard what isn't, but avoid redundant components if they do the same thing.

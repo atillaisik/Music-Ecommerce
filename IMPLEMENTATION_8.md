@@ -19,12 +19,12 @@ This phase focuses on improving user experience, adding robust validation, and e
 - [x] Update form submission logic to require the Terms & Conditions checkbox before allowing account creation.
 
 ## 4. Product Reviews System
-- [ ] Modify `ReviewSection.tsx` to handle an active state of reviews instead of static data.
-- [ ] Limit the default number of displayed reviews to 2.
-- [ ] Add a "Show more comments" button that appears only if there are more than 2 reviews.
-- [ ] Create a "Leave a Review" form visible only to authenticated users.
-- [ ] Provide a fallback message ("Log in to share your thoughts") for unauthenticated users.
-- [ ] Integrate the new review form with local state in `ProductDetail.tsx` to immediately display newly added reviews.
+- [x] Modify `ReviewSection.tsx` to handle an active state of reviews instead of static data.
+- [x] Limit the default number of displayed reviews to 2.
+- [x] Add a "Show more comments" button that appears only if there are more than 2 reviews.
+- [x] Create a "Leave a Review" form visible only to authenticated users.
+- [x] Provide a fallback message ("Log in to share your thoughts") for unauthenticated users.
+- [x] Integrate the new review form with local state in `ProductDetail.tsx` to immediately display newly added reviews.
 
 ## 5. User Profile Expansion
 - [ ] Add a new "My Reviews" tab to the User Profile page (`Profile.tsx`).

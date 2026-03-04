@@ -6,7 +6,7 @@ import { Star, ShoppingCart, ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { products } from "@/data/mock";
+import { products, Review } from "@/data/mock";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
@@ -20,6 +20,20 @@ const ProductDetail = () => {
     const { id } = useParams<{ id: string }>();
     const [isLoading, setIsLoading] = useState(true);
     const product = products.find((p) => p.id === id);
+    const [productReviews, setProductReviews] = useState<Review[]>([]);
+
+    useEffect(() => {
+        if (product) {
+            setProductReviews(product.reviewsData || []);
+        }
+    }, [product]);
+
+    const handleAddReview = (newReview: Review) => {
+        setProductReviews((prev) => [newReview, ...prev]);
+        toast.success("Review submitted!", {
+            description: "Your review has been added successfully.",
+        });
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -175,9 +189,10 @@ const ProductDetail = () => {
                 {/* Reviews Section */}
                 {!isLoading && (
                     <ReviewSection
-                        reviews={product!.reviewsData || []}
+                        reviews={productReviews}
                         averageRating={product!.rating}
-                        totalReviews={product!.reviews}
+                        totalReviews={productReviews.length || product!.reviews}
+                        onAddReview={handleAddReview}
                     />
                 )}
 

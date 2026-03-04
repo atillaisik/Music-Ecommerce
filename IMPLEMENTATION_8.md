@@ -27,9 +27,9 @@ This phase focuses on improving user experience, adding robust validation, and e
 - [x] Integrate the new review form with local state in `ProductDetail.tsx` to immediately display newly added reviews.
 
 ## 5. User Profile Expansion
-- [ ] Add a new "My Reviews" tab to the User Profile page (`Profile.tsx`).
-- [ ] Fetch/filter all existing products to locate and display reviews authored by the current logged-in user.
-- [ ] Ensure the new tab accurately reflects the user's review history.
+- [x] Add a new "My Reviews" tab to the User Profile page (`Profile.tsx`).
+- [x] Fetch/filter all existing products to locate and display reviews authored by the current logged-in user.
+- [x] Ensure the new tab accurately reflects the user's review history.
 
 ---
 **Note:** Ensure all changes maintain responsive design across desktop and mobile views, and that animations/transitions remain smooth.

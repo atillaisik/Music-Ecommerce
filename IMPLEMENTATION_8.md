@@ -3,11 +3,11 @@
 This phase focuses on improving user experience, adding robust validation, and expanding user interaction through reviews and profile features.
 
 ## 1. Checkout Validation
-- [ ] Add strict validation for the `Name` field (require at least two words/First and Last name).
-- [ ] Add strict regex-based validation for the `Email` field.
-- [ ] Add validation for the `City` field (alphabetical characters only).
-- [ ] Add validation for the `ZIP Code` field (minimum 5 alphanumeric characters depending on format).
-- [ ] Ensure validation errors block progression to the next checkout step and display appropriate toast notifications.
+- [x] Add strict validation for the `Name` field (require at least two words/First and Last name).
+- [x] Add strict regex-based validation for the `Email` field.
+- [x] Add validation for the `City` field (alphabetical characters only).
+- [x] Add validation for the `ZIP Code` field (minimum 5 alphanumeric characters depending on format).
+- [x] Ensure validation errors block progression to the next checkout step and display appropriate toast notifications.
 
 ## 2. Product Card UI Fix
 - [ ] Fix the issue where the "Add to Wishlist" (heart) button disappears on hover or gets obscured by the image wrapper.

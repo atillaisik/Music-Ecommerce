@@ -58,10 +58,38 @@ export default function Checkout() {
 
     const nextStep = () => {
         if (step === "shipping") {
-            if (!formData.name || !formData.email || !formData.address) {
+            if (!formData.name || !formData.email || !formData.address || !formData.city || !formData.zip) {
                 toast.error("Please fill in all shipping fields");
                 return;
             }
+
+            // Name validation: At least two words
+            if (formData.name.trim().split(/\s+/).length < 2) {
+                toast.error("Please enter both First and Last name");
+                return;
+            }
+
+            // Email validation: strict regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                toast.error("Please enter a valid email address");
+                return;
+            }
+
+            // City validation: alphabetical characters only (allowing spaces)
+            const cityRegex = /^[A-Za-z\s]+$/;
+            if (!cityRegex.test(formData.city)) {
+                toast.error("City name can only contain alphabetical characters");
+                return;
+            }
+
+            // ZIP Code validation: minimum 5 alphanumeric characters
+            const zipRegex = /^[a-zA-Z0-9\s-]{5,}$/;
+            if (!zipRegex.test(formData.zip)) {
+                toast.error("ZIP Code must be at least 5 alphanumeric characters");
+                return;
+            }
+
             setStep("payment");
         } else if (step === "payment") {
             if (!formData.cardNumber || !formData.cvv) {

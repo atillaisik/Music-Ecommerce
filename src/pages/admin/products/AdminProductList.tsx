@@ -45,7 +45,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useProducts, useCategories, useBrands, useDeleteProduct, useBulkDeleteProducts, useBulkUpdateProducts } from '@/lib/productAPI';
+import { useProducts, useCategories, useBrands, useDeleteProduct, useBulkDeleteProducts, useBulkUpdateProducts, useImportProducts } from '@/lib/productAPI';
+import Papa from 'papaparse';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -72,6 +73,7 @@ const AdminProductList = () => {
     const deleteProduct = useDeleteProduct();
     const bulkDelete = useBulkDeleteProducts();
     const bulkUpdate = useBulkUpdateProducts();
+    const importProducts = useImportProducts();
 
     const handleClearFilters = () => {
         setSearch('');
@@ -111,18 +113,31 @@ const AdminProductList = () => {
 
     const handleExportCSV = () => {
         if (!products) return;
-        const headers = ['ID', 'Name', 'Brand', 'Category', 'Price', 'Stock', 'Status'];
+        const headers = ['ID', 'Name', 'Brand', 'Category', 'Price', 'Original Price', 'Stock', 'Status', 'Badge', 'Description', 'Images'];
         const rows = products.map(p => [
             p.id,
             p.name,
             p.brand?.name || 'N/A',
             p.category?.name || 'N/A',
             p.price,
+            p.original_price || '',
             p.stock_quantity,
-            p.is_active ? 'Active' : 'Inactive'
+            p.is_active ? 'Active' : 'Inactive',
+            p.badge || '',
+            p.description || '',
+            p.images?.map(img => img.image_url).join(",") || ''
         ]);
 
-        const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+        const csvContent = [headers, ...rows].map(e => {
+            return e.map(value => {
+                const stringValue = String(value);
+                if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+                    return `"${stringValue.replace(/"/g, '""')}"`;
+                }
+                return stringValue;
+            }).join(",");
+        }).join("\n");
+
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -137,8 +152,37 @@ const AdminProductList = () => {
     const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        toast.info("Importing products... (Feature coming soon)");
-        // In a real app, you'd parse with PapaParse and use the bulkCreate API
+
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+                const rows = results.data;
+                if (rows.length === 0) {
+                    toast.error("No data found in CSV");
+                    return;
+                }
+
+                // Check for required columns
+                const headers = results.meta.fields || [];
+                if (!headers.includes('Name')) {
+                    toast.error("CSV must contain a 'Name' column");
+                    return;
+                }
+
+                toast.promise(importProducts.mutateAsync(rows), {
+                    loading: 'Importing products...',
+                    success: 'Successfully imported products',
+                    error: 'Error importing products'
+                });
+
+                // Clear input
+                e.target.value = '';
+            },
+            error: (error) => {
+                toast.error(`Error parsing CSV: ${error.message}`);
+            }
+        });
     };
 
     // Pagination (mocked client-side for now)

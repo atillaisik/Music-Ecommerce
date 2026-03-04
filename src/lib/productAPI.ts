@@ -275,3 +275,110 @@ export const useBulkUpdateProducts = () => {
         }
     });
 };
+
+export const useImportProducts = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (rows: any[]) => {
+            // 1. Get unique brands and categories from rows
+            const uniqueBrands = [...new Set(rows.map(r => r.Brand).filter(Boolean))];
+            const uniqueCategories = [...new Set(rows.map(r => r.Category).filter(Boolean))];
+
+            // 2. Fetch existing ones
+            const { data: existingBrands } = await supabase.from('brands').select('id, name');
+            const { data: existingCategories } = await supabase.from('categories').select('id, name');
+
+            const brandMap = new Map(existingBrands?.map(b => [b.name.toLowerCase(), b.id]));
+            const categoryMap = new Map(existingCategories?.map(c => [c.name.toLowerCase(), c.id]));
+
+            // 3. Create missing brands
+            for (const brandName of uniqueBrands) {
+                if (!brandMap.has(brandName.toLowerCase())) {
+                    const slug = brandName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+                    const { data, error } = await supabase
+                        .from('brands')
+                        .insert([{ name: brandName, slug, is_active: true }])
+                        .select()
+                        .single();
+                    if (!error && data) {
+                        brandMap.set(brandName.toLowerCase(), data.id);
+                    }
+                }
+            }
+
+            // 4. Create missing categories
+            for (const catName of uniqueCategories) {
+                if (!categoryMap.has(catName.toLowerCase())) {
+                    const slug = catName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+                    const { data, error } = await supabase
+                        .from('categories')
+                        .insert([{ name: catName, slug, is_active: true, display_order: 0 }])
+                        .select()
+                        .single();
+                    if (!error && data) {
+                        categoryMap.set(catName.toLowerCase(), data.id);
+                    }
+                }
+            }
+
+            // 5. Insert products one by one (to handle images)
+            // In a more optimized version, we'd bulk insert products and then bulk insert images
+            const results = [];
+            for (const row of rows) {
+                const productData: any = {
+                    name: row.Name,
+                    price: parseFloat(row.Price) || 0,
+                    original_price: parseFloat(row['Original Price']) || null,
+                    stock_quantity: parseInt(row.Stock) || 0,
+                    is_active: row.Status?.toLowerCase() === 'active',
+                    badge: row.Badge || null,
+                    description: row.Description || null,
+                    brand_id: brandMap.get(row.Brand?.toLowerCase()),
+                    category_id: categoryMap.get(row.Category?.toLowerCase()),
+                    rating: 0,
+                    reviews_count: 0
+                };
+
+                // If ID is provided, we might want to update or skip? 
+                // For "Import", let's assume we are adding new ones or we can check if ID exists.
+                // The requirements don't specify update-on-import, so let's insert.
+                const { data: product, error: pError } = await supabase
+                    .from('products')
+                    .insert([productData])
+                    .select()
+                    .single();
+
+                if (pError) {
+                    console.error("Error inserting product", row.Name, pError);
+                    continue;
+                }
+
+                // 6. Handle images
+                if (row.Images && product) {
+                    const imageUrls = row.Images.split(',').map(url => url.trim()).filter(Boolean);
+                    if (imageUrls.length > 0) {
+                        const imageRows = imageUrls.map((url, index) => ({
+                            product_id: product.id,
+                            image_url: url,
+                            display_order: index,
+                            is_primary: index === 0
+                        }));
+                        await supabase.from('product_images').insert(imageRows);
+                    }
+                }
+                results.push(product);
+            }
+
+            return results;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['products'] });
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
+            queryClient.invalidateQueries({ queryKey: ['brands'] });
+            toast.success('Products imported successfully');
+        },
+        onError: (error: any) => {
+            toast.error(`Import failed: ${error.message}`);
+        }
+    });
+};

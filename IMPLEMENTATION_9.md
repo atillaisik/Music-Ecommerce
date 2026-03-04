@@ -9,10 +9,10 @@ This phase focuses on fixing persistent admin issues, implementing the CSV impor
 - [x] **Navigation**: Fix the "+ Add Product" button routing in the admin product list.
 
 ## 2. Product Management Enhancements
-- [ ] **CSV Import**: Implement `handleImportCSV` in `AdminProductList.tsx`.
-    - Match columns with the existing export function.
-    - Implement logic to automatically create missing Brands/Categories.
-    - Implement image URL handling for multiple product images.
+- [x] **CSV Import**: Implement `handleImportCSV` in `AdminProductList.tsx`.
+    - [x] Match columns with the existing export function.
+    - [x] Implement logic to automatically create missing Brands/Categories.
+    - [x] Implement image URL handling for multiple product images.
 
 ## 3. Financial & Order Logic
 - [ ] **Discard Tax**: Completely remove tax logic from `cartStore.ts`, `Checkout.tsx`, and `CartSheet.tsx`.

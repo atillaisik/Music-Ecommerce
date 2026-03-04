@@ -14,9 +14,9 @@ This phase focuses on improving user experience, adding robust validation, and e
 - [x] Ensure the heart button remains clickable to toggle wishlist status securely.
 
 ## 3. Registration Flow Enhancements
-- [ ] Add a mandatory "Terms & Conditions" checkbox to the Sign Up form.
-- [ ] Add an optional "Newsletter Subscription" checkbox to the Sign Up form.
-- [ ] Update form submission logic to require the Terms & Conditions checkbox before allowing account creation.
+- [x] Add a mandatory "Terms & Conditions" checkbox to the Sign Up form.
+- [x] Add an optional "Newsletter Subscription" checkbox to the Sign Up form.
+- [x] Update form submission logic to require the Terms & Conditions checkbox before allowing account creation.
 
 ## 4. Product Reviews System
 - [ ] Modify `ReviewSection.tsx` to handle an active state of reviews instead of static data.

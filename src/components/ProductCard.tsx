@@ -2,14 +2,15 @@ import { useState, useCallback, useEffect } from "react";
 import { Star, ShoppingCart, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import type { Product } from "@/data/mock";
+import type { Product } from "@/types/product";
 import { useCartStore, useWishlistStore, useCarouselStore } from "@/lib/store";
 import { toast } from "sonner";
 import { optimizeImage } from "@/lib/image-utils";
 import useEmblaCarousel from "embla-carousel-react";
+import { useMemo } from "react";
 
 interface ProductCardProps {
-  product: Product;
+  product: Product | any;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
@@ -22,7 +23,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(savedIndex);
 
-  const images = product.images && product.images.length > 0 ? product.images : [product.image];
+  // Handle both mock and real image structures
+  const images = useMemo(() => {
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      if (typeof product.images[0] === 'string') return product.images;
+      return product.images.map((img: any) => img.image_url);
+    }
+    return [product.image || product.images?.[0]?.image_url || 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop'];
+  }, [product.images, product.image]);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -144,19 +152,23 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
       <div className="p-4">
         <Link to={`/product/${product.id}`} className="block">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">{product.brand}</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+            {product.brand?.name || product.brand || 'Unknown Brand'}
+          </p>
           <h3 className="mt-1 font-medium text-foreground transition-colors hover:text-primary">{product.name}</h3>
         </Link>
         <div className="mt-2 flex items-center gap-1">
           <Star className="h-3.5 w-3.5 fill-primary text-primary" />
           <span className="text-sm text-foreground">{product.rating}</span>
-          <span className="text-xs text-muted-foreground">({product.reviews})</span>
+          <span className="text-xs text-muted-foreground">({product.reviews_count ?? product.reviews ?? 0})</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-foreground">${product.price.toLocaleString()}</span>
-            {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">${product.originalPrice.toLocaleString()}</span>
+            {(product.original_price || product.originalPrice) && (
+              <span className="text-sm text-muted-foreground line-through">
+                ${(product.original_price || product.originalPrice).toLocaleString()}
+              </span>
             )}
           </div>
           <button

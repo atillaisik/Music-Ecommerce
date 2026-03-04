@@ -3,10 +3,10 @@
 This phase focuses on fixing persistent admin issues, implementing the CSV import system, cleaning up financial calculations, and enhancing the user profile and social presence.
 
 ## 1. Admin UI & Visibility Fixes
-- [ ] **Category Status**: Fix the toggle button in `AdminCategoryList.tsx` to persist changes in Supabase.
-- [ ] **Brands Visibility**: Investigate and fix why new brands don't appear in `Our Brands`.
-- [ ] **Instruments Page**: Ensure new categories appear in the Instruments navigation/grid.
-- [ ] **Navigation**: Fix the "+ Add Product" button routing in the admin product list.
+- [x] **Category Status**: Fix the toggle button in `AdminCategoryList.tsx` to persist changes in Supabase.
+- [x] **Brands Visibility**: Investigate and fix why new brands don't appear in `Our Brands`.
+- [x] **Instruments Page**: Ensure new categories appear in the Instruments navigation/grid.
+- [x] **Navigation**: Fix the "+ Add Product" button routing in the admin product list.
 
 ## 2. Product Management Enhancements
 - [ ] **CSV Import**: Implement `handleImportCSV` in `AdminProductList.tsx`.

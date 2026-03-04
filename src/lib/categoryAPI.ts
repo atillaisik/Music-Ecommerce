@@ -99,6 +99,7 @@ export const useUpdateCategory = () => {
         },
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', 'with-count'] });
             queryClient.invalidateQueries({ queryKey: ['category', variables.id] });
             toast.success('Category updated successfully');
         },

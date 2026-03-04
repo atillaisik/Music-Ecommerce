@@ -3,49 +3,67 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
-import { products, categories } from "@/data/mock";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { useProducts, useCategories, useBrands } from "@/lib/productAPI";
+import { PackageSearch, SlidersHorizontal, X } from "lucide-react";
 
-const sortOptions = ["Popular", "Price: Low", "Price: High", "Newest"];
+const sortOptions = [
+  { label: "Popular", value: "popularity:desc" },
+  { label: "Price: Low", value: "price:asc" },
+  { label: "Price: High", value: "price:desc" },
+  { label: "Newest", value: "created_at:desc" }
+];
 
 const Shop = () => {
-  const [searchParams] = useSearchParams();
-  const initialCat = searchParams.get("category") || "All";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialCat = searchParams.get("category") || "all";
   const initialSearch = searchParams.get("q") || "";
-  const initialBrand = searchParams.get("brand") || "All";
+  const initialBrand = searchParams.get("brand") || "all";
 
   const [selectedCategory, setSelectedCategory] = useState(initialCat);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
-  const [sort, setSort] = useState("Popular");
+  const [sort, setSort] = useState(sortOptions[0].value);
   const [search, setSearch] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
-  const [isLoading, setIsLoading] = useState(true);
+
+  const { data: categories } = useCategories();
+  const { data: brands } = useBrands();
+  const { data: products, isLoading } = useProducts({
+    category_id: selectedCategory === 'all' ? undefined : selectedCategory,
+    brand_id: selectedBrand === 'all' ? undefined : selectedBrand,
+    search: search || undefined,
+    sort: sort
+  });
 
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [selectedCategory, selectedBrand, sort, search]);
+    setSelectedCategory(searchParams.get("category") || "all");
+    setSelectedBrand(searchParams.get("brand") || "all");
+    setSearch(searchParams.get("q") || "");
+  }, [searchParams]);
 
-  const filtered = useMemo(() => {
-    let list = [...products];
-    if (selectedCategory !== "All") list = list.filter((p) => p.category === selectedCategory);
-    if (selectedBrand !== "All") list = list.filter((p) => p.brand === selectedBrand);
-    if (search) list = list.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+  const handleCategoryChange = (id: string) => {
+    setSelectedCategory(id);
+    const newParams = new URLSearchParams(searchParams);
+    if (id === 'all') newParams.delete('category');
+    else newParams.set('category', id);
+    setSearchParams(newParams);
+  };
 
-    // Price filtering
-    list = list.filter((p) => p.price >= priceRange.min && p.price <= priceRange.max);
+  const handleBrandChange = (id: string) => {
+    setSelectedBrand(id);
+    const newParams = new URLSearchParams(searchParams);
+    if (id === 'all') newParams.delete('brand');
+    else newParams.set('brand', id);
+    setSearchParams(newParams);
+  };
 
-    if (sort === "Price: Low") list.sort((a, b) => a.price - b.price);
-    if (sort === "Price: High") list.sort((a, b) => b.price - a.price);
-    if (sort === "Newest") list.sort((a, b) => b.id.localeCompare(a.id)); // Simple mock for newest
-    return list;
-  }, [selectedCategory, sort, search, priceRange]);
+  const filteredByPrice = useMemo(() => {
+    if (!products) return [];
+    return products.filter(p => p.price >= priceRange.min && p.price <= priceRange.max);
+  }, [products, priceRange]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,81 +73,165 @@ const Shop = () => {
       </Helmet>
       <Navbar />
       <main className="container py-10">
-        <h1 className="font-display text-4xl font-bold uppercase tracking-tight">Shop</h1>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-display text-5xl font-black uppercase tracking-tighter italic text-primary">Shop</h1>
+            <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px] mt-1">Discover Professional Instruments</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-widest opacity-40">Filter View</span>
+            <SlidersHorizontal className="h-4 w-4 opacity-40" />
+          </div>
+        </div>
 
-        <div className="mt-6 flex flex-col gap-8 lg:flex-row">
+        <div className="flex flex-col gap-8 lg:flex-row">
           {/* Sidebar */}
-          <aside className="w-full shrink-0 lg:w-56">
-            <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 bg-secondary" />
-            <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Category</h3>
-            <div className="flex flex-wrap gap-2 lg:flex-col">
-              {["All", ...categories.map((c) => c.name)].map((c) => (
-                <Button
-                  key={c}
-                  variant={selectedCategory === c ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(c)}
-                  className="justify-start text-xs uppercase tracking-wider"
+          <aside className="w-full shrink-0 lg:w-64 space-y-8">
+            <div className="relative group">
+              <Input
+                placeholder="Find your sound..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-card/50 border-border/50 h-11 rounded-xl pl-4 focus:ring-primary/20 transition-all font-medium"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {c}
-                </Button>
-              ))}
-            </div>
-            <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Our Brands</h3>
-            <div className="flex flex-wrap gap-2 lg:flex-col">
-              {["All", ...Array.from(new Set(products.map((p) => p.brand)))].map((b) => (
-                <Button
-                  key={b}
-                  variant={selectedBrand === b ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedBrand(b)}
-                  className="justify-start text-xs uppercase tracking-wider"
-                >
-                  {b}
-                </Button>
-              ))}
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  className="h-8 bg-secondary text-xs"
-                  value={priceRange.min || ""}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
-                />
-                <span className="text-muted-foreground">-</span>
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  className="h-8 bg-secondary text-xs"
-                  value={priceRange.max || ""}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
-                />
-              </div>
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
-            <h3 className="mb-2 mt-6 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">Sort</h3>
-            <div className="flex flex-wrap gap-2 lg:flex-col">
-              {sortOptions.map((s) => (
-                <Button key={s} variant={sort === s ? "default" : "ghost"} size="sm" onClick={() => setSort(s)} className="justify-start text-xs">
-                  {s}
+            <section>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Category</h3>
+              <div className="flex flex-col gap-1">
+                <Button
+                  variant={selectedCategory === 'all' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleCategoryChange('all')}
+                  className={`justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg ${selectedCategory === 'all' ? 'shadow-lg shadow-primary/20' : ''}`}
+                >
+                  All Collections
                 </Button>
-              ))}
-            </div>
+                {categories?.map((c) => (
+                  <Button
+                    key={c.id}
+                    variant={selectedCategory === c.id ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => handleCategoryChange(c.id)}
+                    className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
+                  >
+                    {c.name}
+                  </Button>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Our Brands</h3>
+              <div className="flex flex-col gap-1">
+                <Button
+                  variant={selectedBrand === 'all' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleBrandChange('all')}
+                  className={`justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg ${selectedBrand === 'all' ? 'shadow-lg shadow-primary/20' : ''}`}
+                >
+                  All Brands
+                </Button>
+                {brands?.map((b) => (
+                  <Button
+                    key={b.id}
+                    variant={selectedBrand === b.id ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => handleBrandChange(b.id)}
+                    className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
+                  >
+                    {b.name}
+                  </Button>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Price Range</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase font-bold text-muted-foreground/50 ml-1">Min</label>
+                  <Input
+                    type="number"
+                    value={priceRange.min}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
+                    className="h-10 bg-card/30 border-border/40 text-xs font-bold rounded-lg"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase font-bold text-muted-foreground/50 ml-1">Max</label>
+                  <Input
+                    type="number"
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
+                    className="h-10 bg-card/30 border-border/40 text-xs font-bold rounded-lg"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Sort By</h3>
+              <div className="flex flex-col gap-1">
+                {sortOptions.map((option) => (
+                  <Button
+                    key={option.value}
+                    variant={sort === option.value ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setSort(option.value)}
+                    className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            </section>
           </aside>
 
           {/* Grid */}
           <div className="flex-1">
-            <p className="mb-4 text-sm text-muted-foreground">{filtered.length} products</p>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Showing <span className="text-foreground">{filteredByPrice.length}</span> results
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {isLoading
                 ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={`skeleton-${i}`} />)
-                : filtered.map((p) => (
+                : filteredByPrice.map((p) => (
                   <ProductCard key={p.id} product={p} />
                 ))}
             </div>
-            {filtered.length === 0 && <p className="mt-12 text-center text-muted-foreground">No products found.</p>}
+
+            {!isLoading && filteredByPrice.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-32 bg-card/10 rounded-3xl border border-dashed border-border/50">
+                <PackageSearch className="h-16 w-16 text-muted-foreground opacity-20 mb-4" />
+                <p className="text-lg font-bold uppercase tracking-tighter italic">No instruments found</p>
+                <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or search terms.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearch('');
+                    setSelectedCategory('all');
+                    setSelectedBrand('all');
+                    setPriceRange({ min: 0, max: 10000 });
+                  }}
+                  className="mt-6 rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                >
+                  Reset all filters
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </main>

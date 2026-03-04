@@ -41,6 +41,7 @@ import AdminAnalyticsDashboard from "./pages/admin/analytics/AdminAnalyticsDashb
 import AdminActivityLog from "./pages/admin/activity-log/AdminActivityLog";
 import AdminSettings from "./pages/admin/settings/AdminSettings";
 import AdminBackup from "./pages/admin/backup/AdminBackup";
+import AdminFAQList from "./pages/admin/faqs/AdminFAQList";
 import AdminPlaceholder from "./components/admin/AdminPlaceholder";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -102,6 +103,7 @@ const App = () => (
                 <Route path="discounts" element={<AdminDiscountList />} />
                 <Route path="discounts/add" element={<AdminAddDiscount />} />
                 <Route path="discounts/edit/:id" element={<AdminEditDiscount />} />
+                <Route path="faqs" element={<AdminFAQList />} />
                 <Route path="activity-log" element={<AdminActivityLog />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="backup" element={<AdminBackup />} />

@@ -25,6 +25,8 @@ import { useAdminStore } from '@/lib/adminStore';
 import { motion } from 'framer-motion';
 import { useRealTimeSubscriptions } from '@/hooks/useRealTimeSubscriptions';
 
+import { ThemeToggle } from '@/components/ThemeToggle';
+
 const AdminLayout = () => {
     // Initialize real-time subscriptions
     useRealTimeSubscriptions();
@@ -78,6 +80,9 @@ const AdminLayout = () => {
                                 />
                             </div>
                             <Separator orientation="vertical" className="h-4 mx-2 hidden md:block opacity-30" />
+
+                            <ThemeToggle />
+
                             <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5 active:scale-90 transition-transform relative">
                                 <Bell className="h-4.5 w-4.5" />
                                 <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white dark:border-[#0d0e12]" />

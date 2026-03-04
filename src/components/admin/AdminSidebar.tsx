@@ -14,7 +14,8 @@ import {
     Database,
     LogOut,
     ChevronRight,
-    Music
+    Music,
+    HelpCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminStore } from '@/lib/adminStore';
@@ -90,6 +91,13 @@ const menuItems = [
         label: "Discounts",
         icon: Percent,
         url: "/admin/discounts",
+        roles: ['super_admin', 'editor']
+    },
+    {
+        title: "Content",
+        label: "FAQs",
+        icon: HelpCircle,
+        url: "/admin/faqs",
         roles: ['super_admin', 'editor']
     },
     {

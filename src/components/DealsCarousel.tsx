@@ -1,0 +1,81 @@
+import React, { useCallback, useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Product } from "@/data/mock";
+import ProductCard from "./ProductCard";
+
+interface DealsCarouselProps {
+    products: Product[];
+}
+
+const DealsCarousel: React.FC<DealsCarouselProps> = ({ products }) => {
+    const [emblaRef, emblaApi] = useEmblaCarousel(
+        {
+            loop: true,
+            align: "start",
+            slidesToScroll: 1,
+            breakpoints: {
+                "(min-width: 640px)": { slidesToScroll: 2 },
+                "(min-width: 1024px)": { slidesToScroll: 3 },
+                "(min-width: 1280px)": { slidesToScroll: 4 },
+            },
+        },
+        [Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })]
+    );
+
+    const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
+    const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
+
+    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+
+    const onSelect = useCallback(() => {
+        if (!emblaApi) return;
+        setPrevBtnEnabled(emblaApi.canScrollPrev());
+        setNextBtnEnabled(emblaApi.canScrollNext());
+    }, [emblaApi]);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+        onSelect();
+        emblaApi.on("select", onSelect);
+        emblaApi.on("reInit", onSelect);
+    }, [emblaApi, onSelect]);
+
+    return (
+        <div className="relative pt-6 pb-12">
+            <div className="overflow-hidden" ref={emblaRef}>
+                <div className="flex -ml-6">
+                    {products.map((product) => (
+                        <div
+                            key={product.id}
+                            className="pl-6 flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] xl:flex-[0_0_25%] min-w-0"
+                        >
+                            <ProductCard product={product} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <button
+                className="absolute -left-4 md:-left-6 top-[40%] -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-border bg-background/80 backdrop-blur-sm text-foreground shadow-lg transition-all hover:bg-primary hover:text-primary-foreground hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed"
+                onClick={scrollPrev}
+                disabled={!prevBtnEnabled}
+                aria-label="Previous deals"
+            >
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
+            <button
+                className="absolute -right-4 md:-right-6 top-[40%] -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-border bg-background/80 backdrop-blur-sm text-foreground shadow-lg transition-all hover:bg-primary hover:text-primary-foreground hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed"
+                onClick={scrollNext}
+                disabled={!nextBtnEnabled}
+                aria-label="Next deals"
+            >
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
+        </div>
+    );
+};
+
+export default DealsCarousel;

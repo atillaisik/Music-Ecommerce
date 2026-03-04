@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { categories, products } from "@/data/mock";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import BestSellersCarousel from "@/components/BestSellersCarousel";
+import DealsCarousel from "@/components/DealsCarousel";
 
 const stats = [
   { label: "Products", value: "50K+" },
@@ -121,6 +122,34 @@ const Index = () => {
                 </Link>
               </motion.div>
             ))}
+          </div>
+        </section>
+
+        {/* Special Deals */}
+        <section className="py-16 overflow-hidden">
+          <div className="container">
+            <div className="flex items-center justify-between">
+              <div>
+                <Badge variant="outline" className="border-primary text-primary mb-2 font-display uppercase tracking-widest text-[10px]">
+                  Limited Time
+                </Badge>
+                <h2 className="font-display text-3xl font-bold uppercase tracking-tight">Flash Deals</h2>
+              </div>
+              <Button asChild variant="ghost" className="font-display uppercase tracking-wider text-primary">
+                <Link to="/deals">View All Deals <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              </Button>
+            </div>
+            <div className="mt-8">
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <ProductCardSkeleton key={`skeleton-${i}`} />
+                  ))}
+                </div>
+              ) : (
+                <DealsCarousel products={products.filter(p => p.originalPrice).slice(0, 10)} />
+              )}
+            </div>
           </div>
         </section>
 

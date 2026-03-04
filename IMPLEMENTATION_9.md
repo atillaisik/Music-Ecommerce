@@ -28,6 +28,6 @@ This phase focuses on fixing persistent admin issues, implementing the CSV impor
 
 
 ## 5. Theme & Content
-- [ ] **Admin Theme**: Integrate the existing light/dark mode switch into the Admin Layout/Header.
-- [ ] **Dynamic FAQs**: Create a FAQ system that can be managed from the Admin Panel.
-- [ ] **Deals Carousel**: Add left/right navigation arrows to the Deals section to match the Best Sellers carousel.
+- [x] **Admin Theme**: Integrate the existing light/dark mode switch into the Admin Layout/Header.
+- [x] **Dynamic FAQs**: Create a FAQ system that can be managed from the Admin Panel.
+- [x] **Deals Carousel**: Add left/right navigation arrows to the Deals section to match the Best Sellers carousel.

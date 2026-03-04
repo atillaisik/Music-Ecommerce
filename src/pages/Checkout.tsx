@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/lib/store";
+import { useCreateOrder } from "@/lib/orderAPI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,8 +40,7 @@ export default function Checkout() {
     });
 
     const currentSubtotal = subtotal();
-    const tax = currentSubtotal * 0.1;
-    const total = currentSubtotal + tax;
+    const total = currentSubtotal;
 
     useEffect(() => {
         if (items.length === 0 && !isProcessing && step !== "review") {
@@ -110,22 +110,39 @@ export default function Checkout() {
         if (step === "review") setStep("payment");
     };
 
-    const handlePlaceOrder = () => {
+    const createOrder = useCreateOrder();
+    const handlePlaceOrder = async () => {
         setIsProcessing(true);
 
-        // Simulate processing delay
-        setTimeout(() => {
+        try {
+            const order = await createOrder.mutateAsync({
+                customer_name: formData.name,
+                customer_email: formData.email,
+                total_amount: total,
+                shipping_address: `${formData.address}, ${formData.city}, ${formData.zip}`,
+                items: items.map(item => ({
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    price_at_purchase: item.price
+                })),
+                payment_method: 'Credit Card'
+            });
+
             setIsProcessing(false);
             clearCart();
             navigate("/checkout/success", {
                 state: {
-                    orderId: `ORD-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+                    orderId: order.id,
                     total: total,
                     items: items
                 }
             });
             toast.success("Order placed successfully!");
-        }, 2000);
+        } catch (error: any) {
+            console.error("Checkout error:", error);
+            setIsProcessing(false);
+            toast.error(error.message || "Failed to place order. Please try again.");
+        }
     };
 
     if (items.length === 0 && !isProcessing) return null;
@@ -345,10 +362,6 @@ export default function Checkout() {
                                 <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Shipping</span>
                                     <span className="text-green-600 font-medium">FREE</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Tax (10%)</span>
-                                    <span>${tax.toLocaleString()}</span>
                                 </div>
                                 <Separator className="my-2" />
                                 <div className="flex justify-between text-lg font-bold">

@@ -202,10 +202,6 @@ const AdminOrderDetail = () => {
                                 <span>Shipping</span>
                                 <span className="text-emerald-500 font-bold uppercase tracking-widest text-[10px]">Free Shipping</span>
                             </div>
-                            <div className="flex justify-between text-sm opacity-70">
-                                <span>Tax (Included)</span>
-                                <span>$0.00</span>
-                            </div>
                             <Separator className="my-4 bg-border/50" />
                             <div className="flex justify-between items-baseline pt-2">
                                 <span className="text-lg font-black uppercase tracking-wider">Total</span>

@@ -20,6 +20,7 @@ export const useRealTimeSubscriptions = () => {
                 (payload) => {
                     console.log('Order change received:', payload);
                     queryClient.invalidateQueries({ queryKey: ['orders'] });
+                    queryClient.invalidateQueries({ queryKey: ['order-stats'] });
 
                     const newOrder = payload.new as any;
                     if (payload.eventType === 'INSERT' && newOrder) {

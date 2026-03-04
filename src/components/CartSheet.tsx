@@ -17,8 +17,7 @@ export function CartSheet() {
     const { items, removeFromCart, updateQuantity, subtotal, totalItems } = useCartStore();
 
     const currentSubtotal = subtotal();
-    const tax = currentSubtotal * 0.1; // 10% tax for demo
-    const total = currentSubtotal + tax;
+    const total = currentSubtotal;
 
     return (
         <Sheet>
@@ -110,10 +109,6 @@ export function CartSheet() {
                                 <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Subtotal</span>
                                     <span>${currentSubtotal.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Estimated Tax (10%)</span>
-                                    <span>${tax.toLocaleString()}</span>
                                 </div>
                                 <Separator className="my-2" />
                                 <div className="flex justify-between font-bold">

@@ -15,8 +15,8 @@ This phase focuses on fixing persistent admin issues, implementing the CSV impor
     - [x] Implement image URL handling for multiple product images.
 
 ## 3. Financial & Order Logic
-- [ ] **Discard Tax**: Completely remove tax logic from `cartStore.ts`, `Checkout.tsx`, and `CartSheet.tsx`.
-- [ ] **Order Sync**: Debug and fix missing orders in the Admin panel (ensure React Query invalidation or Realtime).
+- [x] **Discard Tax**: Completely remove tax logic from `cartStore.ts`, `Checkout.tsx`, and `CartSheet.tsx`.
+- [x] **Order Sync**: Debug and fix missing orders in the Admin panel (ensure React Query invalidation or Realtime).
 
 ## 4. User Profile & Socials
 - [ ] **Real Data**: Replace mock "Recent Orders" with real data fetched by `user_id`.

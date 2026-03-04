@@ -120,3 +120,53 @@ export const useOrderStats = () => {
         }
     });
 };
+
+export const useCreateOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (orderData: {
+            customer_name: string;
+            customer_email: string;
+            total_amount: number;
+            shipping_address: string;
+            items: { product_id: string; quantity: number; price_at_purchase: number }[];
+            payment_method?: string;
+        }) => {
+            // 1. Create the order
+            const { data: order, error: orderError } = await supabase
+                .from('orders')
+                .insert({
+                    customer_name: orderData.customer_name,
+                    customer_email: orderData.customer_email,
+                    total_amount: orderData.total_amount,
+                    shipping_address: orderData.shipping_address,
+                    payment_method: orderData.payment_method || 'Credit Card',
+                    status: 'pending'
+                })
+                .select()
+                .single();
+
+            if (orderError) throw orderError;
+
+            // 2. Create order items
+            const orderItems = orderData.items.map(item => ({
+                order_id: order.id,
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price_at_purchase: item.price_at_purchase
+            }));
+
+            const { error: itemsError } = await supabase
+                .from('order_items')
+                .insert(orderItems);
+
+            if (itemsError) throw itemsError;
+
+            return order;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['orders'] });
+            queryClient.invalidateQueries({ queryKey: ['order-stats'] });
+        }
+    });
+};

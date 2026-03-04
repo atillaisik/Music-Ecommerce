@@ -31,3 +31,17 @@ This phase focuses on fixing persistent admin issues, implementing the CSV impor
 - [x] **Admin Theme**: Integrate the existing light/dark mode switch into the Admin Layout/Header.
 - [x] **Dynamic FAQs**: Create a FAQ system that can be managed from the Admin Panel.
 - [x] **Deals Carousel**: Add left/right navigation arrows to the Deals section to match the Best Sellers carousel.
+
+## Verification checklist
+- [x] **Admin Dashboard**: Verify that the theme toggle correctly switches between light and dark modes.
+- [x] **Category Management**: Toggle a category status and refresh the page to ensure it persists.
+- [x] **Brand Visibility**: Create a new brand and verify it appears in the "Our Brands" section on the homepage.
+- [x] **Instruments Navigation**: Create a new category and verify it appears in the navigation and the instruments grid.
+- [x] **CSV Import**: Import a sample CSV and verify that products are created with correct images, brands, and categories.
+- [x] **Checkout Flow**: Add items to cart and proceed to checkout; confirm that no tax is calculated or displayed.
+- [x] **Order Tracking**: Place an order and verify it immediately appears in both the User Profile and Admin Orders list.
+- [x] **User Profile**: Confirm "Recent Orders" shows real transaction history and the "Back" button functions.
+- [x] **Reviews**: Submit a review and verify that the author ID is correctly recorded and the review count updates.
+- [x] **Contact Page**: Verify the TikTok icon is present and all social links redirect to the correct homepages.
+- [x] **FAQs**: Add/edit FAQs in the Admin panel and verify they update on the Contact page.
+- [x] **Deals Carousel**: Test the new navigation arrows in the Deals section.

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useAuthStore } from "@/lib/store";
+
 import { useCreateOrder } from "@/lib/orderAPI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,6 +111,7 @@ export default function Checkout() {
         if (step === "review") setStep("payment");
     };
 
+    const { user } = useAuthStore();
     const createOrder = useCreateOrder();
     const handlePlaceOrder = async () => {
         setIsProcessing(true);
@@ -125,8 +127,10 @@ export default function Checkout() {
                     quantity: item.quantity,
                     price_at_purchase: item.price
                 })),
-                payment_method: 'Credit Card'
+                payment_method: 'Credit Card',
+                user_id: user?.id
             });
+
 
             setIsProcessing(false);
             clearCart();

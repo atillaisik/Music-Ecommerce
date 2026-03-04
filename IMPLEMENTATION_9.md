@@ -19,12 +19,13 @@ This phase focuses on fixing persistent admin issues, implementing the CSV impor
 - [x] **Order Sync**: Debug and fix missing orders in the Admin panel (ensure React Query invalidation or Realtime).
 
 ## 4. User Profile & Socials
-- [ ] **Real Data**: Replace mock "Recent Orders" with real data fetched by `user_id`.
-- [ ] **Profile Navigation**: Add a `<- Back` button to the `Profile.tsx` page.
-- [ ] **Review Fix**: Investigate if `user_id` is being recorded during review submission; fix the display count.
-- [ ] **Contact Page**: 
-    - Add TikTok icon and link to the social community section.
-    - Set all social icons to redirect to their platforms' homepages.
+- [x] **Real Data**: Replace mock "Recent Orders" with real data fetched by `user_id`.
+- [x] **Profile Navigation**: Add a `<- Back` button to the `Profile.tsx` page.
+- [x] **Review Fix**: Investigate if `user_id` is being recorded during review submission; fix the display count.
+- [x] **Contact Page**: 
+    - [x] Add TikTok icon and link to the social community section.
+    - [x] Set all social icons to redirect to their platforms' homepages.
+
 
 ## 5. Theme & Content
 - [ ] **Admin Theme**: Integrate the existing light/dark mode switch into the Admin Layout/Header.

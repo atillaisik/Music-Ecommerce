@@ -28,10 +28,12 @@ const ReviewSection = ({ reviews, averageRating, totalReviews, onAddReview }: Re
         const review: Review = {
             id: Math.random().toString(36).substring(2, 9),
             user: user.name,
+            userId: user.id, // Added userId
             rating: newReview.rating,
             comment: newReview.comment,
             date: new Date().toISOString().split("T")[0],
         };
+
 
         onAddReview(review);
         setNewReview({ rating: 5, comment: "" });

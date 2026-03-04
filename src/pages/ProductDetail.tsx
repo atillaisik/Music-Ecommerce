@@ -137,7 +137,8 @@ const ProductDetail = () => {
                                     <span className="text-lg font-medium">{product!.rating}</span>
                                 </div>
                                 <span className="text-muted-foreground">|</span>
-                                <span className="text-muted-foreground">{product!.reviews} reviews</span>
+                                <span className="text-muted-foreground">{Math.max(productReviews.length, product!.reviews)} reviews</span>
+
                             </div>
 
                             <div className="mt-8">
@@ -191,9 +192,10 @@ const ProductDetail = () => {
                     <ReviewSection
                         reviews={productReviews}
                         averageRating={product!.rating}
-                        totalReviews={productReviews.length || product!.reviews}
+                        totalReviews={Math.max(productReviews.length, product!.reviews)}
                         onAddReview={handleAddReview}
                     />
+
                 )}
 
                 {/* Related Products */}

@@ -121,6 +121,29 @@ export const useOrderStats = () => {
     });
 };
 
+export const useUserOrders = (email: string | undefined) => {
+    return useQuery({
+        queryKey: ['orders', 'user', email],
+        queryFn: async () => {
+            if (!email) return [] as Order[];
+
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*, order_items(*, product:products(*))')
+                .eq('customer_email', email)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching user orders:', error);
+                return [] as Order[];
+            }
+
+            return data as Order[];
+        },
+        enabled: !!email
+    });
+};
+
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -131,6 +154,7 @@ export const useCreateOrder = () => {
             shipping_address: string;
             items: { product_id: string; quantity: number; price_at_purchase: number }[];
             payment_method?: string;
+            user_id?: string;
         }) => {
             // 1. Create the order
             const { data: order, error: orderError } = await supabase
@@ -141,7 +165,8 @@ export const useCreateOrder = () => {
                     total_amount: orderData.total_amount,
                     shipping_address: orderData.shipping_address,
                     payment_method: orderData.payment_method || 'Credit Card',
-                    status: 'pending'
+                    status: 'pending',
+                    user_id: orderData.user_id // Added user_id
                 })
                 .select()
                 .single();
@@ -170,3 +195,4 @@ export const useCreateOrder = () => {
         }
     });
 };
+

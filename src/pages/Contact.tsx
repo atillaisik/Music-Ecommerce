@@ -13,8 +13,10 @@ import {
   Facebook,
   Youtube,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Music2
 } from "lucide-react";
+
 import {
   Accordion,
   AccordionContent,
@@ -108,20 +110,24 @@ const Contact = () => (
                 <h3 className="font-display text-lg font-bold uppercase tracking-tight mb-6">Join the Community</h3>
                 <div className="flex flex-wrap gap-4">
                   {[
-                    { icon: Instagram, label: "Instagram", href: "#" },
-                    { icon: Twitter, label: "Twitter", href: "#" },
-                    { icon: Facebook, label: "Facebook", href: "#" },
-                    { icon: Youtube, label: "Youtube", href: "#" },
-                  ].map(({ icon: Icon, label }) => (
+                    { icon: Instagram, label: "Instagram", href: "https://instagram.com" },
+                    { icon: Twitter, label: "Twitter", href: "https://twitter.com" },
+                    { icon: Facebook, label: "Facebook", href: "https://facebook.com" },
+                    { icon: Youtube, label: "Youtube", href: "https://youtube.com" },
+                    { icon: Music2, label: "TikTok", href: "https://tiktok.com" },
+                  ].map(({ icon: Icon, label, href }) => (
                     <a
                       key={label}
-                      href="#"
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex items-center gap-2 rounded-full border bg-background px-5 py-2.5 text-sm font-medium transition-all hover:bg-primary hover:text-primary-foreground hover:scale-105 active:scale-95"
                     >
                       <Icon className="h-4 w-4" />
                       <span>{label}</span>
                     </a>
                   ))}
+
                 </div>
                 <p className="mt-6 text-sm text-muted-foreground flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-primary" />

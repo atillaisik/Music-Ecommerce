@@ -10,8 +10,8 @@ This phase focuses on improving user experience, adding robust validation, and e
 - [x] Ensure validation errors block progression to the next checkout step and display appropriate toast notifications.
 
 ## 2. Product Card UI Fix
-- [ ] Fix the issue where the "Add to Wishlist" (heart) button disappears on hover or gets obscured by the image wrapper.
-- [ ] Ensure the heart button remains clickable to toggle wishlist status securely.
+- [x] Fix the issue where the "Add to Wishlist" (heart) button disappears on hover or gets obscured by the image wrapper.
+- [x] Ensure the heart button remains clickable to toggle wishlist status securely.
 
 ## 3. Registration Flow Enhancements
 - [ ] Add a mandatory "Terms & Conditions" checkbox to the Sign Up form.

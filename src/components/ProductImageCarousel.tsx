@@ -1,18 +1,37 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Fade from "embla-carousel-fade";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { optimizeImage, preloadImage } from "@/lib/image-utils";
+import { useWishlistStore } from "@/lib/store";
+import { toast } from "sonner";
+import type { Product } from "@/data/mock";
 
 interface ProductImageCarouselProps {
     images: string[];
     name: string;
     badge?: string;
+    product: Product;
 }
 
-const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images, name, badge }) => {
+const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images, name, badge, product }) => {
+    const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
+    const isFavorited = isInWishlist(product.id);
+
+    const toggleWishlist = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isFavorited) {
+            removeFromWishlist(product.id);
+            toast.info(`Removed ${product.name} from wishlist`);
+        } else {
+            addToWishlist(product);
+            toast.success(`Added ${product.name} to wishlist!`);
+        }
+    };
+
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
@@ -99,6 +118,16 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images, nam
                         {badge}
                     </Badge>
                 )}
+
+                {/* Wishlist Button */}
+                <button
+                    onClick={toggleWishlist}
+                    className={`absolute right-6 top-6 rounded-full p-2.5 transition-all hover:scale-110 ${isFavorited ? "bg-primary text-primary-foreground" : "bg-background/80 text-foreground hover:bg-background"
+                        } shadow-md z-10`}
+                    aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                    <Heart className={`h-5 w-5 ${isFavorited ? "fill-current" : ""}`} />
+                </button>
 
                 {/* Navigation Arrows */}
                 {images.length > 1 && (

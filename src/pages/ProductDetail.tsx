@@ -80,6 +80,7 @@ const ProductDetail = () => {
                             images={product!.images && product!.images.length > 0 ? product!.images : [product!.image]}
                             name={product!.name}
                             badge={product!.badge}
+                            product={product!}
                         />
                     )}
 

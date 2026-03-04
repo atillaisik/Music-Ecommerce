@@ -89,8 +89,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-      <Link to={`/product/${product.id}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-secondary">
+      <div className="relative aspect-square overflow-hidden bg-secondary">
+        <Link to={`/product/${product.id}`} className="block h-full w-full">
           <div className="overflow-hidden h-full w-full" ref={emblaRef}>
             <div className="flex h-full w-full touch-pan-y">
               {images.map((imgSrc, index) => (
@@ -105,42 +105,42 @@ const ProductCard = ({ product }: ProductCardProps) => {
               ))}
             </div>
           </div>
-          {images.length > 1 && (
-            <>
-              <button
-                onClick={scrollPrev}
-                className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-foreground shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={scrollNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-foreground shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
-                aria-label="Next image"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                {images.map((_, i) => (
-                  <div key={i} className={`h-1.5 rounded-full transition-all ${i === currentImageIndex ? "w-4 bg-primary" : "w-1.5 bg-white/80"}`} />
-                ))}
-              </div>
-            </>
-          )}
-          <button
-            onClick={toggleWishlist}
-            className={`absolute right-3 top-3 rounded-full p-2 transition-all hover:scale-110 ${isFavorited ? "bg-primary text-primary-foreground" : "bg-white/80 text-foreground hover:bg-white"
-              } shadow-sm z-10`}
-            aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
-          >
-            <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
-          </button>
-          {product.badge && (
-            <Badge className="absolute left-3 top-3 bg-primary text-primary-foreground z-10">{product.badge}</Badge>
-          )}
-        </div>
-      </Link>
+        </Link>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={scrollPrev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-foreground shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110 z-20"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={scrollNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-foreground shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110 z-20"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+              {images.map((_, i) => (
+                <div key={i} className={`h-1.5 rounded-full transition-all ${i === currentImageIndex ? "w-4 bg-primary" : "w-1.5 bg-white/80"}`} />
+              ))}
+            </div>
+          </>
+        )}
+        <button
+          onClick={toggleWishlist}
+          className={`absolute right-3 top-3 rounded-full p-2 transition-all hover:scale-110 ${isFavorited ? "bg-primary text-primary-foreground" : "bg-white/80 text-foreground hover:bg-white"
+            } shadow-sm z-20`}
+          aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
+        </button>
+        {product.badge && (
+          <Badge className="absolute left-3 top-3 bg-primary text-primary-foreground z-20">{product.badge}</Badge>
+        )}
+      </div>
 
       <div className="p-4">
         <Link to={`/product/${product.id}`} className="block">

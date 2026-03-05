@@ -33,10 +33,10 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 - `src/lib/categoryAPI.ts`
 
 **Fix**:
-- [ ] Inspect `useUpdateCategory` in `categoryAPI.ts` — verify the mutation sends `{ id, data }` and the Supabase `.update(data).eq('id', id)` call is correct.
-- [ ] Check that `CategoryForm` correctly maps its internal field state back to the `CategoryFormData` shape expected by `onSubmit`.
-- [ ] Add `toast.error` handling in the `onError` of the mutation if not already present.
-- [ ] Confirm `queryClient.invalidateQueries` on success re-fetches the updated list.
+- [x] Inspect `useUpdateCategory` in `categoryAPI.ts` — verify the mutation sends `{ id, data }` and the Supabase `.update(data).eq('id', id)` call is correct.
+- [x] Check that `CategoryForm` correctly maps its internal field state back to the `CategoryFormData` shape expected by `onSubmit`.
+- [x] Add `toast.error` handling in the `onError` of the mutation if not already present.
+- [x] Confirm `queryClient.invalidateQueries` on success re-fetches the updated list.
 
 ---
 
@@ -130,7 +130,7 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 
 ## Verification Checklist
 - [x] **Add Product**: Navigate to `/admin/products/add` and verify the form renders correctly with all fields, dropdowns, and image uploaders.
-- [ ] **Edit Category**: Edit a category's name/description and confirm the changes persist after refreshing `/admin/categories`.
+- [x] **Edit Category**: Edit a category's name/description and confirm the changes persist after refreshing `/admin/categories`.
 - [ ] **Category Status Badges**: Confirm the Active/Inactive status in the category list now displays as a pill badge, consistent with Products and Brands.
 - [ ] **Footer FAQ Link**: Click "FAQs" in the footer and verify it navigates to `/faqs`, not `/contact`.
 - [ ] **Public FAQ Page**: Verify `/faqs` renders with dynamic FAQs from Supabase, with correct Navbar, Footer, and hero styling.

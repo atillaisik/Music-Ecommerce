@@ -95,12 +95,15 @@ export const useUpdateCategory = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, data }: { id: string; data: Partial<Category> }) => {
-            const { error } = await supabase
+            const { data: updatedData, error } = await supabase
                 .from('categories')
                 .update(data)
-                .eq('id', id);
+                .eq('id', id)
+                .select()
+                .single();
 
             if (error) throw error;
+            return updatedData as Category;
         },
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ['categories'] });

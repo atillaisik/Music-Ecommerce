@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/Logo";
 
 const Footer = () => (
   <footer className="border-t border-border bg-card">
@@ -8,11 +9,7 @@ const Footer = () => (
       <div className="grid gap-8 md:grid-cols-4">
         {/* Brand */}
         <div>
-          <img
-            src="/ArasSounds.png"
-            alt="ARASOUNDS Logo"
-            className="h-8 w-auto object-contain"
-          />
+          <Logo className="h-8 w-auto text-black dark:text-white transition-colors duration-300" />
           <p className="mt-3 text-sm text-muted-foreground">
             Your one-stop destination for premium musical instruments and gear.
           </p>
@@ -34,11 +31,18 @@ const Footer = () => (
         <div>
           <h4 className="mb-3 font-display text-sm font-semibold uppercase tracking-wider">Support</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            {["Contact Us", "FAQs", "Shipping", "Returns"].map((l) => (
-              <li key={l}>
-                <Link to="/contact" className="transition-colors hover:text-foreground">{l}</Link>
-              </li>
-            ))}
+            <li>
+              <Link to="/contact" className="transition-colors hover:text-foreground">Contact Us</Link>
+            </li>
+            <li>
+              <Link to="/faqs" className="transition-colors hover:text-foreground">FAQs</Link>
+            </li>
+            <li>
+              <Link to="/contact" className="transition-colors hover:text-foreground">Shipping</Link>
+            </li>
+            <li>
+              <Link to="/contact" className="transition-colors hover:text-foreground">Returns</Link>
+            </li>
           </ul>
         </div>
 

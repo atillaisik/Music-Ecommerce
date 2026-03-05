@@ -10,6 +10,7 @@ import Brands from "./pages/Brands";
 import Learn from "./pages/Learn";
 import Deals from "./pages/Deals";
 import Contact from "./pages/Contact";
+import FAQs from "./pages/FAQs";
 import NotFound from "./pages/NotFound";
 
 import ProductDetail from "./pages/ProductDetail";
@@ -80,6 +81,7 @@ const App = () => (
               <Route path="/learn" element={<Learn />} />
               <Route path="/deals" element={<Deals />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/faqs" element={<FAQs />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/profile" element={<Profile />} />

@@ -132,7 +132,7 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 - [x] **Add Product**: Navigate to `/admin/products/add` and verify the form renders correctly with all fields, dropdowns, and image uploaders.
 - [x] **Edit Category**: Edit a category's name/description and confirm the changes persist after refreshing `/admin/categories`.
 - [ ] **Category Status Badges**: Confirm the Active/Inactive status in the category list now displays as a pill badge, consistent with Products and Brands.
-- [ ] **Footer FAQ Link**: Click "FAQs" in the footer and verify it navigates to `/faqs`, not `/contact`.
-- [ ] **Public FAQ Page**: Verify `/faqs` renders with dynamic FAQs from Supabase, with correct Navbar, Footer, and hero styling.
+- [x] **Footer FAQ Link**: Click "FAQs" in the footer and verify it navigates to `/faqs`, not `/contact`.
+- [x] **Public FAQ Page**: Verify `/faqs` renders with dynamic FAQs from Supabase, with correct Navbar, Footer, and hero styling.
 - [ ] **Store Identity Persistence**: Change and save store settings; refresh the page and confirm the changes are retained.
 - [ ] **Footer Logo**: Switch to light mode and confirm the footer logo turns black (matching the header logo).

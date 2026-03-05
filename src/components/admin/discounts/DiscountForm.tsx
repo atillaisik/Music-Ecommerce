@@ -49,15 +49,15 @@ const DiscountForm: React.FC<DiscountFormProps> = ({ initialData, onSubmit, isLo
         resolver: zodResolver(discountSchema),
         defaultValues: initialData ? {
             code: initialData.code,
-            discount_type: initialData.discount_type,
-            discount_value: initialData.discount_value,
+            type: initialData.type,
+            value: initialData.value,
             usage_limit: initialData.usage_limit,
             expiry_date: initialData.expiry_date ? new Date(initialData.expiry_date).toISOString().split('T')[0] : null,
             is_active: initialData.is_active,
         } : {
             code: '',
-            discount_type: 'percentage',
-            discount_value: 0,
+            type: 'Percentage',
+            value: 0,
             usage_limit: null,
             expiry_date: null,
             is_active: true,
@@ -96,7 +96,7 @@ const DiscountForm: React.FC<DiscountFormProps> = ({ initialData, onSubmit, isLo
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <FormField
                                         control={form.control}
-                                        name="discount_type"
+                                        name="type"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">Type</FormLabel>
@@ -104,14 +104,14 @@ const DiscountForm: React.FC<DiscountFormProps> = ({ initialData, onSubmit, isLo
                                                     <FormControl>
                                                         <SelectTrigger className="h-11 bg-background border-border/50 focus:ring-primary/20">
                                                             <div className="flex items-center gap-2">
-                                                                {field.value === 'percentage' ? <Percent className="h-3.5 w-3.5" /> : <DollarSign className="h-3.5 w-3.5" />}
+                                                                {field.value === 'Percentage' ? <Percent className="h-3.5 w-3.5" /> : <DollarSign className="h-3.5 w-3.5" />}
                                                                 <SelectValue placeholder="Select type" />
                                                             </div>
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="percentage">Percentage (%)</SelectItem>
-                                                        <SelectItem value="fixed">Fixed Amount ($)</SelectItem>
+                                                        <SelectItem value="Percentage">Percentage (%)</SelectItem>
+                                                        <SelectItem value="Fixed">Fixed Amount ($)</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -121,14 +121,14 @@ const DiscountForm: React.FC<DiscountFormProps> = ({ initialData, onSubmit, isLo
 
                                     <FormField
                                         control={form.control}
-                                        name="discount_value"
+                                        name="value"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">Value</FormLabel>
                                                 <FormControl>
                                                     <div className="relative">
                                                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">
-                                                            {form.watch('discount_type') === 'percentage' ? '%' : '$'}
+                                                            {form.watch('type') === 'Percentage' ? '%' : '$'}
                                                         </div>
                                                         <Input type="number" step="0.01" {...field} className="h-11 pl-8 bg-background border-border/50 font-mono font-bold" />
                                                     </div>

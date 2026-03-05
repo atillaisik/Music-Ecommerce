@@ -143,10 +143,10 @@ const AdminDiscountList = () => {
                                     <TableCell>
                                         <div className="flex items-center gap-1.5">
                                             <Badge variant="outline" className="font-bold border-primary/20 text-primary bg-primary/5">
-                                                {coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `$${coupon.discount_value}`}
+                                                {coupon.type === 'Percentage' ? `${coupon.value}%` : `$${coupon.value}`}
                                             </Badge>
                                             <span className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                                                {coupon.discount_type === 'percentage' ? 'OFF' : 'Discount'}
+                                                {coupon.type === 'Percentage' ? 'OFF' : 'Discount'}
                                             </span>
                                         </div>
                                     </TableCell>
@@ -154,7 +154,7 @@ const AdminDiscountList = () => {
                                         <div className="flex flex-col gap-0.5">
                                             <div className="flex items-center gap-1.5 text-xs font-bold font-sans">
                                                 <Hash className="h-3 w-3 opacity-50" />
-                                                {coupon.usage_count} / {coupon.usage_limit || '∞'}
+                                                0 / {coupon.usage_limit || '∞'}
                                             </div>
                                             <p className="text-[9px] uppercase font-black opacity-40">Total Uses</p>
                                         </div>

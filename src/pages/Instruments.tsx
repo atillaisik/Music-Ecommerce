@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Layers } from "lucide-react";
 
 const Instruments = () => {
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories, isLoading } = useCategories(true);
 
   return (
     <div className="min-h-screen bg-background">

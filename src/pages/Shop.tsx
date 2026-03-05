@@ -11,10 +11,10 @@ import { useProducts, useCategories, useBrands } from "@/lib/productAPI";
 import { PackageSearch, SlidersHorizontal, X } from "lucide-react";
 
 const sortOptions = [
-  { label: "Popular", value: "popularity:desc" },
+  { label: "Newest", value: "created_at:desc" },
+  { label: "Popular", value: "rating:desc" },
   { label: "Price: Low", value: "price:asc" },
   { label: "Price: High", value: "price:desc" },
-  { label: "Newest", value: "created_at:desc" }
 ];
 
 const Shop = () => {
@@ -35,7 +35,8 @@ const Shop = () => {
     category_id: selectedCategory === 'all' ? undefined : selectedCategory,
     brand_id: selectedBrand === 'all' ? undefined : selectedBrand,
     search: search || undefined,
-    sort: sort
+    sort: sort,
+    is_active: true,
   });
 
   useEffect(() => {

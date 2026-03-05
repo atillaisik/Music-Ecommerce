@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     Package,
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminStore } from '@/lib/adminStore';
+import { supabase } from '@/lib/supabaseClient';
 import {
     Sidebar,
     SidebarContent,
@@ -126,8 +127,15 @@ const menuItems = [
 const AdminSidebar = () => {
     const { user, logout } = useAdminStore();
     const location = useLocation();
+    const navigate = useNavigate();
     const { state } = useSidebar();
     const isCollapsed = state === 'collapsed';
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        logout();
+        navigate('/admin/login');
+    };
 
     // Filter menu items by user role
     const filteredMenuItems = menuItems.filter(item =>
@@ -213,7 +221,7 @@ const AdminSidebar = () => {
                     )}
                     {!isCollapsed && (
                         <button
-                            onClick={logout}
+                            onClick={handleLogout}
                             className="p-2 hover:bg-destructive/10 hover:text-destructive rounded-lg transition-colors text-muted-foreground"
                             title="Logout"
                         >
@@ -223,7 +231,7 @@ const AdminSidebar = () => {
                 </div>
                 {isCollapsed && (
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="mx-auto mt-4 p-2 hover:bg-destructive/10 hover:text-destructive rounded-lg transition-colors text-muted-foreground"
                         title="Logout"
                     >

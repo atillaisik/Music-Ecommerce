@@ -7,15 +7,20 @@ export interface CategoryWithCount extends Category {
     product_count: number;
 }
 
-export const useCategories = () => {
+export const useCategories = (onlyActive = false) => {
     return useQuery({
-        queryKey: ['categories'],
+        queryKey: ['categories', { onlyActive }],
         queryFn: async () => {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('categories')
                 .select('*')
                 .order('display_order', { ascending: true });
 
+            if (onlyActive) {
+                query = query.eq('is_active', true);
+            }
+
+            const { data, error } = await query;
             if (error) throw error;
             return data as Category[];
         }

@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { toast } from 'sonner';
 import { Music, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabaseClient';
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
@@ -34,23 +35,55 @@ const AdminLogin = () => {
 
     const onSubmit = async (values: LoginFormValues) => {
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            // Mock validation for demo purposes
-            // In a real app, this would be a Supabase auth call
-            if (values.email === 'admin@arasounds.com' && values.password === 'admin123') {
-                login(values.email, 'Admin User', 'super_admin', 'mock-jwt-token');
-                toast.success('Login successful', {
-                    description: 'Welcome back to the Admin Dashboard.',
-                });
-                navigate('/admin');
-            } else {
+        try {
+            // 1. Sign in with Supabase Auth — this sets auth.uid() for RLS
+            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                email: values.email,
+                password: values.password,
+            });
+
+            if (authError || !authData.user) {
                 toast.error('Invalid credentials', {
-                    description: 'Please check your email and password and try again.',
+                    description: authError?.message || 'Please check your email and password.',
                 });
+                return;
             }
+
+            // 2. Verify the user is in the admin_users table with an active role
+            const { data: adminUser, error: adminError } = await supabase
+                .from('admin_users')
+                .select('id, email, role, is_active')
+                .eq('id', authData.user.id)
+                .single();
+
+            if (adminError || !adminUser || !adminUser.is_active) {
+                // Not an admin — sign them out and reject
+                await supabase.auth.signOut();
+                toast.error('Access denied', {
+                    description: 'Your account does not have admin privileges.',
+                });
+                return;
+            }
+
+            // 3. Store the session in the admin store
+            login(
+                adminUser.email,
+                adminUser.email.split('@')[0],
+                adminUser.role,
+                authData.session?.access_token ?? ''
+            );
+
+            toast.success('Login successful', {
+                description: 'Welcome back to the Admin Dashboard.',
+            });
+            navigate('/admin');
+        } catch (err: any) {
+            toast.error('Login failed', {
+                description: err.message ?? 'An unexpected error occurred.',
+            });
+        } finally {
             setIsLoading(false);
-        }, 1500);
+        }
     };
 
     return (

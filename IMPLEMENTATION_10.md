@@ -15,10 +15,10 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 - `src/lib/productAPI.ts`
 
 **Fix**:
-- [ ] Inspect `ProductForm.tsx` for any rendering-time crashes or uncaught exceptions.
-- [ ] Add a null-guard / loading state for `categories` and `brands` data before rendering form selects.
-- [ ] If the issue is a missing route or lazy-load problem, verify `App.tsx` route for `products/add` resolves correctly.
-- [ ] Optionally wrap `AdminAddProduct` in a React `ErrorBoundary` for better debugging.
+- [x] Inspect `ProductForm.tsx` for any rendering-time crashes or uncaught exceptions.
+- [x] Add a null-guard / loading state for `categories` and `brands` data before rendering form selects.
+- [x] If the issue is a missing route or lazy-load problem, verify `App.tsx` route for `products/add` resolves correctly.
+- [x] Optionally wrap `AdminAddProduct` in a React `ErrorBoundary` for better debugging.
 
 ---
 
@@ -60,9 +60,10 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 - `src/pages/admin/categories/AdminCategoryList.tsx`
 
 **Fix**:
-- [ ] Replace the `ToggleLeft`/`ToggleRight` button in the Status column with the pill-badge style from `AdminProductList.tsx`.
-- [ ] Keep the `onClick` handler (`updateCategory.mutate`) intact — just replace the visual element.
-- [ ] Import `CheckCircle2` and `XCircle` from `lucide-react`.
+- [x] Replace the `ToggleLeft`/`ToggleRight` button in the Status column with the pill-badge style from `AdminProductList.tsx`.
+- [x] Keep the `onClick` handler (`updateCategory.mutate`) intact — just replace the visual element.
+- [x] Import `CheckCircle2` and `XCircle` from `lucide-react`.
+- [x] **Category Status Toggle — Visual Redesign (Complete)**
 
 ---
 
@@ -128,7 +129,7 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 ---
 
 ## Verification Checklist
-- [ ] **Add Product**: Navigate to `/admin/products/add` and verify the form renders correctly with all fields, dropdowns, and image uploaders.
+- [x] **Add Product**: Navigate to `/admin/products/add` and verify the form renders correctly with all fields, dropdowns, and image uploaders.
 - [ ] **Edit Category**: Edit a category's name/description and confirm the changes persist after refreshing `/admin/categories`.
 - [ ] **Category Status Badges**: Confirm the Active/Inactive status in the category list now displays as a pill badge, consistent with Products and Brands.
 - [ ] **Footer FAQ Link**: Click "FAQs" in the footer and verify it navigates to `/faqs`, not `/contact`.

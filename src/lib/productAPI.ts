@@ -5,15 +5,20 @@ import { toast } from 'sonner';
 
 // --- Categories & Brands ---
 
-export const useCategories = () => {
+export const useCategories = (onlyActive = false) => {
     return useQuery({
-        queryKey: ['categories'],
+        queryKey: ['categories', { onlyActive }],
         queryFn: async () => {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('categories')
                 .select('*')
                 .order('display_order', { ascending: true });
 
+            if (onlyActive) {
+                query = query.eq('is_active', true);
+            }
+
+            const { data, error } = await query;
             if (error) throw error;
             return data as Category[];
         }
@@ -78,6 +83,7 @@ export const useProducts = (filters: {
     brand_id?: string;
     search?: string;
     sort?: string;
+    is_active?: boolean;
 } = {}) => {
     return useQuery({
         queryKey: ['products', filters],
@@ -89,6 +95,7 @@ export const useProducts = (filters: {
             if (filters.category_id) query = query.eq('category_id', filters.category_id);
             if (filters.brand_id) query = query.eq('brand_id', filters.brand_id);
             if (filters.search) query = query.ilike('name', `%${filters.search}%`);
+            if (filters.is_active !== undefined) query = query.eq('is_active', filters.is_active);
 
             if (filters.sort) {
                 const [column, order] = filters.sort.split(':');
@@ -216,20 +223,51 @@ export const useUpdateProduct = (id: string) => {
 export const useDeleteProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (id: string) => {
-            const { error } = await supabase
+        mutationFn: async (id: string): Promise<{ softDeleted: boolean }> => {
+            // Step 1: Delete product images first (belt-and-suspenders, cascade handles it but
+            // explicit deletion avoids any RLS hiccup on the images table).
+            await supabase.from('product_images').delete().eq('product_id', id);
+
+            // Step 2: Attempt hard delete and use .select() so Supabase returns the
+            // deleted rows — if the array is empty and there's no error it means the
+            // delete was silently blocked by an RLS policy or the row doesn't exist.
+            const { data: deleted, error } = await supabase
                 .from('products')
                 .delete()
-                .eq('id', id);
+                .eq('id', id)
+                .select('id');
 
-            if (error) throw error;
+            if (error) {
+                // FK violation means the product is referenced by order_items.
+                // Fall back to soft-delete so order history is preserved.
+                if (error.code === '23503') {
+                    const { error: softErr } = await supabase
+                        .from('products')
+                        .update({ is_active: false })
+                        .eq('id', id);
+                    if (softErr) throw softErr;
+                    return { softDeleted: true };
+                }
+                throw error;
+            }
+
+            // No error but 0 rows affected → RLS silently blocked the delete.
+            if (!deleted || deleted.length === 0) {
+                throw new Error('Delete was blocked. You may not have permission to delete this product.');
+            }
+
+            return { softDeleted: false };
         },
-        onSuccess: () => {
+        onSuccess: (result) => {
             queryClient.invalidateQueries({ queryKey: ['products'] });
-            toast.success('Product deleted successfully');
+            if (result?.softDeleted) {
+                toast.warning('Product has existing orders — it was deactivated instead of deleted to preserve order history.');
+            } else {
+                toast.success('Product deleted successfully');
+            }
         },
-        onError: (error) => {
-            toast.error(`Error deleting product: ${error.message}`);
+        onError: (error: any) => {
+            toast.error(`Failed to delete product: ${error.message}`);
         }
     });
 };
@@ -238,19 +276,44 @@ export const useBulkDeleteProducts = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (ids: string[]) => {
-            const { error } = await supabase
+            // Delete product images for all selected products first.
+            await supabase.from('product_images').delete().in('product_id', ids);
+
+            const { data: deleted, error } = await supabase
                 .from('products')
                 .delete()
-                .in('id', ids);
+                .in('id', ids)
+                .select('id');
 
-            if (error) throw error;
+            if (error) {
+                // Some products may be referenced by orders; soft-delete the whole batch.
+                if (error.code === '23503') {
+                    const { error: softErr } = await supabase
+                        .from('products')
+                        .update({ is_active: false })
+                        .in('id', ids);
+                    if (softErr) throw softErr;
+                    return { softDeleted: true, count: ids.length };
+                }
+                throw error;
+            }
+
+            if (!deleted || deleted.length === 0) {
+                throw new Error('Delete was blocked. You may not have permission to delete these products.');
+            }
+
+            return { softDeleted: false, count: deleted.length };
         },
-        onSuccess: () => {
+        onSuccess: (result) => {
             queryClient.invalidateQueries({ queryKey: ['products'] });
-            toast.success('Selected products deleted successfully');
+            if (result?.softDeleted) {
+                toast.warning(`${result.count} product(s) have existing orders — they were deactivated instead of deleted.`);
+            } else {
+                toast.success(`${result?.count ?? 'Selected'} product(s) deleted successfully`);
+            }
         },
-        onError: (error) => {
-            toast.error(`Error deleting products: ${error.message}`);
+        onError: (error: any) => {
+            toast.error(`Failed to delete products: ${error.message}`);
         }
     });
 };

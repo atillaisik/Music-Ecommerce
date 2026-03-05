@@ -23,14 +23,10 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useAdminStore } from '@/lib/adminStore';
 import { motion } from 'framer-motion';
-import { useRealTimeSubscriptions } from '@/hooks/useRealTimeSubscriptions';
 
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 const AdminLayout = () => {
-    // Initialize real-time subscriptions
-    useRealTimeSubscriptions();
-
     const { user } = useAdminStore();
     const location = useLocation();
 

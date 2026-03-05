@@ -53,8 +53,8 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoading }) => {
-    const { data: categories } = useCategories();
-    const { data: brands } = useBrands();
+    const { data: categories, isLoading: isLoadingCategories } = useCategories();
+    const { data: brands, isLoading: isLoadingBrands } = useBrands();
     const [uploading, setUploading] = useState(false);
 
     const form = useForm<FormValues>({
@@ -66,7 +66,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
             price: initialData.price,
             original_price: initialData.original_price,
             stock_quantity: initialData.stock_quantity,
-            badge: initialData.badge || '',
+            badge: initialData.badge || 'none',
             description: initialData.description || '',
             is_active: initialData.is_active,
             images: initialData.images?.map(img => ({
@@ -80,7 +80,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
             category_id: '',
             price: 0,
             stock_quantity: 0,
-            badge: '',
+            badge: 'none',
             description: '',
             is_active: true,
             images: [],
@@ -120,7 +120,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
     };
 
     const handleFormSubmit = (values: FormValues) => {
-        onSubmit(values as any);
+        // Convert "none" back to empty string or null for the API if needed
+        const submissionData = {
+            ...values,
+            badge: values.badge === 'none' ? '' : values.badge
+        };
+        onSubmit(submissionData as any);
     };
 
     return (
@@ -152,16 +157,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">Category</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger className="h-11 bg-background border-border/50 focus:ring-primary/20">
-                                                            <SelectValue placeholder="Select Category" />
+                                                            <SelectValue placeholder={isLoadingCategories ? "Loading categories..." : "Select Category"} />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {categories?.map(c => (
-                                                            <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                                                        ))}
+                                                        {categories && categories.length > 0 ? (
+                                                            categories.filter(c => c.id && c.id.trim() !== '').map(c => (
+                                                                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                                            ))
+                                                        ) : (
+                                                            <SelectItem value="none" disabled>No categories found</SelectItem>
+                                                        )}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -175,16 +184,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">Brand</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger className="h-11 bg-background border-border/50 focus:ring-primary/20">
-                                                            <SelectValue placeholder="Select Brand" />
+                                                            <SelectValue placeholder={isLoadingBrands ? "Loading brands..." : "Select Brand"} />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {brands?.map(b => (
-                                                            <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                                                        ))}
+                                                        {brands && brands.length > 0 ? (
+                                                            brands.filter(b => b.id && b.id.trim() !== '').map(b => (
+                                                                <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
+                                                            ))
+                                                        ) : (
+                                                            <SelectItem value="none" disabled>No brands found</SelectItem>
+                                                        )}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -300,14 +313,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">Promotional Badge</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value || 'none'}>
                                                 <FormControl>
                                                     <SelectTrigger className="h-11 bg-background border-border/50">
                                                         <SelectValue placeholder="Standard" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="">None</SelectItem>
+                                                    <SelectItem value="none">None</SelectItem>
                                                     <SelectItem value="Best Seller">Best Seller</SelectItem>
                                                     <SelectItem value="New">New Arrival</SelectItem>
                                                     <SelectItem value="Sale">Sale Item</SelectItem>

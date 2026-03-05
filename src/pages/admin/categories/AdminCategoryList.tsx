@@ -12,7 +12,9 @@ import {
     ToggleLeft,
     ToggleRight,
     AlertTriangle,
-    ArrowRight
+    ArrowRight,
+    CheckCircle2,
+    XCircle
 } from 'lucide-react';
 import {
     Table,
@@ -161,13 +163,18 @@ const AdminCategoryList = () => {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="hover:bg-transparent h-fit p-0"
+                            className="hover:bg-transparent h-fit p-0 group/badge transition-transform active:scale-95"
                             onClick={() => updateCategory.mutate({ id: node.id, data: { is_active: !node.is_active } })}
                         >
-                            {node.is_active ?
-                                <ToggleRight className="h-6 w-6 text-primary" /> :
-                                <ToggleLeft className="h-6 w-6 text-muted-foreground" />
-                            }
+                            {node.is_active ? (
+                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider group-hover/badge:bg-emerald-500/20 transition-colors">
+                                    <CheckCircle2 className="h-3 w-3" /> Active
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-500/10 text-slate-600 border border-slate-500/20 text-[10px] font-bold uppercase tracking-wider group-hover/badge:bg-slate-500/20 transition-colors">
+                                    <XCircle className="h-3 w-3" /> Inactive
+                                </div>
+                            )}
                         </Button>
                     </TableCell>
                     <TableCell className="text-right">

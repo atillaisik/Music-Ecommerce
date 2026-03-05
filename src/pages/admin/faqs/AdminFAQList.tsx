@@ -75,9 +75,9 @@ const AdminFAQList = () => {
 
     const handleToggleActive = async (faq: FAQ) => {
         try {
-            const updated = await faqAPI.update(faq.id, { is_active: !faq.is_active });
+            const updated = await faqAPI.update(faq.id, { is_published: !faq.is_published });
             setFaqs(faqs.map(f => f.id === faq.id ? updated : f));
-            toast.success(`FAQ ${updated.is_active ? 'activated' : 'deactivated'}`);
+            toast.success(`FAQ ${updated.is_published ? 'activated' : 'deactivated'}`);
         } catch (error) {
             console.error('Error toggling FAQ status:', error);
             toast.error('Failed to update status');
@@ -110,7 +110,7 @@ const AdminFAQList = () => {
                 const updated = await faqAPI.update(currentFaq.id, {
                     question: currentFaq.question,
                     answer: currentFaq.answer,
-                    order_index: currentFaq.order_index
+                    display_order: currentFaq.display_order
                 });
                 setFaqs(faqs.map(f => f.id === updated.id ? updated : f));
                 toast.success('FAQ updated');
@@ -118,8 +118,8 @@ const AdminFAQList = () => {
                 const created = await faqAPI.create({
                     question: currentFaq.question,
                     answer: currentFaq.answer,
-                    order_index: faqs.length,
-                    is_active: true
+                    display_order: faqs.length,
+                    is_published: true
                 });
                 setFaqs([...faqs, created]);
                 toast.success('FAQ created');
@@ -223,7 +223,7 @@ const AdminFAQList = () => {
                                             className="hover:bg-transparent h-fit p-0"
                                             onClick={() => handleToggleActive(faq)}
                                         >
-                                            {faq.is_active ?
+                                            {faq.is_published ?
                                                 <ToggleRight className="h-7 w-7 text-primary" /> :
                                                 <ToggleLeft className="h-7 w-7 text-muted-foreground" />
                                             }

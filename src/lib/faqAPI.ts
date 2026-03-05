@@ -6,7 +6,7 @@ export const faqAPI = {
         const { data, error } = await supabase
             .from('faqs')
             .select('*')
-            .order('order_index', { ascending: true });
+            .order('display_order', { ascending: true });
 
         if (error) throw error;
         return data as FAQ[];
@@ -16,8 +16,8 @@ export const faqAPI = {
         const { data, error } = await supabase
             .from('faqs')
             .select('*')
-            .eq('is_active', true)
-            .order('order_index', { ascending: true });
+            .eq('is_published', true)
+            .order('display_order', { ascending: true });
 
         if (error) throw error;
         return data as FAQ[];
@@ -55,7 +55,7 @@ export const faqAPI = {
         if (error) throw error;
     },
 
-    async updateOrder(items: { id: string, order_index: number }[]) {
+    async updateOrder(items: { id: string, display_order: number }[]) {
         const { error } = await supabase.rpc('update_faq_order', {
             faq_orders: items
         });
@@ -63,7 +63,7 @@ export const faqAPI = {
         if (error) {
             // Fallback to individual updates if RPC doesn't exist
             for (const item of items) {
-                await this.update(item.id, { order_index: item.order_index });
+                await this.update(item.id, { display_order: item.display_order });
             }
         }
     }

@@ -134,5 +134,5 @@ This phase focuses on fixing reported bugs across the admin panel, storefront na
 - [ ] **Category Status Badges**: Confirm the Active/Inactive status in the category list now displays as a pill badge, consistent with Products and Brands.
 - [x] **Footer FAQ Link**: Click "FAQs" in the footer and verify it navigates to `/faqs`, not `/contact`.
 - [x] **Public FAQ Page**: Verify `/faqs` renders with dynamic FAQs from Supabase, with correct Navbar, Footer, and hero styling.
-- [ ] **Store Identity Persistence**: Change and save store settings; refresh the page and confirm the changes are retained.
-- [ ] **Footer Logo**: Switch to light mode and confirm the footer logo turns black (matching the header logo).
+- [x] **Store Identity Persistence**: Change and save store settings; refresh the page and confirm the changes are retained.
+- [x] **Footer Logo**: Switch to light mode and confirm the footer logo turns black (matching the header logo).

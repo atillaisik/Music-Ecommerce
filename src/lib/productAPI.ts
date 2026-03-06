@@ -156,7 +156,10 @@ export const useCreateProduct = () => {
                     .from('product_images')
                     .insert(imageRows);
 
-                if (imageError) throw imageError;
+                if (imageError) {
+                    console.error("Error inserting product images:", imageError);
+                    throw new Error(`Product created, but failed to save images: ${imageError.message}`);
+                }
             }
 
             return product;
@@ -192,7 +195,10 @@ export const useUpdateProduct = (id: string) => {
                 .delete()
                 .eq('product_id', id);
 
-            if (deleteImagesError) throw deleteImagesError;
+            if (deleteImagesError) {
+                console.error("Error deleting product images:", deleteImagesError);
+                throw new Error(`Failed to update product images (Cleanup step): ${deleteImagesError.message}`);
+            }
 
             if (images.length > 0) {
                 const imageRows = images.map((img, index) => ({
@@ -206,7 +212,10 @@ export const useUpdateProduct = (id: string) => {
                     .from('product_images')
                     .insert(imageRows);
 
-                if (imageError) throw imageError;
+                if (imageError) {
+                    console.error("Error inserting product images:", imageError);
+                    throw new Error(`Product updated, but failed to save images: ${imageError.message}`);
+                }
             }
         },
         onSuccess: () => {

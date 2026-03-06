@@ -124,10 +124,10 @@ useEffect(() => {
 
 ### Phase 3 — `productAPI.ts` Error Surfacing (Issue 2 & 4)
 
-- [ ] **3.1** In `useUpdateProduct`, add explicit error handling/toast for the image delete step (currently errors are thrown but the toast may not show which step failed)
-- [ ] **3.2** In `useUpdateProduct`, add explicit error handling/toast for the image re-insert step
-- [ ] **3.3** In `useCreateProduct`, add explicit error handling/toast for the image insert step
-- [ ] **3.4** Confirm that saving a product with no images (after schema fix) succeeds without errors
+- [x] **3.1** In `useUpdateProduct`, add explicit error handling/toast for the image delete step (currently errors are thrown but the toast may not show which step failed)
+- [x] **3.2** In `useUpdateProduct`, add explicit error handling/toast for the image re-insert step
+- [x] **3.3** In `useCreateProduct`, add explicit error handling/toast for the image insert step
+- [x] **3.4** Confirm that saving a product with no images (after schema fix) succeeds without errors
 
 ---
 

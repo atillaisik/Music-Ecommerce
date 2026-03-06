@@ -133,20 +133,20 @@ useEffect(() => {
 
 ### Phase 4 — `ProductDetail.tsx` Real Data Migration (Issue 3)
 
-- [ ] **4.1** Remove `import { products, Review } from "@/data/mock"` from `ProductDetail.tsx`
-- [ ] **4.2** Add `import { useProduct } from "@/lib/productAPI"` to `ProductDetail.tsx`
-- [ ] **4.3** Replace `const product = products.find(...)` with `const { data: product, isLoading, error } = useProduct(id)`
-- [ ] **4.4** Update all references that use mock-specific fields:
+- [x] **4.1** Remove `import { products, Review } from "@/data/mock"` from `ProductDetail.tsx`
+- [x] **4.2** Add `import { useProduct } from "@/lib/productAPI"` to `ProductDetail.tsx`
+- [x] **4.3** Replace `const product = products.find(...)` with `const { data: product, isLoading, error } = useProduct(id)`
+- [x] **4.4** Update all references that use mock-specific fields:
   - `product.brand` (string) → `product.brand?.name`
   - `product.category` (string) → `product.category?.name`
   - `product.originalPrice` → `product.original_price`
   - `product.reviews` → `product.reviews_count`
   - `product.image` (single string) → use `product.images` array
   - `product.reviewsData` → remove/replace with real reviews (out of scope, remove mock reviews display for now)
-- [ ] **4.5** Update the `images` prop passed to `ProductImageCarousel`: map `product.images` (array of `ProductImage`) to array of `image_url` strings
-- [ ] **4.6** Update `relatedProducts` to use a separate `useProducts({ category_id: product.category_id })` query instead of filtering mock array
-- [ ] **4.7** Remove mock-data loading spinner (the fake 800ms `setTimeout`) — use real `isLoading` state from `useProduct`
-- [ ] **4.8** Update error state: if `error || !product`, show "Product not found" just as before
+- [x] **4.5** Update the `images` prop passed to `ProductImageCarousel`: map `product.images` (array of `ProductImage`) to array of `image_url` strings
+- [x] **4.6** Update `relatedProducts` to use a separate `useProducts({ category_id: product.category_id })` query instead of filtering mock array
+- [x] **4.7** Remove mock-data loading spinner (the fake 800ms `setTimeout`) — use real `isLoading` state from `useProduct`
+- [x] **4.8** Update error state: if `error || !product`, show "Product not found" just as before
 
 ---
 

@@ -115,10 +115,10 @@ useEffect(() => {
 
 ### Phase 2 — `ProductForm.tsx` Fix (Issues 1 & 6)
 
-- [ ] **2.1** After the `useFieldArray` hook in `ProductForm.tsx`, add a `useEffect` that calls `form.reset()` with all `initialData` values mapped correctly
-- [ ] **2.2** Use `[initialData?.id]` as the dependency array (NOT `[initialData]`) to prevent re-firing on every background refetch
-- [ ] **2.3** Map `initialData.images` correctly: `img.image_url → url`, `img.is_primary`, `img.display_order`
-- [ ] **2.4** Confirm that after the fix, opening the edit page shows existing image thumbnails in the Media section
+- [x] **2.1** After the `useFieldArray` hook in `ProductForm.tsx`, add a `useEffect` that calls `form.reset()` with all `initialData` values mapped correctly
+- [x] **2.2** Use `[initialData?.id]` as the dependency array (NOT `[initialData]`) to prevent re-firing on every background refetch
+- [x] **2.3** Map `initialData.images` correctly: `img.image_url → url`, `img.is_primary`, `img.display_order`
+- [x] **2.4** Confirm that after the fix, opening the edit page shows existing image thumbnails in the Media section
 
 ---
 

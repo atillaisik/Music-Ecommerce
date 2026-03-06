@@ -92,6 +92,28 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
         name: 'images'
     });
 
+    // Sync form with initialData when it loads (Issue 1 & 6)
+    useEffect(() => {
+        if (initialData) {
+            form.reset({
+                name: initialData.name,
+                brand_id: initialData.brand_id,
+                category_id: initialData.category_id,
+                price: initialData.price,
+                original_price: initialData.original_price,
+                stock_quantity: initialData.stock_quantity,
+                badge: initialData.badge || 'none',
+                description: initialData.description || '',
+                is_active: initialData.is_active,
+                images: initialData.images?.map(img => ({
+                    url: img.image_url,
+                    is_primary: img.is_primary,
+                    display_order: img.display_order
+                })) || [],
+            });
+        }
+    }, [initialData?.id, form]);
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;

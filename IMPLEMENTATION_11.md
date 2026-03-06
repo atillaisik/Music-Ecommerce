@@ -152,8 +152,8 @@ useEffect(() => {
 
 ### Phase 5 — `ProductImageCarousel.tsx` Type Fix (Issue 3)
 
-- [ ] **5.1** Change `import type { Product } from "@/data/mock"` to `import type { Product } from "@/types/product"`
-- [ ] **5.2** Verify all usages of the `product` prop inside the carousel still work with the real `Product` type (wishlist functions use `product.id` and `product.name` — both exist in the real type ✅)
+- [x] **5.1** Change `import type { Product } from "@/data/mock"` to `import type { Product } from "@/types/product"`
+- [x] **5.2** Verify all usages of the `product` prop inside the carousel still work with the real `Product` type (wishlist functions use `product.id` and `product.name` — both exist in the real type ✅)
 
 ---
 

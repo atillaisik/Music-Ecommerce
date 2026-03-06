@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { optimizeImage, preloadImage } from "@/lib/image-utils";
 import { useWishlistStore } from "@/lib/store";
 import { toast } from "sonner";
-import type { Product } from "@/data/mock";
+import type { Product } from "@/types/product";
 
 interface ProductImageCarouselProps {
     images: string[];

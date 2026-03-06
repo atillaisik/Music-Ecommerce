@@ -108,8 +108,8 @@ useEffect(() => {
 
 ### Phase 1 — Schema & Validation Fix
 
-- [ ] **1.1** In `src/lib/schemas.ts`: change `images: z.array(...).min(1, ...)` to `.min(0)` — allow zero images on edit
-- [ ] **1.2** Verify the admin account used for testing is present in the `admin_users` table in Supabase (manual check via Supabase dashboard — no code change needed)
+- [x] **1.1** In `src/lib/schemas.ts`: change `images: z.array(...).min(1, ...)` to `.min(0)` — allow zero images on edit
+- [x] **1.2** Verify the admin account used for testing is present in the `admin_users` table in Supabase (manual check via Supabase dashboard — no code change needed)
 
 ---
 

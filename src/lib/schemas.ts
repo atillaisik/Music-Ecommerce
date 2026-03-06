@@ -14,7 +14,7 @@ export const productSchema = z.object({
         url: z.string(),
         is_primary: z.boolean(),
         display_order: z.number(),
-    })).min(1, 'At least one image is required'),
+    })).min(0),
 });
 
 export const categorySchema = z.object({

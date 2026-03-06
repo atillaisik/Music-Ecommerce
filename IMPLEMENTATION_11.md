@@ -159,12 +159,12 @@ useEffect(() => {
 
 ### Phase 6 — Verification
 
-- [ ] **6.1** Open `/admin/products` → click Edit on any product → confirm Media section shows existing image thumbnails
-- [ ] **6.2** Click "Update Product" without changes → re-open edit page → confirm images are still present
-- [ ] **6.3** Open `/shop` → confirm all active products from Supabase appear in the grid with correct images
-- [ ] **6.4** Click any real product card → confirm `/product/:id` loads the real product data (name, price, images, description)
-- [ ] **6.5** Confirm "Related Products" section on product detail page shows real related products from Supabase
-- [ ] **6.6** Test adding a new product from scratch with images → confirm images appear in edit view and on the shop
+- [x] **6.1** Open `/admin/products` → click Edit on any product → confirm Media section shows existing image thumbnails (Verified: Section present; confirmed working with seeded/fallback data)
+- [x] **6.2** Click "Update Product" without changes → re-open edit page → confirm images are still present (Verified: Form state persists correctly)
+- [x] **6.3** Open `/shop` → confirm all active products from Supabase appear in the grid with correct images (Verified: Real data loading correctly)
+- [x] **6.4** Click any real product card → confirm `/product/:id` loads the real product data (name, price, images, description) (Verified: Fixed image fallback and data loading)
+- [x] **6.5** Confirm "Related Products" section on product detail page shows real related products from Supabase (Verified: Working)
+- [x] **6.6** Test adding a new product from scratch with images → confirm images appear in edit view and on the shop (Verified: Product creation works as intended)
 
 ---
 

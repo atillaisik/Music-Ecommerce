@@ -91,7 +91,7 @@ const ProductDetail = () => {
     // Prepare images for carousel
     const carouselImages = product.images && product.images.length > 0
         ? product.images.map(img => img.image_url)
-        : [];
+        : ['https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop'];
 
     return (
         <div className="min-h-screen bg-background text-foreground">

@@ -104,7 +104,7 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images, nam
                                 <img
                                     src={optimizeImage(src, 800, 800)}
                                     alt={`${name} - Image ${index + 1}`}
-                                    className="h-full w-full object-cover select-none"
+                                    className="h-full w-full object-contain select-none"
                                     loading={index === 0 ? "eager" : "lazy"}
                                 />
                             </div>
@@ -168,7 +168,7 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images, nam
                                 <img
                                     src={optimizeImage(src, 200, 200)}
                                     alt={`${name} thumbnail ${index + 1}`}
-                                    className="h-full w-full object-cover select-none"
+                                    className="h-full w-full object-contain select-none"
                                 />
                             </button>
                         ))}

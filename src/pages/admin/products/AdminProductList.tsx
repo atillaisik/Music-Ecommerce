@@ -390,7 +390,7 @@ const AdminProductList = () => {
                                         <div className="flex items-center gap-3">
                                             <div className="h-10 w-10 rounded-md bg-muted overflow-hidden border border-border/50 group-hover:scale-105 transition-transform">
                                                 {product.images?.[0]?.image_url ? (
-                                                    <img src={product.images[0].image_url} alt={product.name} className="h-full w-full object-cover" />
+                                                    <img src={product.images[0].image_url} alt={product.name} className="h-full w-full object-contain" />
                                                 ) : (
                                                     <div className="h-full w-full flex items-center justify-center text-muted-foreground">
                                                         <Package className="h-5 w-5" />

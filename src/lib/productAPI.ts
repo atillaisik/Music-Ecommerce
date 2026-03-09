@@ -182,12 +182,19 @@ export const useUpdateProduct = (id: string) => {
             const { images, ...productData } = formData;
 
             // 1. Update product
-            const { error: productError } = await supabase
+            console.log("Updating product with data:", productData);
+            const { data: updatedProduct, error: productError } = await supabase
                 .from('products')
                 .update(productData)
-                .eq('id', id);
+                .eq('id', id)
+                .select();
+                
+            console.log("Update result:", { updatedProduct, productError });
 
             if (productError) throw productError;
+            if (!updatedProduct || updatedProduct.length === 0) {
+                throw new Error('Update was blocked by Row Level Security policy. You do not have permission to update this product.');
+            }
 
             // 2. Update images (simplified: delete existing and re-insert)
             // In a real app, you'd manage this more carefully

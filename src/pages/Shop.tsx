@@ -27,7 +27,7 @@ const Shop = () => {
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sort, setSort] = useState(sortOptions[0].value);
   const [search, setSearch] = useState(initialSearch);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
 
   const { data: categories } = useCategories();
   const { data: brands } = useBrands();
@@ -225,7 +225,7 @@ const Shop = () => {
                     setSearch('');
                     setSelectedCategory('all');
                     setSelectedBrand('all');
-                    setPriceRange({ min: 0, max: 10000 });
+                    setPriceRange({ min: 0, max: 1000000 });
                   }}
                   className="mt-6 rounded-xl font-bold uppercase tracking-widest text-[10px]"
                 >

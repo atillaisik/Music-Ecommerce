@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Building2 } from "lucide-react";
 
 const Brands = () => {
-  const { data: brands, isLoading } = useBrands();
+  const { data: brands, isLoading } = useBrands(true);
 
   return (
     <div className="min-h-screen bg-background">

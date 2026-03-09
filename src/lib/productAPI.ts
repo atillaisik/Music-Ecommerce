@@ -25,15 +25,20 @@ export const useCategories = (onlyActive = false) => {
     });
 };
 
-export const useBrands = () => {
+export const useBrands = (onlyActive = false) => {
     return useQuery({
-        queryKey: ['brands'],
+        queryKey: ['brands', { onlyActive }],
         queryFn: async () => {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('brands')
                 .select('*')
                 .order('name', { ascending: true });
 
+            if (onlyActive) {
+                query = query.eq('is_active', true);
+            }
+
+            const { data, error } = await query;
             if (error) throw error;
             return data as Brand[];
         }

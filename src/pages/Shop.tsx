@@ -29,8 +29,8 @@ const Shop = () => {
   const [search, setSearch] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
 
-  const { data: categories } = useCategories();
-  const { data: brands } = useBrands();
+  const { data: categories } = useCategories(true);
+  const { data: brands } = useBrands(true);
   const { data: products, isLoading } = useProducts({
     category_id: selectedCategory === 'all' ? undefined : selectedCategory,
     brand_id: selectedBrand === 'all' ? undefined : selectedBrand,

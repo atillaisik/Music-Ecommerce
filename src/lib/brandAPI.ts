@@ -3,14 +3,20 @@ import { supabase } from './supabaseClient';
 import { Brand } from '../types/product';
 import { toast } from 'sonner';
 
-export const useBrands = () => {
+export const useBrands = (onlyActive = false) => {
     return useQuery({
-        queryKey: ['brands'],
+        queryKey: ['brands', { onlyActive }],
         queryFn: async () => {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('brands')
                 .select('*')
                 .order('name', { ascending: true });
+
+            if (onlyActive) {
+                query = query.eq('is_active', true);
+            }
+
+            const { data, error } = await query;
 
             if (error) {
                 console.error('Error fetching brands:', error);

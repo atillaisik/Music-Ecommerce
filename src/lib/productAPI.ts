@@ -154,7 +154,8 @@ export const useCreateProduct = () => {
 
                 const { error: imageError } = await supabase
                     .from('product_images')
-                    .insert(imageRows);
+                    .insert(imageRows)
+                    .select();
 
                 if (imageError) {
                     console.error("Error inserting product images:", imageError);
@@ -210,7 +211,8 @@ export const useUpdateProduct = (id: string) => {
 
                 const { error: imageError } = await supabase
                     .from('product_images')
-                    .insert(imageRows);
+                    .insert(imageRows)
+                    .select(); // Added .select() to catch RLS errors
 
                 if (imageError) {
                     console.error("Error inserting product images:", imageError);

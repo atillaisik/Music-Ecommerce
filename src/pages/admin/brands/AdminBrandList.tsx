@@ -33,7 +33,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useBrands, useDeleteBrand } from '@/lib/brandAPI';
+import { useBrands, useDeleteBrand, useUpdateBrand } from '@/lib/brandAPI';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
@@ -45,6 +45,7 @@ const AdminBrandList = () => {
 
     const { data: brands, isLoading } = useBrands();
     const deleteBrand = useDeleteBrand();
+    const updateBrand = useUpdateBrand();
 
     const filteredBrands = brands?.filter(b =>
         b.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -156,17 +157,22 @@ const AdminBrandList = () => {
                                         </p>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        {brand.is_active ? (
-                                            <div className="flex items-center justify-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider mx-auto w-fit">
-                                                <CheckCircle2 className="h-3 w-3" />
-                                                Active
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center justify-center gap-1.5 px-2 py-1 rounded-full bg-slate-500/10 text-slate-600 border border-slate-500/20 text-[10px] font-bold uppercase tracking-wider mx-auto w-fit">
-                                                <XCircle className="h-3 w-3" />
-                                                Inactive
-                                            </div>
-                                        )}
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="hover:bg-transparent h-fit p-0 group/badge transition-transform active:scale-95"
+                                            onClick={() => updateBrand.mutate({ id: brand.id, is_active: !brand.is_active })}
+                                        >
+                                            {brand.is_active ? (
+                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider group-hover/badge:bg-emerald-500/20 transition-colors">
+                                                    <CheckCircle2 className="h-3 w-3" /> Active
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-500/10 text-slate-600 border border-slate-500/20 text-[10px] font-bold uppercase tracking-wider group-hover/badge:bg-slate-500/20 transition-colors">
+                                                    <XCircle className="h-3 w-3" /> Inactive
+                                                </div>
+                                            )}
+                                        </Button>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>

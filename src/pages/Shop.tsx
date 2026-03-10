@@ -73,6 +73,16 @@ const Shop = () => {
     setSearchParams(newParams);
   };
 
+  const clearFilters = () => {
+    setSearch('');
+    setSelectedCategory('all');
+    setSelectedBrand('all');
+    setSelectedBadge('all');
+    setPriceRange({ min: 0, max: 1000000 });
+    setSort(sortOptions[0].value);
+    setSearchParams(new URLSearchParams());
+  };
+
   const filteredByPrice = useMemo(() => {
     if (!products) return [];
     const minPrice = priceRange.min === "" ? 0 : Number(priceRange.min);
@@ -94,8 +104,18 @@ const Shop = () => {
             <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px] mt-1">Discover Professional Instruments</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-widest opacity-40">Filter View</span>
-            <SlidersHorizontal className="h-4 w-4 opacity-40" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              Clear Filters
+            </Button>
+            <div className="hidden sm:flex items-center gap-2 ml-2 border-l border-border/50 pl-4">
+              <span className="text-xs font-bold uppercase tracking-widest opacity-40">Filter View</span>
+              <SlidersHorizontal className="h-4 w-4 opacity-40" />
+            </div>
           </div>
         </div>
 
@@ -273,13 +293,7 @@ const Shop = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setSearch('');
-                    setSelectedCategory('all');
-                    setSelectedBrand('all');
-                    setSelectedBadge('all');
-                    setPriceRange({ min: 0, max: 1000000 });
-                  }}
+                  onClick={clearFilters}
                   className="mt-6 rounded-xl font-bold uppercase tracking-widest text-[10px]"
                 >
                   Reset all filters

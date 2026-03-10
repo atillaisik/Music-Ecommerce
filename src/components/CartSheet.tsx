@@ -59,7 +59,7 @@ export function CartSheet() {
                                     <div key={item.id} className="flex gap-4">
                                         <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
                                             <img
-                                                src={item.image}
+                                                src={(item as any).image || (item.images && item.images.length > 0 ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0].image_url) : 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop')}
                                                 alt={item.name}
                                                 className="h-full w-full object-cover"
                                             />
@@ -70,7 +70,7 @@ export function CartSheet() {
                                                     <h4 className="line-clamp-1 text-sm font-medium">{item.name}</h4>
                                                     <p className="text-sm font-bold">${(item.price * item.quantity).toLocaleString()}</p>
                                                 </div>
-                                                <p className="text-xs text-muted-foreground mt-0.5">{item.brand}</p>
+                                                <p className="text-xs text-muted-foreground mt-0.5">{(item.brand as any)?.name || item.brand || 'Unknown Brand'}</p>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center rounded-md border border-border">

@@ -345,7 +345,7 @@ export default function Checkout() {
                                 {items.map((item) => (
                                     <div key={item.id} className="flex gap-4">
                                         <div className="h-16 w-16 rounded bg-secondary overflow-hidden flex-shrink-0">
-                                            <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                                            <img src={(item as any).image || (item.images && item.images.length > 0 ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0].image_url) : 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop')} alt={item.name} className="h-full w-full object-cover" />
                                         </div>
                                         <div className="flex-1 text-sm">
                                             <p className="font-medium line-clamp-1">{item.name}</p>

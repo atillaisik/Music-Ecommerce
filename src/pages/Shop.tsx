@@ -27,7 +27,7 @@ const Shop = () => {
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sort, setSort] = useState(sortOptions[0].value);
   const [search, setSearch] = useState(initialSearch);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000000 });
+  const [priceRange, setPriceRange] = useState<{ min: number | string, max: number | string }>({ min: 0, max: 1000000 });
 
   const { data: categories } = useCategories(true);
   const { data: brands } = useBrands(true);
@@ -63,7 +63,9 @@ const Shop = () => {
 
   const filteredByPrice = useMemo(() => {
     if (!products) return [];
-    return products.filter(p => p.price >= priceRange.min && p.price <= priceRange.max);
+    const minPrice = priceRange.min === "" ? 0 : Number(priceRange.min);
+    const maxPrice = priceRange.max === "" ? Infinity : Number(priceRange.max);
+    return products.filter(p => p.price >= minPrice && p.price <= maxPrice);
   }, [products, priceRange]);
 
   return (
@@ -163,7 +165,7 @@ const Shop = () => {
                   <Input
                     type="number"
                     value={priceRange.min}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value === '' ? '' : Number(e.target.value) }))}
                     className="h-10 bg-card/30 border-border/40 text-xs font-bold rounded-lg"
                   />
                 </div>
@@ -172,7 +174,7 @@ const Shop = () => {
                   <Input
                     type="number"
                     value={priceRange.max}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value === '' ? '' : Number(e.target.value) }))}
                     className="h-10 bg-card/30 border-border/40 text-xs font-bold rounded-lg"
                   />
                 </div>

@@ -14,10 +14,13 @@ import { toast } from "sonner";
 import { useCartStore } from "@/lib/store";
 import ProductImageCarousel from "@/components/ProductImageCarousel";
 import { useProduct, useProducts } from "@/lib/productAPI";
+import { useReviews, useAddReview, ProductReview } from "@/lib/reviewAPI";
 
 const ProductDetail = () => {
     const { id } = useParams<{ id: string }>();
     const { data: product, isLoading, error } = useProduct(id);
+    const { data: reviews = [] } = useReviews(product?.id);
+    const addReviewMutation = useAddReview();
 
     // Fetch related products (products in the same category)
     const { data: relatedProductsData, isLoading: isRelatedLoading } = useProducts({
@@ -36,6 +39,14 @@ const ProductDetail = () => {
         addToCart(product as any);
         toast.success(`${product.name} added to cart!`, {
             description: "You can view your cart in the navigation bar.",
+        });
+    };
+
+    const handleAddReview = (reviewData: Omit<ProductReview, 'id' | 'created_at' | 'updated_at'>) => {
+        if (!product) return;
+        addReviewMutation.mutate({
+            ...reviewData,
+            product_id: product.id
         });
     };
 
@@ -187,10 +198,10 @@ const ProductDetail = () => {
 
                 {/* Reviews Section */}
                 <ReviewSection
-                    reviews={[]} // Real reviews system is out of scope for now
+                    reviews={reviews}
                     averageRating={product.rating || 0}
                     totalReviews={product.reviews_count || 0}
-                    onAddReview={() => console.log("Review system coming soon")}
+                    onAddReview={handleAddReview}
                 />
 
                 {/* Related Products */}

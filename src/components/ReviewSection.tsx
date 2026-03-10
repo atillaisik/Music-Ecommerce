@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Star, MessageSquarePlus } from "lucide-react";
-import { Review } from "@/data/mock";
+import { ProductReview } from "@/lib/reviewAPI";
 import { useAuthStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 interface ReviewSectionProps {
-    reviews: Review[];
+    reviews: ProductReview[];
     averageRating: number;
     totalReviews: number;
-    onAddReview?: (review: Review) => void;
+    onAddReview?: (review: Omit<ProductReview, 'id' | 'created_at' | 'updated_at'>) => void;
 }
 
 const ReviewSection = ({ reviews, averageRating, totalReviews, onAddReview }: ReviewSectionProps) => {
@@ -25,13 +25,12 @@ const ReviewSection = ({ reviews, averageRating, totalReviews, onAddReview }: Re
         e.preventDefault();
         if (!user || !onAddReview) return;
 
-        const review: Review = {
-            id: Math.random().toString(36).substring(2, 9),
-            user: user.name,
-            userId: user.id, // Added userId
+        const review: Omit<ProductReview, 'id' | 'created_at' | 'updated_at'> = {
+            product_id: "", // Will be set by parent or we can pass it here, let's just use empty and parent overrides
+            user_name: user.name,
+            user_id: user.id,
             rating: newReview.rating,
             comment: newReview.comment,
-            date: new Date().toISOString().split("T")[0],
         };
 
 
@@ -142,7 +141,7 @@ const ReviewSection = ({ reviews, averageRating, totalReviews, onAddReview }: Re
                             <div key={review.id} className="border-b border-border pb-8 last:border-0">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-bold">{review.user}</p>
+                                        <p className="font-bold">{review.user_name}</p>
                                         <div className="mt-1 flex items-center gap-1">
                                             {[...Array(5)].map((_, i) => (
                                                 <Star
@@ -155,7 +154,9 @@ const ReviewSection = ({ reviews, averageRating, totalReviews, onAddReview }: Re
                                             ))}
                                         </div>
                                     </div>
-                                    <span className="text-sm text-muted-foreground">{review.date}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                        {new Date(review.created_at).toLocaleDateString()}
+                                    </span>
                                 </div>
                                 <p className="mt-4 text-muted-foreground">{review.comment}</p>
                             </div>

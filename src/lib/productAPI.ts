@@ -89,6 +89,7 @@ export const useProducts = (filters: {
     search?: string;
     sort?: string;
     is_active?: boolean;
+    badge?: string;
 } = {}) => {
     return useQuery({
         queryKey: ['products', filters],
@@ -101,6 +102,7 @@ export const useProducts = (filters: {
             if (filters.brand_id) query = query.eq('brand_id', filters.brand_id);
             if (filters.search) query = query.ilike('name', `%${filters.search}%`);
             if (filters.is_active !== undefined) query = query.eq('is_active', filters.is_active);
+            if (filters.badge) query = query.eq('badge', filters.badge);
 
             if (filters.sort) {
                 const [column, order] = filters.sort.split(':');

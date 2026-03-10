@@ -22,9 +22,11 @@ const Shop = () => {
   const initialCat = searchParams.get("category") || "all";
   const initialSearch = searchParams.get("q") || "";
   const initialBrand = searchParams.get("brand") || "all";
+  const initialBadge = searchParams.get("badge") || "all";
 
   const [selectedCategory, setSelectedCategory] = useState(initialCat);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
+  const [selectedBadge, setSelectedBadge] = useState(initialBadge);
   const [sort, setSort] = useState(sortOptions[0].value);
   const [search, setSearch] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState<{ min: number | string, max: number | string }>({ min: 0, max: 1000000 });
@@ -34,6 +36,7 @@ const Shop = () => {
   const { data: products, isLoading } = useProducts({
     category_id: selectedCategory === 'all' ? undefined : selectedCategory,
     brand_id: selectedBrand === 'all' ? undefined : selectedBrand,
+    badge: selectedBadge === 'all' ? undefined : selectedBadge,
     search: search || undefined,
     sort: sort,
     is_active: true,
@@ -42,6 +45,7 @@ const Shop = () => {
   useEffect(() => {
     setSelectedCategory(searchParams.get("category") || "all");
     setSelectedBrand(searchParams.get("brand") || "all");
+    setSelectedBadge(searchParams.get("badge") || "all");
     setSearch(searchParams.get("q") || "");
   }, [searchParams]);
 
@@ -58,6 +62,14 @@ const Shop = () => {
     const newParams = new URLSearchParams(searchParams);
     if (id === 'all') newParams.delete('brand');
     else newParams.set('brand', id);
+    setSearchParams(newParams);
+  };
+
+  const handleBadgeChange = (id: string) => {
+    setSelectedBadge(id);
+    const newParams = new URLSearchParams(searchParams);
+    if (id === 'all') newParams.delete('badge');
+    else newParams.set('badge', id);
     setSearchParams(newParams);
   };
 
@@ -182,6 +194,44 @@ const Shop = () => {
             </section>
 
             <section>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Collections</h3>
+              <div className="flex flex-col gap-1">
+                <Button
+                  variant={selectedBadge === 'all' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleBadgeChange('all')}
+                  className={`justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg ${selectedBadge === 'all' ? 'shadow-lg shadow-primary/20' : ''}`}
+                >
+                  All Products
+                </Button>
+                <Button
+                  variant={selectedBadge === 'Best Seller' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleBadgeChange('Best Seller')}
+                  className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
+                >
+                  Best Seller
+                </Button>
+                <Button
+                  variant={selectedBadge === 'Premium' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleBadgeChange('Premium')}
+                  className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
+                >
+                  Premium Gear
+                </Button>
+                <Button
+                  variant={selectedBadge === 'Hot' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleBadgeChange('Hot')}
+                  className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
+                >
+                  Hot Item
+                </Button>
+              </div>
+            </section>
+
+            <section>
               <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Sort By</h3>
               <div className="flex flex-col gap-1">
                 {sortOptions.map((option) => (
@@ -227,6 +277,7 @@ const Shop = () => {
                     setSearch('');
                     setSelectedCategory('all');
                     setSelectedBrand('all');
+                    setSelectedBadge('all');
                     setPriceRange({ min: 0, max: 1000000 });
                   }}
                   className="mt-6 rounded-xl font-bold uppercase tracking-widest text-[10px]"

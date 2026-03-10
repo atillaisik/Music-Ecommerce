@@ -345,7 +345,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, isLoad
                                                     <SelectItem value="none">None</SelectItem>
                                                     <SelectItem value="Best Seller">Best Seller</SelectItem>
                                                     <SelectItem value="New">New Arrival</SelectItem>
-                                                    <SelectItem value="Sale">Sale Item</SelectItem>
                                                     <SelectItem value="Premium">Premium Gear</SelectItem>
                                                     <SelectItem value="Hot">Hot Item</SelectItem>
                                                 </SelectContent>

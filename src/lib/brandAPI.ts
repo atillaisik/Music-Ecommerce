@@ -103,12 +103,18 @@ export const useDeleteBrand = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (id: string) => {
-            const { error } = await supabase
+            const { error, count } = await supabase
                 .from('brands')
-                .delete()
+                .delete({ count: 'exact' })
                 .eq('id', id);
 
             if (error) throw error;
+            
+            // If RLS blocked the delete or the ID doesn't exist, count will be 0
+            if (count === 0) {
+                throw new Error('Permission denied or brand not found');
+            }
+            
             return id;
         },
         onSuccess: () => {
@@ -116,7 +122,16 @@ export const useDeleteBrand = () => {
             toast.success('Brand deleted successfully');
         },
         onError: (error: any) => {
-            toast.error(`Failed to delete brand: ${error.message}`);
+            console.error('Delete brand error:', error);
+            
+            let message = error.message;
+            
+            // Handle specific PostgreSQL error codes
+            if (error.code === '23503') {
+                message = "The brand cannot be deleted because it is still linked to one or more products.";
+            }
+            
+            toast.error(`Failed to delete brand: ${message}`);
         }
     });
 };

@@ -23,10 +23,10 @@ This implementation plan focuses on resolving the issue where brands appear to b
     - [x] If products exist, the brand cannot be deleted until products are reassigned or removed. (Confirmed: `on delete restrict` is in place)
 
 ### Phase 2: API Layer Fixes (`src/lib/brandAPI.ts`)
-- [ ] **Update `useDeleteBrand` Mutation**:
-    - [ ] Request count from Supabase delete: `.delete({ count: 'exact' })`.
-    - [ ] Check if `count === 0` and throw a "Permission denied or brand not found" error if so.
-    - [ ] Improve error message parsing in `onError`.
+- [x] **Update `useDeleteBrand` Mutation**:
+    - [x] Request count from Supabase delete: `.delete({ count: 'exact' })`.
+    - [x] Check if `count === 0` and throw a "Permission denied or brand not found" error if so.
+    - [x] Improve error message parsing in `onError`.
 
 ### Phase 3: UI Layer Fixes (`src/pages/admin/brands/AdminBrandList.tsx`)
 - [ ] **Handle Constraint Errors in UI**:

@@ -95,6 +95,13 @@ const menuItems = [
         roles: ['super_admin', 'editor']
     },
     {
+        title: "Marketing",
+        label: "Deals Page",
+        icon: Tag,
+        url: "/admin/marketing/deals",
+        roles: ['super_admin', 'editor']
+    },
+    {
         title: "Content",
         label: "FAQs",
         icon: HelpCircle,

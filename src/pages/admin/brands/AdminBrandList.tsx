@@ -12,8 +12,10 @@ import {
     CheckCircle2,
     XCircle,
     Building2,
-    Globe
+    Globe,
+    Loader2
 } from 'lucide-react';
+import { useAdminStore } from '@/lib/adminStore';
 import {
     Table,
     TableBody,
@@ -41,6 +43,8 @@ const AdminBrandList = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const { user } = useAdminStore();
+    const canModify = user?.role === 'super_admin' || user?.role === 'editor';
     const pageSize = 10;
 
     const { data: brands, isLoading } = useBrands();
@@ -69,12 +73,14 @@ const AdminBrandList = () => {
                     <h1 className="text-2xl font-bold tracking-tight">Brand Management</h1>
                     <p className="text-muted-foreground">Manage the brands and manufacturers in your store.</p>
                 </div>
-                <Button asChild className="gap-2 shadow-lg shadow-primary/20 h-9 rounded-lg font-bold">
-                    <Link to="/admin/brands/add">
-                        <Plus className="h-4 w-4" />
-                        Add Brand
-                    </Link>
-                </Button>
+                {canModify && (
+                    <Button asChild className="gap-2 shadow-lg shadow-primary/20 h-9 rounded-lg font-bold">
+                        <Link to="/admin/brands/add">
+                            <Plus className="h-4 w-4" />
+                            Add Brand
+                        </Link>
+                    </Button>
+                )}
             </div>
 
             {/* Filters */}
@@ -161,7 +167,8 @@ const AdminBrandList = () => {
                                             variant="ghost"
                                             size="sm"
                                             className="hover:bg-transparent h-fit p-0 group/badge transition-transform active:scale-95"
-                                            onClick={() => updateBrand.mutate({ id: brand.id, is_active: !brand.is_active })}
+                                            onClick={() => canModify && updateBrand.mutate({ id: brand.id, is_active: !brand.is_active })}
+                                            disabled={!canModify || updateBrand.isPending}
                                         >
                                             {brand.is_active ? (
                                                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider group-hover/badge:bg-emerald-500/20 transition-colors">
@@ -184,20 +191,24 @@ const AdminBrandList = () => {
                                             <DropdownMenuContent align="end" className="w-48 overflow-hidden rounded-xl border-border/50 shadow-2xl animate-in fade-in zoom-in-95">
                                                 <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Actions</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 focus:text-primary">
-                                                    <Link to={`/admin/brands/edit/${brand.id}`} className="flex items-center gap-2 w-full">
-                                                        <Edit className="h-4 w-4" />
-                                                        Edit Brand
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem
-                                                    className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive font-bold"
-                                                    onClick={() => setDeletingId(brand.id)}
-                                                >
-                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                    Delete Brand
-                                                </DropdownMenuItem>
+                                                {canModify && (
+                                                    <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 focus:text-primary">
+                                                        <Link to={`/admin/brands/edit/${brand.id}`} className="flex items-center gap-2 w-full">
+                                                            <Edit className="h-4 w-4" />
+                                                            Edit Brand
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                )}
+                                                {canModify && <DropdownMenuSeparator />}
+                                                {canModify && (
+                                                    <DropdownMenuItem
+                                                        className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive font-bold"
+                                                        onClick={() => setDeletingId(brand.id)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4 mr-2" />
+                                                        Delete Brand
+                                                    </DropdownMenuItem>
+                                                )}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
@@ -248,12 +259,23 @@ const AdminBrandList = () => {
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel disabled={deleteBrand.isPending}>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={() => deletingId && handleDelete(deletingId)}
-                            className="bg-destructive text-white hover:bg-destructive/90"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                deletingId && handleDelete(deletingId);
+                            }}
+                            className="bg-destructive text-white hover:bg-destructive/90 min-w-[120px]"
+                            disabled={deleteBrand.isPending}
                         >
-                            Delete Brand
+                            {deleteBrand.isPending ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                'Delete Brand'
+                            )}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

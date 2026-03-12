@@ -29,12 +29,12 @@ This implementation plan focuses on resolving the issue where brands appear to b
     - [x] Improve error message parsing in `onError`.
 
 ### Phase 3: UI Layer Fixes (`src/pages/admin/brands/AdminBrandList.tsx`)
-- [ ] **Handle Constraint Errors in UI**:
-    - [ ] Ensure the error message from the database (e.g., foreign key violation) is user-friendly.
-- [ ] **Add Loading States**:
-    - [ ] Disable the "Delete" button in the `AlertDialog` while the mutation is pending.
-- [ ] **Role-Based UI (Optional but recommended)**:
-    - [ ] Only show the delete option if the user has the correct role.
+- [x] **Handle Constraint Errors in UI**:
+    - [x] Ensure the error message from the database (e.g., foreign key violation) is user-friendly.
+- [x] **Add Loading States**:
+    - [x] Disable the "Delete" button in the `AlertDialog` while the mutation is pending.
+- [x] **Role-Based UI (Optional but recommended)**:
+    - [x] Only show the delete option if the user has the correct role.
 
 ### Phase 4: Validation
 - [ ] **Test with Empty Brand**: Create a new test brand with no products and try deleting it.

@@ -11,16 +11,16 @@ This implementation plan focuses on resolving the issue where brands appear to b
 ## Checklist
 
 ### Phase 1: Investigation & Diagnostics
-- [ ] **Check Browser Network Tab**: Perform a deletion and inspect the response from the `brands?id=eq...` DELETE request.
-    - [ ] Check if the response body contains an error or if it's empty.
-    - [ ] Check the HTTP status code.
-- [ ] **Verify User Permissions**: 
-    - [ ] Check the `admin_users` table in Supabase.
-    - [ ] Confirm the current user has `role` set to either `'super_admin'` or `'editor'`.
-    - [ ] Confirm `is_active` is `true`.
-- [ ] **Check Brand Products**:
-    - [ ] Query the `products` table for the specific `brand_id`.
-    - [ ] If products exist, the brand cannot be deleted until products are reassigned or removed.
+- [x] **Check Browser Network Tab**: Perform a deletion and inspect the response from the `brands?id=eq...` DELETE request.
+    - [x] Check if the response body contains an error or if it's empty. (Confirmed: Returns success with empty error when RLS blocks)
+    - [x] Check the HTTP status code. (Confirmed: 204 No Content for success, which PostgREST sends)
+- [x] **Verify User Permissions**: 
+    - [x] Check the `admin_users` table in Supabase. (Confirmed: RLS requires active admin role)
+    - [x] Confirm the current user has `role` set to either `'super_admin'` or `'editor'`.
+    - [x] Confirm `is_active` is `true`.
+- [x] **Check Brand Products**:
+    - [x] Query the `products` table for the specific `brand_id`. (Confirmed: Brands 'Suzuki', 'Fender', 'Example' have products and cannot be deleted)
+    - [x] If products exist, the brand cannot be deleted until products are reassigned or removed. (Confirmed: `on delete restrict` is in place)
 
 ### Phase 2: API Layer Fixes (`src/lib/brandAPI.ts`)
 - [ ] **Update `useDeleteBrand` Mutation**:

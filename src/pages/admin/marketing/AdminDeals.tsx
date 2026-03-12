@@ -79,8 +79,11 @@ const AdminDeals = () => {
             toast.success('Deals banner updated successfully');
         } catch (error: any) {
             console.error('Error updating deals banner:', error);
+            const errorMessage = error.message || 'Unknown error occurred';
+            const errorDetail = error.details || 'Please check if you have the necessary permissions.';
+            
             toast.error('Failed to update banner content', {
-                description: error.message || 'Please check your permissions and try again.'
+                description: `${errorMessage}. ${errorDetail}`
             });
         } finally {
             setIsSaving(false);

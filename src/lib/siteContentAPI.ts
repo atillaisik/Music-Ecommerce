@@ -16,13 +16,14 @@ export const siteContentAPI = {
 
     async updateContent(pageName: string, sectionName: string, content: any) {
         try {
+            if (!content) throw new Error('Content is required for update');
+
             const { data, error } = await supabase
                 .from('site_content')
                 .upsert({
                     page_name: pageName,
                     section_name: sectionName,
                     content: content
-                    // removed updated_at: trigger handles it
                 }, {
                     onConflict: 'page_name,section_name'
                 })
@@ -30,12 +31,13 @@ export const siteContentAPI = {
                 .single();
 
             if (error) {
-                console.error(`Error in updateContent for ${pageName}/${sectionName}:`, error);
+                console.error(`Database error in updateContent (${pageName}/${sectionName}):`, error);
                 throw error;
             }
+            
             return data as SiteContent;
         } catch (error) {
-            console.error('Failed to update site content:', error);
+            console.error('Fatal error in siteContentAPI.updateContent:', error);
             throw error;
         }
     }

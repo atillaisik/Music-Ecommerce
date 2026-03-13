@@ -58,7 +58,7 @@ const AdminBrandList = () => {
 
     const handleDelete = (id: string) => {
         deleteBrand.mutate(id, {
-            onSuccess: () => setDeletingId(null)
+            onSettled: () => setDeletingId(null)
         });
     };
 

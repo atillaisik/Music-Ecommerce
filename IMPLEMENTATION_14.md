@@ -25,12 +25,12 @@ This plan implements a robust authentication and profile system for the public p
 - [x] **Forgot Password**: Add "Forgot Password" link and modal/section using `supabase.auth.resetPasswordForEmail`. <!-- id: 7 -->
 
 ## Phase 4: Wishlist & Data Sync
-- [ ] **Wishlist Persistence**: <!-- id: 8 -->
-    - [ ] Update `useWishlistStore` to sync local items to Supabase when the user logs in.
-    - [ ] Fetch server-side wishlist on mount if authenticated.
-- [ ] **Update APIs**: <!-- id: 9 -->
-    - [ ] Modify `orderAPI.ts` to include `user_id` in new orders.
-    - [ ] Modify `reviewAPI.ts` to use UUIDs for review authorship.
+- [x] **Wishlist Persistence**: <!-- id: 8 -->
+    - [x] Update `useWishlistStore` to sync local items to Supabase when the user logs in.
+    - [x] Fetch server-side wishlist on mount if authenticated.
+- [x] **Update APIs**: <!-- id: 9 -->
+    - [x] Modify `orderAPI.ts` to include `user_id` in new orders.
+    - [x] Modify `reviewAPI.ts` to use UUIDs for review authorship.
 
 ## Phase 5: Profile & Personalization
 - [ ] **Enhanced Profile Page**: <!-- id: 10 -->

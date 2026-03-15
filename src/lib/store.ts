@@ -102,23 +102,38 @@ export const useAuthStore = create<AuthState>()(
     )
 );
 
+import { wishlistAPI } from './wishlistAPI';
+
 interface WishlistState {
     items: (Product | MockProduct)[];
-    addToWishlist: (product: Product | MockProduct) => void;
-    removeFromWishlist: (productId: string) => void;
+    addToWishlist: (product: Product | MockProduct) => Promise<void>;
+    removeFromWishlist: (productId: string) => Promise<void>;
     isInWishlist: (productId: string) => boolean;
+    syncWishlist: () => Promise<void>;
+    fetchWishlist: () => Promise<void>;
+    clearWishlist: () => void;
 }
 
 export const useWishlistStore = create<WishlistState>()(
     persist(
         (set, get) => ({
             items: [],
-            addToWishlist: (product: Product | MockProduct) => {
+            addToWishlist: async (product: Product | MockProduct) => {
+                const isAuth = useAuthStore.getState().isAuthenticated;
+                if (isAuth) {
+                    await wishlistAPI.addToWishlist(product.id);
+                }
+                
                 set((state) => ({
                     items: [...state.items, product]
                 }));
             },
-            removeFromWishlist: (productId: string) => {
+            removeFromWishlist: async (productId: string) => {
+                const isAuth = useAuthStore.getState().isAuthenticated;
+                if (isAuth) {
+                    await wishlistAPI.removeFromWishlist(productId);
+                }
+
                 set((state) => ({
                     items: state.items.filter((item) => item.id !== productId)
                 }));
@@ -126,6 +141,20 @@ export const useWishlistStore = create<WishlistState>()(
             isInWishlist: (productId: string) => {
                 return get().items.some((item) => item.id === productId);
             },
+            syncWishlist: async () => {
+                const items = get().items;
+                if (items.length > 0) {
+                    await wishlistAPI.syncWishlist(items.map(i => i.id));
+                }
+                // After sync, fetch the full list from server to ensure consistency
+                const serverItems = await wishlistAPI.getWishlist();
+                set({ items: serverItems });
+            },
+            fetchWishlist: async () => {
+                const serverItems = await wishlistAPI.getWishlist();
+                set({ items: serverItems });
+            },
+            clearWishlist: () => set({ items: [] }),
         }),
         {
             name: 'arasounds-wishlist',

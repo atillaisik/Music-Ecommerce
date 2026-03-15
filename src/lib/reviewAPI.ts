@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export interface ProductReview {
     id: string;
     product_id: string;
-    user_id: string;
+    user_id: string; // This is the UUID from profiles.id
     user_name: string;
     rating: number;
     comment: string;

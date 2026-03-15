@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { useAuthStore } from '@/lib/store';
+import { useAuthStore, useWishlistStore } from '@/lib/store';
 
 export const AppAuthHandler = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
+  const syncWishlist = useWishlistStore((state) => state.syncWishlist);
+  const fetchWishlist = useWishlistStore((state) => state.fetchWishlist);
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
 
   useEffect(() => {
     // 1. Check initial session
@@ -18,6 +21,8 @@ export const AppAuthHandler = () => {
           email: session.user.email || '',
           name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
         });
+        // Fetch server wishlist on mount if authenticated
+        fetchWishlist();
       } else {
         setUser(null);
       }
@@ -36,8 +41,15 @@ export const AppAuthHandler = () => {
           email: session.user.email || '',
           name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
         });
+
+        if (event === 'SIGNED_IN') {
+          syncWishlist();
+        }
       } else {
         setUser(null);
+        if (event === 'SIGNED_OUT') {
+          clearWishlist();
+        }
       }
     });
 

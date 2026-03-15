@@ -43,6 +43,18 @@ export default function Checkout() {
     const currentSubtotal = subtotal();
     const total = currentSubtotal;
 
+    const { user } = useAuthStore();
+
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                name: prev.name || user.name || "",
+                email: prev.email || user.email || ""
+            }));
+        }
+    }, [user]);
+
     useEffect(() => {
         if (items.length === 0 && !isProcessing && step !== "review") {
             // If cart is empty and we aren't mid-checkout/success, go back to shop
@@ -111,7 +123,6 @@ export default function Checkout() {
         if (step === "review") setStep("payment");
     };
 
-    const { user } = useAuthStore();
     const createOrder = useCreateOrder();
     const handlePlaceOrder = async () => {
         setIsProcessing(true);

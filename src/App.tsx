@@ -52,6 +52,7 @@ import { HelmetProvider } from "react-helmet-async";
 import ScrollToTop from "./components/ScrollToTop";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import { useRealTimeSubscriptions } from "@/hooks/useRealTimeSubscriptions";
+import { AppAuthHandler } from "./components/AppAuthHandler";
 
 // Runs real-time Supabase subscriptions globally so BOTH the shop and admin
 // pages receive live cache invalidations when data changes.
@@ -70,6 +71,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <AppAuthHandler />
             <GlobalSubscriptions />
             <ScrollToTop />
             <Routes>

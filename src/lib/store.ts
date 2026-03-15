@@ -71,7 +71,11 @@ interface User {
 interface AuthState {
     user: User | null;
     isAuthenticated: boolean;
-    login: (email: string, name: string) => void;
+    isLoading: boolean;
+    error: string | null;
+    setUser: (user: User | null) => void;
+    setLoading: (loading: boolean) => void;
+    setError: (error: string | null) => void;
     logout: () => void;
 }
 
@@ -80,11 +84,17 @@ export const useAuthStore = create<AuthState>()(
         (set) => ({
             user: null,
             isAuthenticated: false,
-            login: (email, name) => set({
-                user: { id: Math.random().toString(36).substr(2, 9), email, name },
-                isAuthenticated: true
+            isLoading: false,
+            error: null,
+            setUser: (user) => set({ 
+                user, 
+                isAuthenticated: !!user,
+                isLoading: false,
+                error: null 
             }),
-            logout: () => set({ user: null, isAuthenticated: false }),
+            setLoading: (isLoading) => set({ isLoading }),
+            setError: (error) => set({ error, isLoading: false }),
+            logout: () => set({ user: null, isAuthenticated: false, error: null }),
         }),
         {
             name: 'arasounds-auth',

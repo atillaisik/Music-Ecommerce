@@ -58,6 +58,18 @@ export const useCartStore = create<CartState>()(
         }),
         {
             name: 'arasounds-cart',
+            version: 1,
+            migrate: (persistedState: any, version: number) => {
+                if (version === 0) {
+                    // Filter out any items that don't have a valid UUID as ID
+                    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    return {
+                        ...persistedState,
+                        items: persistedState.items.filter((item: any) => uuidRegex.test(item.id))
+                    };
+                }
+                return persistedState;
+            },
         }
     )
 );
@@ -158,6 +170,18 @@ export const useWishlistStore = create<WishlistState>()(
         }),
         {
             name: 'arasounds-wishlist',
+            version: 1,
+            migrate: (persistedState: any, version: number) => {
+                if (version === 0) {
+                    // Filter out any items that don't have a valid UUID as ID
+                    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    return {
+                        ...persistedState,
+                        items: persistedState.items.filter((item: any) => uuidRegex.test(item.id))
+                    };
+                }
+                return persistedState;
+            },
         }
     )
 );

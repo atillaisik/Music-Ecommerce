@@ -3,8 +3,8 @@
 This phase focuses on fixing the issue where favorites are not being persisted for signed-in users due to ID format mismatches and missing async handling.
 
 ## Phase 1: Data Strategy & Mock Updates
-- [ ] **UUID Transition**: Replace all numeric IDs in `src/data/mock.ts` with valid UUIDs.
-- [ ] **Legacy Cleanup**: Add a filter in `useWishlistStore` and `useCartStore` initialization to remove any non-UUID IDs from local storage (to avoid crashes).
+- [x] **UUID Transition**: Replace all numeric IDs in `src/data/mock.ts` with valid UUIDs.
+- [x] **Legacy Cleanup**: Add a filter in `useWishlistStore` and `useCartStore` initialization to remove any non-UUID IDs from local storage (to avoid crashes).
 
 ## Phase 2: Store & API Hardening
 - [ ] **Error Propagation**: Update `useWishlistStore` in `src/lib/store.ts` to `throw` errors from `wishlistAPI` so components can catch them.

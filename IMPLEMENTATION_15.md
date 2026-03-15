@@ -12,9 +12,9 @@ This phase focuses on fixing the issue where favorites are not being persisted f
 - [x] **Optimistic Rollback**: Implement state rollback logic in the store if the backend operation fails.
 
 ## Phase 3: UI Enhancement
-- [ ] **Async UI**: Update `ProductCard.tsx` to `await` wishlist actions.
-- [ ] **Loading States**: Disable the favorite button while an operation is in progress (`isPending`).
-- [ ] **Correct Feedback**: Only show success toasts AFTER a successful backend response; show error toasts on failure.
+- [x] **Async UI**: Update `ProductCard.tsx` to `await` wishlist actions.
+- [x] **Loading States**: Disable the favorite button while an operation is in progress (`isPending`).
+- [x] **Correct Feedback**: Only show success toasts AFTER a successful backend response; show error toasts on failure.
 
 ## Phase 4: Verification
 - [ ] **Guest Test**: Verify favorites still work locally for non-logged-in users.

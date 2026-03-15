@@ -82,16 +82,29 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   const isFavorited = isInWishlist(product.id);
+  const [isWishlistPending, setIsWishlistPending] = useState(false);
 
-  const toggleWishlist = (e: React.MouseEvent) => {
+  const toggleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isFavorited) {
-      removeFromWishlist(product.id);
-      toast.info(`Removed ${product.name} from wishlist`);
-    } else {
-      addToWishlist(product);
-      toast.success(`Added ${product.name} to wishlist!`);
+    
+    if (isWishlistPending) return;
+
+    setIsWishlistPending(true);
+    try {
+      if (isFavorited) {
+        await removeFromWishlist(product.id);
+        toast.info(`Removed ${product.name} from wishlist`);
+      } else {
+        await addToWishlist(product);
+        toast.success(`Added ${product.name} to wishlist!`);
+      }
+    } catch (error) {
+      toast.error(`Failed to update wishlist`, {
+        description: "Please try again later."
+      });
+    } finally {
+      setIsWishlistPending(false);
     }
   };
 
@@ -139,11 +152,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
         <button
           onClick={toggleWishlist}
+          disabled={isWishlistPending}
           className={`absolute right-3 top-3 rounded-full p-2 transition-all hover:scale-110 ${isFavorited ? "bg-primary text-primary-foreground" : "bg-white/80 text-foreground hover:bg-white"
-            } shadow-sm z-20`}
+            } ${isWishlistPending ? "opacity-70 cursor-not-allowed" : ""} shadow-sm z-20`}
           aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
+          <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""} ${isWishlistPending ? "animate-pulse" : ""}`} />
         </button>
         {product.badge && (
           <Badge className="absolute left-3 top-3 bg-primary text-primary-foreground z-20">{product.badge}</Badge>

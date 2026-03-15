@@ -42,4 +42,4 @@ This plan implements a robust authentication and profile system for the public p
 - [ ] **Registration Test**: Verify record creation in `auth.users` and `public.profiles`. <!-- id: 12 -->
 - [ ] **Persistence Test**: Confirm user remains logged in after hard refresh. <!-- id: 13 -->
 - [ ] **Cross-Device Test**: Add item to wishlist on Device A, verify appearance on Device B after login. <!-- id: 14 -->
-- [ ] **Security (RLS) Test**: Ensure users cannot view/edit other users' profiles or orders. <!-- id: 15 -->
+- [x] **Security (RLS) Test**: Ensure users cannot view/edit other users' profiles or orders (VERIFIED). <!-- id: 15 -->

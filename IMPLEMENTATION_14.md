@@ -17,12 +17,12 @@ This plan implements a robust authentication and profile system for the public p
 - [x] **Implement `AppAuthHandler`**: Create a global component in `App.tsx` that listens to `onAuthStateChange` to keep the store in sync with Supabase. <!-- id: 5 -->
 
 ## Phase 3: Signup & Login Flow
-- [ ] **Update `AuthModal.tsx`**: <!-- id: 6 -->
-    - [ ] Implement `supabase.auth.signInWithPassword`.
-    - [ ] Implement `supabase.auth.signUp` with `full_name` metadata.
-    - [ ] Add "Confirm Password" validation.
-    - [ ] Handle "Email Confirmation Required" state (if enabled in Supabase).
-- [ ] **Forgot Password**: Add "Forgot Password" link and modal/section using `supabase.auth.resetPasswordForEmail`. <!-- id: 7 -->
+- [x] **Update `AuthModal.tsx`**: <!-- id: 6 -->
+    - [x] Implement `supabase.auth.signInWithPassword`.
+    - [x] Implement `supabase.auth.signUp` with `full_name` metadata.
+    - [x] Add "Confirm Password" validation.
+    - [x] Handle "Email Confirmation Required" state (if enabled in Supabase).
+- [x] **Forgot Password**: Add "Forgot Password" link and modal/section using `supabase.auth.resetPasswordForEmail`. <!-- id: 7 -->
 
 ## Phase 4: Wishlist & Data Sync
 - [ ] **Wishlist Persistence**: <!-- id: 8 -->

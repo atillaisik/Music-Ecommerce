@@ -90,8 +90,13 @@ export const AuthModal = ({ defaultTab = "login", children }: AuthModalProps) =>
 
                 if (error) throw error;
 
-                if (data.session) {
-                    toast.success("Account created and logged in!");
+                if (data.session || data.user) {
+                    if (data.session) {
+                        toast.success("Account created and logged in!");
+                    } else {
+                        toast.success("Account created successfully! You can now sign in.");
+                        setView("login");
+                    }
                 } else {
                     toast.success("Account created! Please check your email for confirmation.");
                 }
@@ -100,8 +105,10 @@ export const AuthModal = ({ defaultTab = "login", children }: AuthModalProps) =>
                     toast.info("Thank you for subscribing to our newsletter!");
                 }
                 
-                setIsOpen(false);
-                resetForm();
+                if (data.session) {
+                    setIsOpen(false);
+                    resetForm();
+                }
             } else if (view === "forgot-password") {
                 if (!email) {
                     toast.error("Please enter your email");
@@ -119,7 +126,12 @@ export const AuthModal = ({ defaultTab = "login", children }: AuthModalProps) =>
                 setView("login");
             }
         } catch (error: any) {
-            toast.error(error.message || "An error occurred during authentication");
+            console.error("Auth error:", error);
+            if (error.status === 429 || error.message?.includes("rate limit")) {
+                toast.error("Email rate limit exceeded. Please try again in an hour or contact support.");
+            } else {
+                toast.error(error.message || "An error occurred during authentication");
+            }
         } finally {
             setIsLoading(false);
         }

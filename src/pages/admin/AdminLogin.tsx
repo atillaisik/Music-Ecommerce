@@ -43,8 +43,16 @@ const AdminLogin = () => {
             });
 
             if (authError || !authData.user) {
-                toast.error('Invalid credentials', {
-                    description: authError?.message || 'Please check your email and password.',
+                let errorMessage = 'Please check your email and password.';
+                
+                if (authError?.message === 'Email not confirmed') {
+                    errorMessage = 'Your email address has not been confirmed yet. Please check your inbox or contact the system administrator.';
+                } else if (authError?.message === 'Invalid login credentials') {
+                    errorMessage = 'The email or password you entered is incorrect.';
+                }
+
+                toast.error('Login failed', {
+                    description: errorMessage,
                 });
                 return;
             }
@@ -56,11 +64,19 @@ const AdminLogin = () => {
                 .eq('id', authData.user.id)
                 .single();
 
-            if (adminError || !adminUser || !adminUser.is_active) {
+            if (adminError || !adminUser) {
                 // Not an admin — sign them out and reject
                 await supabase.auth.signOut();
                 toast.error('Access denied', {
-                    description: 'Your account does not have admin privileges.',
+                    description: 'Your account does not have admin privileges. If this is a new account, ensure it has been added to the admin_users table.',
+                });
+                return;
+            }
+
+            if (!adminUser.is_active) {
+                await supabase.auth.signOut();
+                toast.error('Account inactive', {
+                    description: 'Your admin account has been deactivated. Please contact the system administrator.',
                 });
                 return;
             }

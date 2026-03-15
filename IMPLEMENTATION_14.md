@@ -33,10 +33,10 @@ This plan implements a robust authentication and profile system for the public p
     - [x] Modify `reviewAPI.ts` to use UUIDs for review authorship.
 
 ## Phase 5: Profile & Personalization
-- [ ] **Enhanced Profile Page**: <!-- id: 10 -->
-    - [ ] Fetch and display full profile data (address, phone, etc.).
-    - [ ] Allow users to edit their profile details.
-- [ ] **UI Polish**: Add loading skeletons for profile data and order history. <!-- id: 11 -->
+- [x] **Enhanced Profile Page**: <!-- id: 10 -->
+    - [x] Fetch and display full profile data (address, phone, etc.).
+    - [x] Allow users to edit their profile details.
+- [x] **UI Polish**: Add loading skeletons for profile data and order history. <!-- id: 11 -->
 
 ## Phase 6: Verification
 - [ ] **Registration Test**: Verify record creation in `auth.users` and `public.profiles`. <!-- id: 12 -->

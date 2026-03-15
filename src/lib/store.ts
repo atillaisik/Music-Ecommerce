@@ -131,36 +131,61 @@ export const useWishlistStore = create<WishlistState>()(
         (set, get) => ({
             items: [],
             addToWishlist: async (product: Product | MockProduct) => {
+                const previousItems = get().items;
                 const isAuth = useAuthStore.getState().isAuthenticated;
-                if (isAuth) {
-                    await wishlistAPI.addToWishlist(product.id);
-                }
                 
+                // Optimistic update
                 set((state) => ({
                     items: [...state.items, product]
                 }));
+
+                try {
+                    if (isAuth) {
+                        await wishlistAPI.addToWishlist(product.id);
+                    }
+                } catch (error) {
+                    // Rollback on failure
+                    set({ items: previousItems });
+                    console.error('Failed to add to wishlist:', error);
+                    throw error;
+                }
             },
             removeFromWishlist: async (productId: string) => {
+                const previousItems = get().items;
                 const isAuth = useAuthStore.getState().isAuthenticated;
-                if (isAuth) {
-                    await wishlistAPI.removeFromWishlist(productId);
-                }
 
+                // Optimistic update
                 set((state) => ({
                     items: state.items.filter((item) => item.id !== productId)
                 }));
+
+                try {
+                    if (isAuth) {
+                        await wishlistAPI.removeFromWishlist(productId);
+                    }
+                } catch (error) {
+                    // Rollback on failure
+                    set({ items: previousItems });
+                    console.error('Failed to remove from wishlist:', error);
+                    throw error;
+                }
             },
             isInWishlist: (productId: string) => {
                 return get().items.some((item) => item.id === productId);
             },
             syncWishlist: async () => {
                 const items = get().items;
-                if (items.length > 0) {
-                    await wishlistAPI.syncWishlist(items.map(i => i.id));
+                try {
+                    if (items.length > 0) {
+                        await wishlistAPI.syncWishlist(items.map(i => i.id));
+                    }
+                    // After sync, fetch the full list from server to ensure consistency
+                    const serverItems = await wishlistAPI.getWishlist();
+                    set({ items: serverItems });
+                } catch (error) {
+                    console.error('Failed to sync wishlist:', error);
+                    throw error;
                 }
-                // After sync, fetch the full list from server to ensure consistency
-                const serverItems = await wishlistAPI.getWishlist();
-                set({ items: serverItems });
             },
             fetchWishlist: async () => {
                 const serverItems = await wishlistAPI.getWishlist();

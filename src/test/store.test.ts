@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { useCartStore } from '../lib/store';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { useCartStore, useWishlistStore } from '../lib/store';
 
 const mockProduct = {
     id: '1',
@@ -65,5 +65,55 @@ describe('Cart Store', () => {
         useCartStore.getState().addToCart(mockProduct); // 1000
         useCartStore.getState().updateQuantity('1', 2); // 2000
         expect(useCartStore.getState().subtotal()).toBe(2000);
+    });
+});
+
+describe('Wishlist Store', () => {
+    beforeEach(() => {
+        useWishlistStore.getState().clearWishlist();
+        vi.clearAllMocks();
+    });
+
+    it('should add an item to the wishlist', async () => {
+        await useWishlistStore.getState().addToWishlist(mockProduct);
+        const state = useWishlistStore.getState();
+        expect(state.items).toHaveLength(1);
+        expect(state.items[0].id).toBe('1');
+    });
+
+    it('should remove an item from the wishlist', async () => {
+        await useWishlistStore.getState().addToWishlist(mockProduct);
+        await useWishlistStore.getState().removeFromWishlist('1');
+        const state = useWishlistStore.getState();
+        expect(state.items).toHaveLength(0);
+    });
+
+    it('should rollback wishlist if API call fails', async () => {
+        const { wishlistAPI } = await import('../lib/wishlistAPI');
+        const { useAuthStore } = await import('../lib/store');
+        
+        // Mock authenticated state
+        vi.spyOn(useAuthStore, 'getState').mockReturnValue({
+            isAuthenticated: true,
+            user: { id: 'user-1', email: 'test@example.com', name: 'Test User' },
+            isLoading: false,
+            error: null,
+            setUser: vi.fn(),
+            setLoading: vi.fn(),
+            setError: vi.fn(),
+            logout: vi.fn()
+        } as any);
+
+        // Mock API failure
+        vi.spyOn(wishlistAPI, 'addToWishlist').mockRejectedValue(new Error('API Error'));
+
+        // Initial state should be empty
+        expect(useWishlistStore.getState().items).toHaveLength(0);
+
+        // Call addToWishlist and expect it to throw
+        await expect(useWishlistStore.getState().addToWishlist(mockProduct)).rejects.toThrow('API Error');
+
+        // State should be back to empty after rollback
+        expect(useWishlistStore.getState().items).toHaveLength(0);
     });
 });

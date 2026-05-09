@@ -44,6 +44,9 @@
     "newsletter_placeholder": "Your email",
     "newsletter_button": "Join",
     "rights_reserved": "All rights reserved.",
+    "mersis_label": "MERSIS",
+    "tax_office_label": "Tax Office",
+    "trade_registry_label": "Trade Registry",
     "links": {
       "shop": "Shop",
       "instruments": "Instruments",
@@ -410,5 +413,18 @@
     "label": "Choose language",
     "tr": "Turkish",
     "en": "English"
+  },
+  "cookies": {
+    "dialog_label": "Cookie preferences",
+    "title": "Your cookie preferences",
+    "body": "We use essential cookies so the site works correctly. See our <0>Cookie Policy</0> for details.",
+    "close": "Close banner",
+    "essential_only": "Essential only",
+    "accept_all": "Accept all"
+  },
+  "error_boundary": {
+    "title": "Something went wrong",
+    "default_message": "An unexpected error occurred while rendering this component.",
+    "try_again": "Try again"
   }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Cookie, X } from "lucide-react";
 
@@ -36,14 +37,15 @@ const setCookieConsent = (choice: ConsentChoice) => {
 };
 
 export const CookieConsentBanner = () => {
+    const { t } = useTranslation();
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         const existing = getCookieConsent();
         if (!existing) {
             // Show after a short delay so it doesn't block first paint LCP
-            const t = setTimeout(() => setVisible(true), 600);
-            return () => clearTimeout(t);
+            const timer = setTimeout(() => setVisible(true), 600);
+            return () => clearTimeout(timer);
         }
     }, []);
 
@@ -58,7 +60,7 @@ export const CookieConsentBanner = () => {
         <div
             role="dialog"
             aria-live="polite"
-            aria-label="Çerez tercihleri"
+            aria-label={t("cookies.dialog_label")}
             className="fixed bottom-0 left-0 right-0 z-50 mx-auto p-3 md:p-4"
         >
             <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card text-card-foreground shadow-2xl backdrop-blur-md">
@@ -68,23 +70,24 @@ export const CookieConsentBanner = () => {
                             <Cookie className="h-4 w-4" />
                         </div>
                         <div className="flex-1 text-sm">
-                            <p className="font-bold mb-1">Çerez tercihleriniz</p>
+                            <p className="font-bold mb-1">{t("cookies.title")}</p>
                             <p className="text-muted-foreground leading-relaxed">
-                                Sitemizi kullanırken hizmet sunabilmemiz için zorunlu
-                                çerezler kullanırız. Detaylar için{" "}
-                                <Link
-                                    to="/cerez-politikasi"
-                                    className="text-primary hover:underline font-medium"
-                                >
-                                    Çerez Politikası
-                                </Link>
-                                'nı inceleyebilirsiniz.
+                                <Trans
+                                    i18nKey="cookies.body"
+                                    components={[
+                                        <Link
+                                            key="cookie-policy"
+                                            to="/cerez-politikasi"
+                                            className="text-primary hover:underline font-medium"
+                                        />,
+                                    ]}
+                                />
                             </p>
                         </div>
                         <button
                             type="button"
                             onClick={() => handle("rejected")}
-                            aria-label="Banner'ı kapat"
+                            aria-label={t("cookies.close")}
                             className="text-muted-foreground hover:text-foreground transition-colors p-1"
                         >
                             <X className="h-4 w-4" />
@@ -97,14 +100,14 @@ export const CookieConsentBanner = () => {
                             onClick={() => handle("essential")}
                             className="text-xs font-bold uppercase tracking-widest"
                         >
-                            Yalnızca zorunlu
+                            {t("cookies.essential_only")}
                         </Button>
                         <Button
                             size="sm"
                             onClick={() => handle("all")}
                             className="text-xs font-bold uppercase tracking-widest"
                         >
-                            Tümünü kabul et
+                            {t("cookies.accept_all")}
                         </Button>
                     </div>
                 </div>

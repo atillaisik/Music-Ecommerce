@@ -44,6 +44,9 @@
     "newsletter_placeholder": "E-posta",
     "newsletter_button": "Katıl",
     "rights_reserved": "Tüm hakları saklıdır.",
+    "mersis_label": "MERSIS",
+    "tax_office_label": "Vergi Dairesi",
+    "trade_registry_label": "Ticaret Sicil",
     "links": {
       "shop": "Mağaza",
       "instruments": "Enstrümanlar",
@@ -410,5 +413,18 @@
     "label": "Dil seçin",
     "tr": "Türkçe",
     "en": "İngilizce"
+  },
+  "cookies": {
+    "dialog_label": "Çerez tercihleri",
+    "title": "Çerez tercihleriniz",
+    "body": "Sitemizi kullanırken hizmet sunabilmemiz için zorunlu çerezler kullanırız. Detaylar için <0>Çerez Politikası</0>'nı inceleyebilirsiniz.",
+    "close": "Banner'ı kapat",
+    "essential_only": "Yalnızca zorunlu",
+    "accept_all": "Tümünü kabul et"
+  },
+  "error_boundary": {
+    "title": "Bir şeyler ters gitti",
+    "default_message": "Bu bileşen yüklenirken beklenmeyen bir hata oluştu.",
+    "try_again": "Tekrar dene"
   }
 }

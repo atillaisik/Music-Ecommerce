@@ -153,9 +153,9 @@ const Footer = () => {
                 <div className="mt-6 flex flex-col items-center gap-1 text-center text-xs text-muted-foreground">
                     {settings?.mersisNo && (
                         <span>
-                            MERSIS: {settings.mersisNo}
-                            {settings.taxOffice && <> · Vergi Dairesi: {settings.taxOffice}</>}
-                            {settings.tradeRegistryNo && <> · Ticaret Sicil: {settings.tradeRegistryNo}</>}
+                            {t("footer.mersis_label")}: {settings.mersisNo}
+                            {settings.taxOffice && <> · {t("footer.tax_office_label")}: {settings.taxOffice}</>}
+                            {settings.tradeRegistryNo && <> · {t("footer.trade_registry_label")}: {settings.tradeRegistryNo}</>}
                         </span>
                     )}
                     <span>

@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from './supabaseClient';
 import { Order, OrderStatus } from '../types/order';
 import { toast } from 'sonner';
+import { mapSupabaseError } from './apiErrors';
+import { sendTransactionalEmail } from './transactionalEmail';
 
 export const useOrders = (filters: {
     status?: OrderStatus;
@@ -20,7 +22,6 @@ export const useOrders = (filters: {
             }
 
             if (filters.search) {
-                // Search by email or name
                 query = query.or(`customer_email.ilike.%${filters.search}%,customer_name.ilike.%${filters.search}%`);
             }
 
@@ -32,14 +33,8 @@ export const useOrders = (filters: {
             }
 
             const { data, error } = await query;
-
-            if (error) {
-                console.error('Error fetching orders:', error);
-                // Fallback to empty array if table doesn't exist yet or other error
-                return [] as Order[];
-            }
-
-            return data as Order[];
+            if (error) throw mapSupabaseError(error);
+            return (data ?? []) as Order[];
         }
     });
 };
@@ -56,11 +51,7 @@ export const useOrder = (id: string | undefined) => {
                 .eq('id', id)
                 .single();
 
-            if (error) {
-                console.error('Error fetching order details:', error);
-                throw error;
-            }
-
+            if (error) throw mapSupabaseError(error);
             return data as Order;
         },
         enabled: !!id
@@ -70,7 +61,17 @@ export const useOrder = (id: string | undefined) => {
 export const useUpdateOrderStatus = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async ({ id, status }: { id: string; status: OrderStatus }) => {
+        mutationFn: async ({
+            id,
+            status,
+            tracking_number,
+            carrier,
+        }: {
+            id: string;
+            status: OrderStatus;
+            tracking_number?: string;
+            carrier?: string;
+        }) => {
             const { data, error } = await supabase
                 .from('orders')
                 .update({ status, updated_at: new Date().toISOString() })
@@ -78,16 +79,25 @@ export const useUpdateOrderStatus = () => {
                 .select()
                 .single();
 
-            if (error) throw error;
-            return data;
+            if (error) throw mapSupabaseError(error);
+            return { ...data, _ctx: { tracking_number, carrier } };
         },
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
             queryClient.invalidateQueries({ queryKey: ['order', data.id] });
             toast.success(`Order status updated to ${data.status}`);
+            // Trigger transactional email if applicable.
+            if (data.status === 'completed' && data._ctx?.tracking_number) {
+                void sendTransactionalEmail({
+                    type: 'shipping_notification',
+                    order_id: data.id,
+                    tracking_number: data._ctx.tracking_number,
+                    carrier: data._ctx.carrier ?? 'Anlaşmalı kargo',
+                });
+            }
         },
         onError: (error: any) => {
-            toast.error(`Failed to update order status: ${error.message}`);
+            toast.error(`Failed to update order status: ${error.message ?? 'unknown error'}`);
         }
     });
 };
@@ -100,23 +110,14 @@ export const useOrderStats = () => {
                 .from('orders')
                 .select('status');
 
-            if (error) {
-                return {
-                    pending: 0,
-                    completed: 0,
-                    cancelled: 0,
-                    total: 0
-                };
-            }
+            if (error) throw mapSupabaseError(error);
 
-            const stats = {
+            return {
                 pending: data.filter(o => o.status === 'pending').length,
                 completed: data.filter(o => o.status === 'completed').length,
                 cancelled: data.filter(o => o.status === 'cancelled').length,
-                total: data.length
+                total: data.length,
             };
-
-            return stats;
         }
     });
 };
@@ -127,72 +128,70 @@ export const useUserOrders = (email: string | undefined) => {
         queryFn: async () => {
             if (!email) return [] as Order[];
 
-            const { data, error } = await supabase
+            const { data: { session } } = await supabase.auth.getSession();
+            let query = supabase
                 .from('orders')
                 .select('*, order_items(*, product:products(*))')
-                .eq('customer_email', email)
                 .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error('Error fetching user orders:', error);
-                return [] as Order[];
+            if (session?.user) {
+                query = query.or(`user_id.eq.${session.user.id},customer_email.eq.${email}`);
+            } else {
+                query = query.eq('customer_email', email);
             }
 
-            return data as Order[];
+            const { data, error } = await query;
+            if (error) throw mapSupabaseError(error);
+            return (data ?? []) as Order[];
         },
         enabled: !!email
     });
 };
 
+export interface CreateOrderInput {
+    customer_name: string;
+    customer_email: string;
+    total_amount: number;
+    shipping_address: string;
+    items: { product_id: string; quantity: number; price_at_purchase: number }[];
+    payment_method?: string;
+    discount_code?: string;
+}
+
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (orderData: {
-            customer_name: string;
-            customer_email: string;
-            total_amount: number;
-            shipping_address: string;
-            items: { product_id: string; quantity: number; price_at_purchase: number }[];
-            payment_method?: string;
-            user_id?: string;
-        }) => {
-            // 1. Create the order
-            const { data: order, error: orderError } = await supabase
-                .from('orders')
-                .insert({
-                    customer_name: orderData.customer_name,
-                    customer_email: orderData.customer_email,
-                    total_amount: orderData.total_amount,
-                    shipping_address: orderData.shipping_address,
-                    payment_method: orderData.payment_method || 'Credit Card',
-                    status: 'pending',
-                    user_id: orderData.user_id // Added user_id
-                })
-                .select()
-                .single();
+        mutationFn: async (input: CreateOrderInput) => {
+            if (!input.customer_email?.trim()) throw new Error('customer_email is required');
+            if (!input.customer_name?.trim()) throw new Error('customer_name is required');
+            if (!input.shipping_address?.trim()) throw new Error('shipping_address is required');
+            if (!input.items?.length) throw new Error('Cart is empty');
 
-            if (orderError) throw orderError;
+            const { data: { session } } = await supabase.auth.getSession();
+            const user_id = session?.user?.id ?? null;
 
-            // 2. Create order items
-            const orderItems = orderData.items.map(item => ({
-                order_id: order.id,
-                product_id: item.product_id,
-                quantity: item.quantity,
-                price_at_purchase: item.price_at_purchase
-            }));
+            const { data, error } = await supabase.rpc('create_order', {
+                payload: {
+                    user_id,
+                    customer_name: input.customer_name.trim(),
+                    customer_email: input.customer_email.trim(),
+                    total_amount: input.total_amount,
+                    shipping_address: input.shipping_address.trim(),
+                    payment_method: input.payment_method ?? 'Credit Card',
+                    items: input.items,
+                    discount_code: input.discount_code?.trim() || null,
+                },
+            });
 
-            const { error: itemsError } = await supabase
-                .from('order_items')
-                .insert(orderItems);
-
-            if (itemsError) throw itemsError;
-
-            return order;
+            if (error) throw mapSupabaseError(error);
+            if (!data) throw new Error('create_order returned no order id');
+            return { id: data as string };
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
             queryClient.invalidateQueries({ queryKey: ['order-stats'] });
-        }
+            // Fire order confirmation email (non-blocking)
+            void sendTransactionalEmail({ type: 'order_confirmation', order_id: data.id });
+        },
     });
 };
-

@@ -32,7 +32,7 @@ Follow these steps to set up the development environment and get the project run
    ```bash
    npm run dev
    ```
-   Open [http://localhost:8080](http://localhost:8080) in your browser.
+   Open [http://localhost:5180](http://localhost:5180) in your browser.
 
 ### Local Testing
 

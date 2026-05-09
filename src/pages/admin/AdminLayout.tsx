@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useAdminStore } from '@/lib/adminStore';
+import { useAdminRealTimeSubscriptions } from '@/hooks/useAdminRealTimeSubscriptions';
 import { motion } from 'framer-motion';
 
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -29,6 +30,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 const AdminLayout = () => {
     const { user } = useAdminStore();
     const location = useLocation();
+    useAdminRealTimeSubscriptions();
 
     // Simple breadcrumb logic based on path
     const pathSegments = location.pathname.split('/').filter(Boolean);

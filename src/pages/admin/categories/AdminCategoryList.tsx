@@ -316,7 +316,7 @@ const AdminCategoryList = () => {
                         <AlertDialogCancel className="rounded-xl font-bold uppercase tracking-widest text-[10px] h-11 border-border/50" onClick={() => { setReassignTargetId(null); }}>Cancel Request</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDelete}
-                            disabled={deletingCategory && deletingCategory.count > 0 && !reassignTargetId}
+                            disabled={!!deletingCategory && deletingCategory.count > 0 && !reassignTargetId}
                             className={`rounded-xl font-black uppercase tracking-widest text-[10px] h-11 bg-destructive text-white hover:bg-destructive/90 shadow-lg shadow-destructive/20 transition-all ${(!reassignTargetId && deletingCategory?.count! > 0) ? 'opacity-50 grayscale' : ''}`}
                         >
                             {deletingCategory && deletingCategory.count > 0 ? (

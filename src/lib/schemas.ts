@@ -14,7 +14,7 @@ export const productSchema = z.object({
         url: z.string(),
         is_primary: z.boolean(),
         display_order: z.number(),
-    })).min(0),
+    })).min(1, 'At least one image is required'),
 });
 
 export const categorySchema = z.object({
@@ -37,8 +37,8 @@ export const brandSchema = z.object({
 
 export const discountSchema = z.object({
     code: z.string().min(3, 'Code must be at least 3 characters').transform(v => v.toUpperCase()),
-    type: z.enum(['Percentage', 'Fixed']),
-    value: z.coerce.number().min(0.01, 'Value must be at least 0.01'),
+    discount_type: z.enum(['percentage', 'fixed']),
+    discount_value: z.coerce.number().min(0.01, 'Value must be at least 0.01'),
     usage_limit: z.coerce.number().optional().nullable(),
     expiry_date: z.string().optional().nullable(),
     is_active: z.boolean().default(true),

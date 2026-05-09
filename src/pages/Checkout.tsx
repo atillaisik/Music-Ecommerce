@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useCartStore, useAuthStore } from "@/lib/store";
 
 import { useCreateOrder } from "@/lib/orderAPI";
+import { validateDiscountCode } from "@/lib/discountAPI";
+import { useStoreSettings } from "@/lib/storeSettingsAPI";
+import { formatTRY } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,21 +18,24 @@ import {
     Truck,
     CheckCircle2,
     ShoppingBag,
-    Loader2
+    Loader2,
+    Tag,
+    X,
 } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 type Step = "shipping" | "payment" | "review";
 
 export default function Checkout() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { items, subtotal, clearCart } = useCartStore();
     const [step, setStep] = useState<Step>("shipping");
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // Form state
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -37,81 +44,102 @@ export default function Checkout() {
         zip: "",
         cardNumber: "",
         expiry: "",
-        cvv: ""
+        cvv: "",
     });
 
     const currentSubtotal = subtotal();
-    const total = currentSubtotal;
+    const [discountCode, setDiscountCode] = useState("");
+    const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; amount: number } | null>(null);
+    const [validatingDiscount, setValidatingDiscount] = useState(false);
+    const { data: storeSettings } = useStoreSettings();
+    const shippingFee = Number(storeSettings?.standardShippingFee ?? 0);
+    const total = Math.max(0, currentSubtotal - (appliedDiscount?.amount ?? 0)) + shippingFee;
 
     const { user } = useAuthStore();
 
+    const handleApplyDiscount = async () => {
+        const trimmed = discountCode.trim();
+        if (!trimmed) {
+            toast.error(t("checkout.discount_required"));
+            return;
+        }
+        setValidatingDiscount(true);
+        try {
+            const result = await validateDiscountCode(trimmed, currentSubtotal);
+            if (!result.ok) {
+                toast.error(result.error ?? t("checkout.discount_invalid"));
+                setAppliedDiscount(null);
+                return;
+            }
+            setAppliedDiscount({ code: trimmed.toUpperCase(), amount: result.discount_amount });
+            toast.success(t("checkout.discount_applied", { amount: formatTRY(result.discount_amount) }));
+        } catch (err: any) {
+            toast.error(err?.message ?? t("checkout.discount_validation_error"));
+        } finally {
+            setValidatingDiscount(false);
+        }
+    };
+
+    const handleClearDiscount = () => {
+        setAppliedDiscount(null);
+        setDiscountCode("");
+    };
+
     useEffect(() => {
         if (user) {
-            setFormData(prev => ({
+            setFormData((prev) => ({
                 ...prev,
                 name: prev.name || user.name || "",
-                email: prev.email || user.email || ""
+                email: prev.email || user.email || "",
             }));
         }
     }, [user]);
 
     useEffect(() => {
         if (items.length === 0 && !isProcessing && step !== "review") {
-            // If cart is empty and we aren't mid-checkout/success, go back to shop
-            // But let's allow review step if reached. Actually, if empty, just go home.
-            toast.error("Your cart is empty");
+            toast.error(t("checkout.errors.cart_empty"));
             navigate("/shop");
         }
-    }, [items, navigate, isProcessing]);
+    }, [items, navigate, isProcessing, step, t]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const nextStep = () => {
         if (step === "shipping") {
             if (!formData.name || !formData.email || !formData.address || !formData.city || !formData.zip) {
-                toast.error("Please fill in all shipping fields");
+                toast.error(t("checkout.errors.fill_shipping_fields"));
                 return;
             }
-
-            // Name validation: At least two words
             if (formData.name.trim().split(/\s+/).length < 2) {
-                toast.error("Please enter both First and Last name");
+                toast.error(t("checkout.errors.name_two_words"));
                 return;
             }
-
-            // Email validation: strict regex
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(formData.email)) {
-                toast.error("Please enter a valid email address");
+                toast.error(t("checkout.errors.invalid_email"));
                 return;
             }
-
-            // City validation: alphabetical characters only (allowing spaces)
-            const cityRegex = /^[A-Za-z\s]+$/;
+            const cityRegex = /^[A-Za-zÇĞİıÖŞÜçğıöşü\s]+$/;
             if (!cityRegex.test(formData.city)) {
-                toast.error("City name can only contain alphabetical characters");
+                toast.error(t("checkout.errors.invalid_city"));
                 return;
             }
-
-            // ZIP Code validation: minimum 5 alphanumeric characters
             const zipRegex = /^[a-zA-Z0-9\s-]{5,}$/;
             if (!zipRegex.test(formData.zip)) {
-                toast.error("ZIP Code must be at least 5 alphanumeric characters");
+                toast.error(t("checkout.errors.invalid_zip"));
                 return;
             }
-
             setStep("payment");
         } else if (step === "payment") {
             if (!formData.cardNumber || !formData.cvv) {
-                toast.error("Please fill in payment details");
+                toast.error(t("checkout.errors.fill_payment"));
                 return;
             }
-            // Mock card validation
             if (formData.cardNumber.replace(/\s/g, "").length < 16) {
-                toast.error("Invalid card number. Use 16 digits.");
+                toast.error(t("checkout.errors.invalid_card"));
                 return;
             }
             setStep("review");
@@ -131,17 +159,16 @@ export default function Checkout() {
             const order = await createOrder.mutateAsync({
                 customer_name: formData.name,
                 customer_email: formData.email,
-                total_amount: total,
+                total_amount: currentSubtotal,
                 shipping_address: `${formData.address}, ${formData.city}, ${formData.zip}`,
-                items: items.map(item => ({
+                items: items.map((item) => ({
                     product_id: item.id,
                     quantity: item.quantity,
-                    price_at_purchase: item.price
+                    price_at_purchase: item.price,
                 })),
-                payment_method: 'Credit Card',
-                user_id: user?.id
+                payment_method: "Credit Card",
+                discount_code: appliedDiscount?.code,
             });
-
 
             setIsProcessing(false);
             clearCart();
@@ -149,14 +176,14 @@ export default function Checkout() {
                 state: {
                     orderId: order.id,
                     total: total,
-                    items: items
-                }
+                    items: items,
+                },
             });
-            toast.success("Order placed successfully!");
+            toast.success(t("checkout.success_toast"));
         } catch (error: any) {
             console.error("Checkout error:", error);
             setIsProcessing(false);
-            toast.error(error.message || "Failed to place order. Please try again.");
+            toast.error(error.message || t("checkout.errors.place_order_failed"));
         }
     };
 
@@ -164,19 +191,20 @@ export default function Checkout() {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
+            <SEOHead path="/checkout" defaultTitle={t("checkout.title")} />
             <Navbar />
 
             <main className="flex-1 container max-w-5xl py-12 px-4">
                 <div className="flex flex-col gap-8">
                     {/* Header & Steps */}
                     <div className="space-y-4">
-                        <h1 className="text-3xl font-display font-bold">Checkout</h1>
+                        <h1 className="text-3xl font-display font-bold">{t("checkout.page_title")}</h1>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <span className={step === "shipping" ? "text-primary font-bold" : ""}>Shipping</span>
+                            <span className={step === "shipping" ? "text-primary font-bold" : ""}>{t("checkout.step_shipping")}</span>
                             <ChevronRight className="h-4 w-4" />
-                            <span className={step === "payment" ? "text-primary font-bold" : ""}>Payment</span>
+                            <span className={step === "payment" ? "text-primary font-bold" : ""}>{t("checkout.step_payment")}</span>
                             <ChevronRight className="h-4 w-4" />
-                            <span className={step === "review" ? "text-primary font-bold" : ""}>Review</span>
+                            <span className={step === "review" ? "text-primary font-bold" : ""}>{t("checkout.step_review")}</span>
                         </div>
                     </div>
 
@@ -187,63 +215,32 @@ export default function Checkout() {
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-2 text-xl font-bold">
                                         <Truck className="h-5 w-5 text-primary" />
-                                        <h2>Shipping Information</h2>
+                                        <h2>{t("checkout.shipping_info_title")}</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="name">Full Name</Label>
-                                            <Input
-                                                id="name"
-                                                name="name"
-                                                placeholder="John Doe"
-                                                value={formData.name}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="name">{t("checkout.full_name")}</Label>
+                                            <Input id="name" name="name" placeholder="Ahmet Yılmaz" value={formData.name} onChange={handleInputChange} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="email">Email Address</Label>
-                                            <Input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                placeholder="john@example.com"
-                                                value={formData.email}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="email">{t("checkout.email")}</Label>
+                                            <Input id="email" name="email" type="email" placeholder="ad@example.com" value={formData.email} onChange={handleInputChange} />
                                         </div>
                                         <div className="md:col-span-2 space-y-2">
-                                            <Label htmlFor="address">Street Address</Label>
-                                            <Input
-                                                id="address"
-                                                name="address"
-                                                placeholder="123 Music Ave"
-                                                value={formData.address}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="address">{t("checkout.address")}</Label>
+                                            <Input id="address" name="address" placeholder="Mahalle, sokak, kapı no" value={formData.address} onChange={handleInputChange} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="city">City</Label>
-                                            <Input
-                                                id="city"
-                                                name="city"
-                                                placeholder="New York"
-                                                value={formData.city}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="city">{t("checkout.city")}</Label>
+                                            <Input id="city" name="city" placeholder="İstanbul" value={formData.city} onChange={handleInputChange} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="zip">ZIP Code</Label>
-                                            <Input
-                                                id="zip"
-                                                name="zip"
-                                                placeholder="10001"
-                                                value={formData.zip}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="zip">{t("checkout.zip")}</Label>
+                                            <Input id="zip" name="zip" placeholder="34000" value={formData.zip} onChange={handleInputChange} />
                                         </div>
                                     </div>
                                     <Button onClick={nextStep} className="w-full md:w-auto px-8">
-                                        Continue to Payment
+                                        {t("checkout.continue_to_payment")}
                                         <ChevronRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </div>
@@ -253,51 +250,33 @@ export default function Checkout() {
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-2 text-xl font-bold">
                                         <CreditCard className="h-5 w-5 text-primary" />
-                                        <h2>Payment Method</h2>
+                                        <h2>{t("checkout.payment_method_title")}</h2>
                                     </div>
                                     <div className="p-4 rounded-lg bg-secondary/50 border border-border flex items-center gap-4 text-sm text-muted-foreground">
                                         <CheckCircle2 className="h-4 w-4 text-primary" />
-                                        <p>This is a simulated checkout. Use any 16-digit number.</p>
+                                        <p>{t("checkout.payment_demo_note")}</p>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="md:col-span-2 space-y-2">
-                                            <Label htmlFor="cardNumber">Card Number</Label>
-                                            <Input
-                                                id="cardNumber"
-                                                name="cardNumber"
-                                                placeholder="0000 0000 0000 0000"
-                                                value={formData.cardNumber}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="cardNumber">{t("checkout.card_number")}</Label>
+                                            <Input id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" value={formData.cardNumber} onChange={handleInputChange} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="expiry">Expiry Date</Label>
-                                            <Input
-                                                id="expiry"
-                                                name="expiry"
-                                                placeholder="MM/YY"
-                                                value={formData.expiry}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="expiry">{t("checkout.expiry")}</Label>
+                                            <Input id="expiry" name="expiry" placeholder="AA/YY" value={formData.expiry} onChange={handleInputChange} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="cvv">CVV</Label>
-                                            <Input
-                                                id="cvv"
-                                                name="cvv"
-                                                placeholder="123"
-                                                value={formData.cvv}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Label htmlFor="cvv">{t("checkout.cvv")}</Label>
+                                            <Input id="cvv" name="cvv" placeholder="123" value={formData.cvv} onChange={handleInputChange} />
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
                                         <Button variant="outline" onClick={prevStep}>
                                             <ChevronLeft className="mr-2 h-4 w-4" />
-                                            Back
+                                            {t("common.back")}
                                         </Button>
                                         <Button onClick={nextStep} className="flex-1 md:flex-none md:px-8">
-                                            Review Order
+                                            {t("checkout.review_order")}
                                             <ChevronRight className="ml-2 h-4 w-4" />
                                         </Button>
                                     </div>
@@ -308,19 +287,19 @@ export default function Checkout() {
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-2 text-xl font-bold">
                                         <ShoppingBag className="h-5 w-5 text-primary" />
-                                        <h2>Review Your Order</h2>
+                                        <h2>{t("checkout.review_title")}</h2>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-xl border border-border bg-card">
                                         <div className="space-y-2">
-                                            <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Shipping To</h3>
+                                            <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">{t("checkout.shipping_to")}</h3>
                                             <p className="font-medium">{formData.name}</p>
                                             <p className="text-sm text-muted-foreground">{formData.address}</p>
                                             <p className="text-sm text-muted-foreground">{formData.city}, {formData.zip}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Payment</h3>
-                                            <p className="font-medium">Card ending in {formData.cardNumber.slice(-4)}</p>
+                                            <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">{t("checkout.payment_label")}</h3>
+                                            <p className="font-medium">{t("checkout.card_ending", { last4: formData.cardNumber.slice(-4) })}</p>
                                             <p className="text-sm text-muted-foreground">{formData.email}</p>
                                         </div>
                                     </div>
@@ -328,20 +307,16 @@ export default function Checkout() {
                                     <div className="flex gap-4">
                                         <Button variant="outline" onClick={prevStep} disabled={isProcessing}>
                                             <ChevronLeft className="mr-2 h-4 w-4" />
-                                            Back
+                                            {t("common.back")}
                                         </Button>
-                                        <Button
-                                            onClick={handlePlaceOrder}
-                                            className="flex-1 md:flex-none md:px-12 py-6 text-lg"
-                                            disabled={isProcessing}
-                                        >
+                                        <Button onClick={handlePlaceOrder} className="flex-1 md:flex-none md:px-12 py-6 text-lg" disabled={isProcessing}>
                                             {isProcessing ? (
                                                 <>
                                                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                                    Processing...
+                                                    {t("checkout.processing")}
                                                 </>
                                             ) : (
-                                                "Place Order"
+                                                t("checkout.place_order")
                                             )}
                                         </Button>
                                     </div>
@@ -351,17 +326,21 @@ export default function Checkout() {
 
                         {/* Order Summary Sidebar */}
                         <div className="space-y-6 lg:border-l lg:pl-12 border-border">
-                            <h2 className="text-xl font-bold">Order Summary</h2>
+                            <h2 className="text-xl font-bold">{t("checkout.order_summary")}</h2>
                             <div className="space-y-4">
                                 {items.map((item) => (
                                     <div key={item.id} className="flex gap-4">
                                         <div className="h-16 w-16 rounded bg-secondary overflow-hidden flex-shrink-0">
-                                            <img src={(item as any).image || (item.images && item.images.length > 0 ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0].image_url) : 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop')} alt={item.name} className="h-full w-full object-cover" />
+                                            <img
+                                                src={(item as any).image || (item.images && item.images.length > 0 ? (typeof item.images[0] === "string" ? item.images[0] : item.images[0].image_url) : "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop")}
+                                                alt={item.name}
+                                                className="h-full w-full object-cover"
+                                            />
                                         </div>
                                         <div className="flex-1 text-sm">
                                             <p className="font-medium line-clamp-1">{item.name}</p>
-                                            <p className="text-muted-foreground">Qty: {item.quantity}</p>
-                                            <p className="font-bold mt-1">${(item.price * item.quantity).toLocaleString()}</p>
+                                            <p className="text-muted-foreground">{t("cart.quantity")}: {item.quantity}</p>
+                                            <p className="font-bold mt-1">{formatTRY(item.price * item.quantity)}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -369,19 +348,74 @@ export default function Checkout() {
 
                             <Separator />
 
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+                                {t("checkout.vat_note")}
+                            </p>
+
+                            {/* Discount code */}
+                            <div className="space-y-2">
+                                <Label htmlFor="discount" className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                    <Tag className="h-3.5 w-3.5" /> {t("checkout.discount_code")}
+                                </Label>
+                                {appliedDiscount ? (
+                                    <div className="flex items-center justify-between rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+                                        <span className="font-mono font-bold">{appliedDiscount.code}</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleClearDiscount}
+                                            className="text-muted-foreground hover:text-destructive transition-colors"
+                                            aria-label={t("checkout.discount_remove")}
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <Input
+                                            id="discount"
+                                            placeholder={t("checkout.discount_placeholder")}
+                                            value={discountCode}
+                                            onChange={(e) => setDiscountCode(e.target.value)}
+                                            className="font-mono uppercase tracking-wider"
+                                            disabled={validatingDiscount}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleApplyDiscount}
+                                            disabled={validatingDiscount || !discountCode.trim()}
+                                        >
+                                            {validatingDiscount ? <Loader2 className="h-4 w-4 animate-spin" /> : t("checkout.discount_apply")}
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Separator />
+
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Subtotal</span>
-                                    <span>${currentSubtotal.toLocaleString()}</span>
+                                    <span className="text-muted-foreground">{t("checkout.subtotal")}</span>
+                                    <span>{formatTRY(currentSubtotal)}</span>
                                 </div>
+                                {appliedDiscount && (
+                                    <div className="flex justify-between text-sm text-emerald-600">
+                                        <span>{t("checkout.discount")} ({appliedDiscount.code})</span>
+                                        <span>-{formatTRY(appliedDiscount.amount)}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Shipping</span>
-                                    <span className="text-green-600 font-medium">FREE</span>
+                                    <span className="text-muted-foreground">{t("checkout.shipping")}</span>
+                                    {shippingFee > 0 ? (
+                                        <span className="font-medium">{formatTRY(shippingFee)}</span>
+                                    ) : (
+                                        <span className="text-green-600 font-medium">{t("checkout.shipping_included")}</span>
+                                    )}
                                 </div>
                                 <Separator className="my-2" />
                                 <div className="flex justify-between text-lg font-bold">
-                                    <span>Total</span>
-                                    <span className="text-primary">${total.toLocaleString()}</span>
+                                    <span>{t("checkout.total_with_vat")}</span>
+                                    <span className="text-primary">{formatTRY(total)}</span>
                                 </div>
                             </div>
                         </div>

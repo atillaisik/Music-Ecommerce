@@ -1,5 +1,6 @@
 import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -12,17 +13,21 @@ import {
 import { useCartStore } from "@/lib/store";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatTRY } from "@/lib/currency";
 
 export function CartSheet() {
+    const { t } = useTranslation();
     const { items, removeFromCart, updateQuantity, subtotal, totalItems } = useCartStore();
 
     const currentSubtotal = subtotal();
-    const total = currentSubtotal;
 
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <button className="relative p-2 text-muted-foreground transition-colors hover:text-foreground" aria-label="Cart">
+                <button
+                    className="relative p-2 text-muted-foreground transition-colors hover:text-foreground"
+                    aria-label={t("cart.title")}
+                >
                     <ShoppingCart className="h-5 w-5" />
                     {totalItems() > 0 && (
                         <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
@@ -35,7 +40,7 @@ export function CartSheet() {
                 <SheetHeader className="px-1">
                     <SheetTitle className="font-display flex items-center gap-2">
                         <ShoppingCart className="h-5 w-5" />
-                        Your Cart ({totalItems()})
+                        {t("cart.title")} ({totalItems()})
                     </SheetTitle>
                 </SheetHeader>
 
@@ -44,12 +49,7 @@ export function CartSheet() {
                         <div className="rounded-full bg-secondary p-6">
                             <ShoppingCart className="h-10 w-10 text-muted-foreground opacity-20" />
                         </div>
-                        <p className="text-center text-muted-foreground">Your cart is empty</p>
-                        <Button variant="outline" asChild>
-                            <SheetTrigger asChild>
-                                <button>Continue Shopping</button>
-                            </SheetTrigger>
-                        </Button>
+                        <p className="text-center text-muted-foreground">{t("cart.empty_title")}</p>
                     </div>
                 ) : (
                     <>
@@ -59,7 +59,7 @@ export function CartSheet() {
                                     <div key={item.id} className="flex gap-4">
                                         <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
                                             <img
-                                                src={(item as any).image || (item.images && item.images.length > 0 ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0].image_url) : 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop')}
+                                                src={(item as any).image || (item.images && item.images.length > 0 ? (typeof item.images[0] === "string" ? item.images[0] : item.images[0].image_url) : "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=800&fit=crop")}
                                                 alt={item.name}
                                                 className="h-full w-full object-cover"
                                             />
@@ -68,9 +68,9 @@ export function CartSheet() {
                                             <div>
                                                 <div className="flex justify-between gap-2">
                                                     <h4 className="line-clamp-1 text-sm font-medium">{item.name}</h4>
-                                                    <p className="text-sm font-bold">${(item.price * item.quantity).toLocaleString()}</p>
+                                                    <p className="text-sm font-bold">{formatTRY(item.price * item.quantity)}</p>
                                                 </div>
-                                                <p className="text-xs text-muted-foreground mt-0.5">{(item.brand as any)?.name || item.brand || 'Unknown Brand'}</p>
+                                                <p className="text-xs text-muted-foreground mt-0.5">{(item.brand as any)?.name || ""}</p>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center rounded-md border border-border">
@@ -92,7 +92,7 @@ export function CartSheet() {
                                                 <button
                                                     onClick={() => removeFromCart(item.id)}
                                                     className="text-muted-foreground transition-colors hover:text-destructive"
-                                                    aria-label="Remove item"
+                                                    aria-label={t("cart.remove")}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
@@ -107,19 +107,17 @@ export function CartSheet() {
                             <Separator />
                             <div className="space-y-1.5">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Subtotal</span>
-                                    <span>${currentSubtotal.toLocaleString()}</span>
+                                    <span className="text-muted-foreground">{t("cart.subtotal")}</span>
+                                    <span>{formatTRY(currentSubtotal)}</span>
                                 </div>
-                                <Separator className="my-2" />
-                                <div className="flex justify-between font-bold">
-                                    <span>Total</span>
-                                    <span className="text-primary">${total.toLocaleString()}</span>
-                                </div>
+                                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-bold">
+                                    {t("common.vat_shipping_included")}
+                                </p>
                             </div>
                             <SheetFooter className="mt-2">
                                 <Button className="w-full font-display uppercase tracking-wider py-6" asChild>
                                     <Link to="/checkout">
-                                        Checkout Now
+                                        {t("cart.checkout_button")}
                                     </Link>
                                 </Button>
                             </SheetFooter>

@@ -77,8 +77,8 @@ describe('Zod Schemas', () => {
     describe('discountSchema', () => {
         const validDiscount = {
             code: 'summer25',
-            type: 'Percentage',
-            value: 20,
+            discount_type: 'percentage' as const,
+            discount_value: 20,
             is_active: true
         };
 
@@ -90,8 +90,8 @@ describe('Zod Schemas', () => {
             }
         });
 
-        it('should fail if value is zero or negative', () => {
-            const invalidDiscount = { ...validDiscount, value: 0 };
+        it('should fail if discount_value is zero or negative', () => {
+            const invalidDiscount = { ...validDiscount, discount_value: 0 };
             const result = discountSchema.safeParse(invalidDiscount);
             expect(result.success).toBe(false);
         });

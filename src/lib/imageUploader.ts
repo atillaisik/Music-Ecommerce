@@ -1,12 +1,25 @@
 import { supabase } from './supabaseClient';
 import { toast } from 'sonner';
 
-/**
- * Validates file type and size.
- * 
- * @param file - File to validate.
- * @returns Object with isValid and error message.
- */
+const requireSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) throw new Error('You must be signed in to upload images.');
+    return session;
+};
+
+const requireActiveAdmin = async () => {
+    const session = await requireSession();
+    const { data, error } = await supabase
+        .from('admin_users')
+        .select('id, role, is_active')
+        .eq('id', session.user.id)
+        .single();
+    if (error || !data || !data.is_active) {
+        throw new Error('Admin access required to upload to product/admin buckets.');
+    }
+    return { session, admin: data };
+};
+
 export const validateFile = (file: File): { isValid: boolean; error?: string } => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
     const maxFileSize = 5 * 1024 * 1024; // 5MB
@@ -44,27 +57,24 @@ export const uploadImage = async (
     }
 
     try {
+        if (bucketName === 'product-images' || bucketName === 'admin-uploads') {
+            await requireActiveAdmin();
+        } else {
+            await requireSession();
+        }
+
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
         const filePath = folderName ? `${folderName}/${fileName}` : fileName;
 
-        // 1. Upload the file
         const { error: uploadError } = await supabase.storage
             .from(bucketName)
-            .upload(filePath, file, {
-                upsert: true,
-                // Supabase JS client doesn't directly support onUploadProgress in all versions, 
-                // but we can simulate it or use it if available in newer versions.
-                // For now, we'll mark it as started.
-            });
+            .upload(filePath, file, { upsert: true });
 
-        if (onProgress) onProgress(100); // Mark as complete
+        if (onProgress) onProgress(100);
 
-        if (uploadError) {
-            throw uploadError;
-        }
+        if (uploadError) throw uploadError;
 
-        // 2. Get the public URL
         const { data: { publicUrl } } = supabase.storage
             .from(bucketName)
             .getPublicUrl(filePath);
@@ -73,6 +83,44 @@ export const uploadImage = async (
     } catch (error: any) {
         console.error('Error uploading image:', error);
         toast.error(`Error uploading image: ${error.message}`);
+        return null;
+    }
+};
+
+export const uploadAvatar = async (
+    userId: string,
+    file: File,
+): Promise<string | null> => {
+    const validation = validateFile(file);
+    if (!validation.isValid) {
+        toast.error(validation.error);
+        return null;
+    }
+
+    try {
+        const session = await requireSession();
+        if (session.user.id !== userId) {
+            throw new Error('You can only upload an avatar for your own profile.');
+        }
+
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const filePath = `${userId}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, file, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
+
+        return publicUrl;
+    } catch (error: any) {
+        console.error('Error uploading avatar:', error);
+        toast.error(`Error uploading avatar: ${error.message}`);
         return null;
     }
 };

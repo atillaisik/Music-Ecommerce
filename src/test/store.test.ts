@@ -1,15 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useCartStore, useWishlistStore } from '../lib/store';
+import type { Product } from '../types/product';
 
-const mockProduct = {
+const mockProduct: Product = {
     id: '1',
     name: 'Test Guitar',
-    brand: 'Fender',
-    category: 'Guitars',
+    brand_id: 'brand-1',
+    category_id: 'cat-1',
     price: 1000,
     rating: 5,
-    reviews: 10,
-    image: 'test.jpg'
+    reviews_count: 10,
+    stock_quantity: 5,
+    featured: false,
+    on_sale: false,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
 };
 
 describe('Cart Store', () => {

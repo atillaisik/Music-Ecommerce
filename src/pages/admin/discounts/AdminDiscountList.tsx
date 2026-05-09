@@ -62,7 +62,7 @@ const AdminDiscountList = () => {
     const totalPages = Math.ceil((filteredCoupons?.length || 0) / pageSize);
     const paginatedCoupons = filteredCoupons?.slice((page - 1) * pageSize, page * pageSize);
 
-    const isExpired = (expiryDate?: string) => {
+    const isExpired = (expiryDate?: string | null) => {
         if (!expiryDate) return false;
         return new Date(expiryDate) < new Date();
     };
@@ -144,10 +144,10 @@ const AdminDiscountList = () => {
                                     <TableCell>
                                         <div className="flex items-center gap-1.5">
                                             <Badge variant="outline" className="font-bold border-primary/20 text-primary bg-primary/5">
-                                                {coupon.type === 'Percentage' ? `${coupon.value}%` : `$${coupon.value}`}
+                                                {coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `$${coupon.discount_value}`}
                                             </Badge>
                                             <span className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                                                {coupon.type === 'Percentage' ? 'OFF' : 'Discount'}
+                                                {coupon.discount_type === 'percentage' ? 'OFF' : 'Discount'}
                                             </span>
                                         </div>
                                     </TableCell>
@@ -155,7 +155,7 @@ const AdminDiscountList = () => {
                                         <div className="flex flex-col gap-0.5">
                                             <div className="flex items-center gap-1.5 text-xs font-bold font-sans">
                                                 <Hash className="h-3 w-3 opacity-50" />
-                                                0 / {coupon.usage_limit || '∞'}
+                                                {coupon.usage_count ?? 0} / {coupon.usage_limit || '∞'}
                                             </div>
                                             <p className="text-[9px] uppercase font-black opacity-40">Total Uses</p>
                                         </div>

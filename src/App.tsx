@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,6 +16,15 @@ import ProductDetail from "./pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Profile from "./pages/Profile";
+import ResetPassword from "./pages/ResetPassword";
+import Terms from "./pages/policies/Terms";
+import Privacy from "./pages/policies/Privacy";
+import Returns from "./pages/policies/Returns";
+import Shipping from "./pages/policies/Shipping";
+import CookiesPolicy from "./pages/policies/Cookies";
+import DistanceSelling from "./pages/policies/DistanceSelling";
+import Imprint from "./pages/policies/Imprint";
+import CookieConsentBanner from "./components/CookieConsentBanner";
 
 // Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -44,6 +52,10 @@ import AdminSettings from "./pages/admin/settings/AdminSettings";
 import AdminBackup from "./pages/admin/backup/AdminBackup";
 import AdminFAQList from "./pages/admin/faqs/AdminFAQList";
 import AdminDeals from "./pages/admin/marketing/AdminDeals";
+import AdminArticleList from "./pages/admin/articles/AdminArticleList";
+import AdminAddArticle from "./pages/admin/articles/AdminAddArticle";
+import AdminEditArticle from "./pages/admin/articles/AdminEditArticle";
+import AdminSEOSettings from "./pages/admin/seo/AdminSEOSettings";
 import AdminPlaceholder from "./components/admin/AdminPlaceholder";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -53,6 +65,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import { useRealTimeSubscriptions } from "@/hooks/useRealTimeSubscriptions";
 import { AppAuthHandler } from "./components/AppAuthHandler";
+import { AdminAuthHandler } from "./components/AdminAuthHandler";
 
 // Runs real-time Supabase subscriptions globally so BOTH the shop and admin
 // pages receive live cache invalidations when data changes.
@@ -68,7 +81,6 @@ const App = () => (
     <HelmetProvider>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="arasounds-theme">
         <TooltipProvider>
-          <Toaster />
           <Sonner />
           <BrowserRouter>
             <AppAuthHandler />
@@ -88,15 +100,44 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* Legal & policy pages (Turkish) */}
+              <Route path="/kullanim-kosullari" element={<Terms />} />
+              <Route path="/gizlilik-politikasi" element={<Privacy />} />
+              <Route path="/iade-politikasi" element={<Returns />} />
+              <Route path="/teslimat-politikasi" element={<Shipping />} />
+              <Route path="/cerez-politikasi" element={<CookiesPolicy />} />
+              <Route path="/mesafeli-satis-sozlesmesi" element={<DistanceSelling />} />
+              <Route path="/kunye" element={<Imprint />} />
+              {/* English aliases for SEO + legacy links */}
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/returns" element={<Returns />} />
+              <Route path="/shipping" element={<Shipping />} />
+              <Route path="/cookies" element={<CookiesPolicy />} />
+              <Route path="/distance-sales" element={<DistanceSelling />} />
+              <Route path="/imprint" element={<Imprint />} />
 
               {/* Admin Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route
+                path="/admin/login"
+                element={
+                  <>
+                    <AdminAuthHandler />
+                    <AdminLogin />
+                  </>
+                }
+              />
               <Route
                 path="/admin"
                 element={
-                  <ProtectedAdminRoute>
-                    <AdminLayout />
-                  </ProtectedAdminRoute>
+                  <>
+                    <AdminAuthHandler />
+                    <ProtectedAdminRoute>
+                      <AdminLayout />
+                    </ProtectedAdminRoute>
+                  </>
                 }
               >
                 <Route index element={<AdminDashboard />} />
@@ -119,6 +160,10 @@ const App = () => (
                 <Route path="discounts/edit/:id" element={<AdminEditDiscount />} />
                 <Route path="marketing/deals" element={<AdminDeals />} />
                 <Route path="faqs" element={<AdminFAQList />} />
+                <Route path="articles" element={<AdminArticleList />} />
+                <Route path="articles/add" element={<AdminAddArticle />} />
+                <Route path="articles/edit/:id" element={<AdminEditArticle />} />
+                <Route path="seo" element={<AdminSEOSettings />} />
                 <Route path="activity-log" element={<AdminActivityLog />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="backup" element={<AdminBackup />} />
@@ -126,6 +171,7 @@ const App = () => (
 
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <CookieConsentBanner />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>

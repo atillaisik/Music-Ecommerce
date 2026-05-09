@@ -1,13 +1,32 @@
 # Admin User Guide
 
-## Overview
+## Provisioning the first super_admin
 
-The Admin Panel is a specialized section for managing the music store's products, categories, brands, orders, and analytics.
+Admins are NOT created via the public sign-up form. The first super_admin (and any subsequent admins) must be provisioned through Supabase directly:
 
-### Accessing the Admin Panel
+1. **Create the auth user** in Supabase Studio → Authentication → Users → "Create a new user". Set email and a strong password. Auto-confirm the email.
+2. **Insert the admin row** in the SQL editor:
+   ```sql
+   insert into public.admin_users (id, email, role, is_active)
+   values (
+     '<auth-user-uuid>'::uuid,
+     '<email>',
+     'super_admin', -- or 'editor' / 'viewer'
+     true
+   );
+   ```
+3. **Test the login** by signing in at `/admin/login`. The login flow will:
+   - Authenticate against Supabase Auth (`signInWithPassword`).
+   - Fetch the matching `admin_users` row by `auth.uid()`.
+   - Reject the session if the row is missing or `is_active = false`.
+
+To deactivate an admin, set `is_active = false` — they are immediately denied on the next protected-route mount because `ProtectedAdminRoute` re-validates against the server every time.
+
+## Accessing the Admin Panel
 
 - Navigate to `/admin` on your browser.
 - Log in using your admin credentials.
+- Sessions persist across reloads via Supabase's `localStorage` token store, but each protected route re-checks the role from the server.
 
 ## Modules
 
@@ -38,6 +57,16 @@ The main landing page for the admin panel, providing a birds-eye view of:
 ### System Settings
 - Configure global store information.
 - Manage branding and shipping preferences.
+
+## Roles
+
+| Role          | Capabilities                                              |
+|---------------|-----------------------------------------------------------|
+| `super_admin` | Full access (settings, backup, admin user management)     |
+| `editor`      | Product / category / brand / order / discount CRUD        |
+| `viewer`      | Read-only dashboards and analytics                        |
+
+`ProtectedAdminRoute` accepts an optional `requiredRole` prop. Routes without the prop allow any authenticated admin; routes with `requiredRole="super_admin"` (e.g. `/admin/settings`, `/admin/backup`) deny editors and viewers.
 
 ---
 

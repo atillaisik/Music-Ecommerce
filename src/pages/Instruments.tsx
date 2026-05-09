@@ -1,20 +1,24 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { useCategories } from "@/lib/categoryAPI";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Layers } from "lucide-react";
 
 const Instruments = () => {
+  const { t } = useTranslation();
   const { data: categories, isLoading } = useCategories(true);
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead path="/instruments" defaultTitle={t("instruments.title")} defaultDescription={t("instruments.subtitle")} />
       <Navbar />
       <main className="container py-10">
-        <h1 className="font-display text-4xl font-bold uppercase tracking-tight text-primary italic">Instruments</h1>
-        <p className="mt-2 text-muted-foreground font-medium">Browse our collection by category</p>
+        <h1 className="font-display text-4xl font-bold uppercase tracking-tight text-primary italic">{t("instruments.page_title")}</h1>
+        <p className="mt-2 text-muted-foreground font-medium">{t("instruments.subtitle")}</p>
 
         <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -52,7 +56,7 @@ const Instruments = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                   <div className="absolute bottom-6 left-6 right-6">
                     <h2 className="font-display text-2xl font-black uppercase text-white tracking-tight group-hover:text-primary transition-colors">{cat.name}</h2>
-                    <p className="text-xs font-bold uppercase tracking-widest text-primary/80 mt-1">Explore Collection</p>
+                    <p className="text-xs font-bold uppercase tracking-widest text-primary/80 mt-1">{t("instruments.explore")}</p>
                   </div>
                 </Link>
               </motion.div>
@@ -60,7 +64,7 @@ const Instruments = () => {
           ) : (
             <div className="col-span-full py-20 text-center opacity-40">
               <Layers className="h-12 w-12 mx-auto mb-4" />
-              <p className="font-bold uppercase tracking-tighter text-xl">No categories found</p>
+              <p className="font-bold uppercase tracking-tighter text-xl">{t("instruments.empty")}</p>
             </div>
           )}
         </div>

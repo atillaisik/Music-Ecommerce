@@ -1,23 +1,18 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import SEOHead from "@/components/SEOHead";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useState, useEffect } from "react";
-import { categories, products } from "@/data/mock";
+import { useCategories, useProducts } from "@/lib/productAPI";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import BestSellersCarousel from "@/components/BestSellersCarousel";
 import DealsCarousel from "@/components/DealsCarousel";
-
-const stats = [
-  { label: "Products", value: "50K+" },
-  { label: "Brands", value: "200+" },
-  { label: "Musicians", value: "1M+" },
-];
+import { useStoreSettings } from "@/lib/storeSettingsAPI";
+import { organizationSchema, websiteSchema, SITE_URL } from "@/lib/seo";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -25,22 +20,50 @@ const fadeUp = {
 };
 
 const Index = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories(true);
+  const { data: dealsProducts = [], isLoading: dealsLoading } = useProducts({
+    on_sale: true,
+    is_active: true,
+    limit: 10,
+  });
+  const { data: featuredProducts = [], isLoading: featuredLoading } = useProducts({
+    featured: true,
+    is_active: true,
+    limit: 10,
+  });
 
-  useEffect(() => {
-    // Simulate initial data fetch
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const stats = [
+    { label: t("home.stats.products"), value: "50K+" },
+    { label: t("home.stats.brands"), value: "200+" },
+    { label: t("home.stats.musicians"), value: "1M+" },
+  ];
+
+  const { data: settings } = useStoreSettings();
+  const orgSchema = organizationSchema({
+    name: settings?.storeName ?? "ARASOUNDS",
+    legalName: settings?.legalName,
+    email: settings?.supportEmail,
+    phone: settings?.supportPhone,
+    address: settings?.address,
+    mersisNo: settings?.mersisNo,
+    taxNumber: settings?.taxNumber,
+    tradeRegistryNo: settings?.tradeRegistryNo,
+  });
+  const siteSchema = websiteSchema({
+    name: "ARASOUNDS",
+    url: SITE_URL,
+    searchUrl: `${SITE_URL}/shop`,
+  });
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>ARASOUNDS | Premium Musical Instruments</title>
-        <meta name="description" content="Discover premium instruments from the world's top brands. Guitars, Pianos, Drums and more at ARASOUNDS." />
-      </Helmet>
+      <SEOHead
+        path="/"
+        defaultTitle={t("home.title")}
+        defaultDescription={t("home.description")}
+        jsonLd={[orgSchema, siteSchema]}
+      />
       <Navbar />
       <main>
         {/* Hero */}
@@ -48,7 +71,7 @@ const Index = () => {
           <div className="absolute inset-0">
             <img
               src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop"
-              alt="Musician performing on stage"
+              alt=""
               className="h-full w-full object-cover opacity-40"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
@@ -57,7 +80,7 @@ const Index = () => {
             <motion.div initial="hidden" animate="visible" className="max-w-2xl">
               <motion.div variants={fadeUp} custom={0}>
                 <Badge variant="outline" className="border-primary text-primary mb-4 font-display uppercase tracking-widest">
-                  New Arrivals 2026
+                  {t("home.hero_badge")}
                 </Badge>
               </motion.div>
               <motion.h1
@@ -65,18 +88,18 @@ const Index = () => {
                 custom={1}
                 className="font-display text-5xl font-bold uppercase leading-tight tracking-tight md:text-7xl"
               >
-                Your Sound{" "}
-                <span className="text-primary">Starts Here.</span>
+                {t("home.hero_title_1")}{" "}
+                <span className="text-primary">{t("home.hero_title_2")}</span>
               </motion.h1>
               <motion.p variants={fadeUp} custom={2} className="mt-4 max-w-lg text-lg text-muted-foreground">
-                Discover premium instruments from the world's top brands. Whether you're just starting out or a seasoned pro, find your perfect sound.
+                {t("home.hero_subtitle")}
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="mt-8 flex flex-wrap gap-4">
                 <Button asChild size="lg" className="font-display text-base uppercase tracking-wider">
-                  <Link to="/instruments">Explore Instruments <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  <Link to="/instruments">{t("home.hero_cta_explore")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="font-display text-base uppercase tracking-wider">
-                  <Link to="/shop">Shop Best Sellers</Link>
+                  <Link to="/shop">{t("home.hero_cta_shop")}</Link>
                 </Button>
               </motion.div>
             </motion.div>
@@ -97,31 +120,43 @@ const Index = () => {
 
         {/* Categories */}
         <section className="container py-16">
-          <h2 className="font-display text-3xl font-bold uppercase tracking-tight">Browse Categories</h2>
+          <h2 className="font-display text-3xl font-bold uppercase tracking-tight">{t("home.categories_title")}</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((cat, i) => (
-              <motion.div
-                key={cat.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Link
-                  to={`/shop?category=${cat.name}`}
-                  className="group relative block overflow-hidden rounded-lg"
+            {categoriesLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={`cat-skel-${i}`} className="aspect-[16/9] rounded-lg bg-secondary animate-pulse" />
+              ))
+            ) : categories.length === 0 ? (
+              <p className="text-muted-foreground col-span-full">{t("home.categories_empty")}</p>
+            ) : (
+              categories.map((cat, i) => (
+                <motion.div
+                  key={cat.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
                 >
-                  <div className="aspect-[16/9] overflow-hidden">
-                    <img src={cat.image} alt={cat.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
-                  <div className="absolute bottom-4 left-4">
-                    <h3 className="font-display text-xl font-bold uppercase">{cat.name}</h3>
-                    <p className="text-sm text-muted-foreground">{cat.count} products</p>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={`/shop?category=${encodeURIComponent(cat.slug ?? cat.name)}`}
+                    className="group relative block overflow-hidden rounded-lg"
+                  >
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <img
+                        src={cat.image_url ?? "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&h=400&fit=crop"}
+                        alt={cat.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <h3 className="font-display text-xl font-bold uppercase">{cat.name}</h3>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))
+            )}
           </div>
         </section>
 
@@ -131,23 +166,25 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <Badge variant="outline" className="border-primary text-primary mb-2 font-display uppercase tracking-widest text-[10px]">
-                  Limited Time
+                  {t("home.deals_badge")}
                 </Badge>
-                <h2 className="font-display text-3xl font-bold uppercase tracking-tight">Flash Deals</h2>
+                <h2 className="font-display text-3xl font-bold uppercase tracking-tight">{t("home.deals_title")}</h2>
               </div>
               <Button asChild variant="ghost" className="font-display uppercase tracking-wider text-primary">
-                <Link to="/deals">View All Deals <ArrowRight className="ml-1 h-4 w-4" /></Link>
+                <Link to="/deals">{t("home.deals_view_all")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
               </Button>
             </div>
             <div className="mt-8">
-              {isLoading ? (
+              {dealsLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <ProductCardSkeleton key={`skeleton-${i}`} />
+                    <ProductCardSkeleton key={`deal-skel-${i}`} />
                   ))}
                 </div>
+              ) : dealsProducts.length === 0 ? (
+                <p className="text-muted-foreground">{t("home.deals_empty")}</p>
               ) : (
-                <DealsCarousel products={products.filter(p => p.originalPrice).slice(0, 10)} />
+                <DealsCarousel products={dealsProducts} />
               )}
             </div>
           </div>
@@ -157,20 +194,22 @@ const Index = () => {
         <section className="bg-card py-16">
           <div className="container">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-3xl font-bold uppercase tracking-tight">Best Sellers</h2>
+              <h2 className="font-display text-3xl font-bold uppercase tracking-tight">{t("home.best_sellers")}</h2>
               <Button asChild variant="ghost" className="font-display uppercase tracking-wider text-primary">
-                <Link to="/shop">View All <ArrowRight className="ml-1 h-4 w-4" /></Link>
+                <Link to="/shop">{t("common.view_all")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
               </Button>
             </div>
             <div className="mt-8">
-              {isLoading ? (
+              {featuredLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <ProductCardSkeleton key={`skeleton-${i}`} />
+                    <ProductCardSkeleton key={`featured-skel-${i}`} />
                   ))}
                 </div>
+              ) : featuredProducts.length === 0 ? (
+                <p className="text-muted-foreground">{t("home.best_sellers_empty")}</p>
               ) : (
-                <BestSellersCarousel products={products.slice(0, 10)} />
+                <BestSellersCarousel products={featuredProducts} />
               )}
             </div>
           </div>
@@ -178,7 +217,7 @@ const Index = () => {
 
         {/* Brand Banner */}
         <section className="container py-16 text-center">
-          <h2 className="font-display text-3xl font-bold uppercase tracking-tight">Trusted by Top Brands</h2>
+          <h2 className="font-display text-3xl font-bold uppercase tracking-tight">{t("home.trusted_brands")}</h2>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-8">
             {["Fender", "Gibson", "Yamaha", "Roland", "Taylor", "Martin"].map((b) => (
               <Link

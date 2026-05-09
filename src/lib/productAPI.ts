@@ -90,6 +90,9 @@ export const useProducts = (filters: {
     sort?: string;
     is_active?: boolean;
     badge?: string;
+    featured?: boolean;
+    on_sale?: boolean;
+    limit?: number;
 } = {}) => {
     return useQuery({
         queryKey: ['products', filters],
@@ -103,6 +106,8 @@ export const useProducts = (filters: {
             if (filters.search) query = query.ilike('name', `%${filters.search}%`);
             if (filters.is_active !== undefined) query = query.eq('is_active', filters.is_active);
             if (filters.badge) query = query.eq('badge', filters.badge);
+            if (filters.featured) query = query.eq('featured', true);
+            if (filters.on_sale) query = query.eq('on_sale', true);
 
             if (filters.sort) {
                 const [column, order] = filters.sort.split(':');
@@ -110,6 +115,8 @@ export const useProducts = (filters: {
             } else {
                 query = query.order('created_at', { ascending: false });
             }
+
+            if (filters.limit) query = query.limit(filters.limit);
 
             const { data, error } = await query;
             if (error) throw error;
@@ -443,9 +450,9 @@ export const useImportProducts = () => {
 
                 // 6. Handle images
                 if (row.Images && product) {
-                    const imageUrls = row.Images.split(',').map(url => url.trim()).filter(Boolean);
+                    const imageUrls = (row.Images as string).split(',').map((url: string) => url.trim()).filter(Boolean);
                     if (imageUrls.length > 0) {
-                        const imageRows = imageUrls.map((url, index) => ({
+                        const imageRows = imageUrls.map((url: string, index: number) => ({
                             product_id: product.id,
                             image_url: url,
                             display_order: index,

@@ -15,11 +15,12 @@ import {
     LogOut,
     ChevronRight,
     Music,
-    HelpCircle
+    HelpCircle,
+    FileText,
+    Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminStore } from '@/lib/adminStore';
-import { supabase } from '@/lib/supabaseClient';
 import {
     Sidebar,
     SidebarContent,
@@ -109,6 +110,20 @@ const menuItems = [
         roles: ['super_admin', 'editor']
     },
     {
+        title: "Content",
+        label: "Articles",
+        icon: FileText,
+        url: "/admin/articles",
+        roles: ['super_admin', 'editor']
+    },
+    {
+        title: "Content",
+        label: "SEO",
+        icon: Search,
+        url: "/admin/seo",
+        roles: ['super_admin', 'editor']
+    },
+    {
         title: "System",
         label: "Activity Log",
         icon: History,
@@ -139,8 +154,7 @@ const AdminSidebar = () => {
     const isCollapsed = state === 'collapsed';
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
-        logout();
+        await logout();
         navigate('/admin/login');
     };
 

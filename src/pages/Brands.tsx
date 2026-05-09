@@ -1,20 +1,24 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { useBrands } from "@/lib/productAPI";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Building2 } from "lucide-react";
 
 const Brands = () => {
+  const { t } = useTranslation();
   const { data: brands, isLoading } = useBrands(true);
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead path="/brands" defaultTitle={t("brands.title")} defaultDescription={t("brands.subtitle")} />
       <Navbar />
       <main className="container py-10">
-        <h1 className="font-display text-4xl font-bold uppercase tracking-tight text-primary italic">Our Brands</h1>
-        <p className="mt-2 text-muted-foreground font-medium">Premium instruments from world-class manufacturers</p>
+        <h1 className="font-display text-4xl font-bold uppercase tracking-tight text-primary italic">{t("brands.page_title")}</h1>
+        <p className="mt-2 text-muted-foreground font-medium">{t("brands.subtitle")}</p>
 
         <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
           {isLoading ? (
@@ -50,7 +54,7 @@ const Brands = () => {
           ) : (
             <div className="col-span-full py-20 text-center opacity-40">
               <Building2 className="h-12 w-12 mx-auto mb-4" />
-              <p className="font-bold uppercase tracking-tighter text-xl">No brands discovered yet</p>
+              <p className="font-bold uppercase tracking-tighter text-xl">{t("brands.empty")}</p>
             </div>
           )}
         </div>

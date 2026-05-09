@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/lib/productAPI";
 import { siteContentAPI } from "@/lib/siteContentAPI";
@@ -10,15 +12,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tag } from "lucide-react";
 
 const Deals = () => {
+    const { t } = useTranslation();
     const [banner, setBanner] = useState<BannerContent>({
-        badge: "Limited Time",
-        title: "Deals & Offers",
-        subtitle: "Save big on premium instruments — while stocks last!"
+        badge: t("deals.default_badge"),
+        title: t("deals.default_title"),
+        subtitle: t("deals.default_subtitle"),
     });
     const [isLoadingBanner, setIsLoadingBanner] = useState(true);
 
-    const { data: products, isLoading: isLoadingProducts } = useProducts();
-    const deals = products?.filter((p) => p.original_price && p.original_price > p.price) || [];
+    const { data: deals = [], isLoading: isLoadingProducts } = useProducts({ on_sale: true, is_active: true });
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -38,6 +40,7 @@ const Deals = () => {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEOHead path="/deals" defaultTitle={t("deals.title")} defaultDescription={t("deals.default_subtitle")} />
             <Navbar />
             <main className="container py-10">
                 {/* Banner */}
@@ -88,8 +91,8 @@ const Deals = () => {
                         <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                             <Tag className="h-10 w-10 text-muted-foreground" />
                         </div>
-                        <p className="text-xl font-bold uppercase italic tracking-tight">No active deals right now</p>
-                        <p className="text-muted-foreground">Check back soon for premium instruments at discounted prices!</p>
+                        <p className="text-xl font-bold uppercase italic tracking-tight">{t("deals.empty_title")}</p>
+                        <p className="text-muted-foreground">{t("deals.empty_text")}</p>
                     </div>
                 )}
             </main>

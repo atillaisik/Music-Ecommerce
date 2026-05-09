@@ -1,33 +1,35 @@
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import ProductCard from "@/components/ProductCard";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { useProducts, useCategories, useBrands } from "@/lib/productAPI";
 import { PackageSearch, SlidersHorizontal, X } from "lucide-react";
 
-const sortOptions = [
-  { label: "Newest", value: "created_at:desc" },
-  { label: "Popular", value: "rating:desc" },
-  { label: "Price: Low", value: "price:asc" },
-  { label: "Price: High", value: "price:desc" },
-];
-
 const Shop = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCat = searchParams.get("category") || "all";
   const initialSearch = searchParams.get("q") || "";
   const initialBrand = searchParams.get("brand") || "all";
   const initialBadge = searchParams.get("badge") || "all";
 
+  const sortOptions = [
+    { label: t("shop.sort_newest"), value: "created_at:desc" },
+    { label: t("shop.sort_popular"), value: "rating:desc" },
+    { label: t("shop.sort_price_asc"), value: "price:asc" },
+    { label: t("shop.sort_price_desc"), value: "price:desc" },
+  ];
+
   const [selectedCategory, setSelectedCategory] = useState(initialCat);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [selectedBadge, setSelectedBadge] = useState(initialBadge);
-  const [sort, setSort] = useState(sortOptions[0].value);
+  const [sort, setSort] = useState("created_at:desc");
   const [search, setSearch] = useState(initialSearch);
   const [priceRange, setPriceRange] = useState<{ min: number | string, max: number | string }>({ min: 0, max: 1000000 });
 
@@ -79,7 +81,7 @@ const Shop = () => {
     setSelectedBrand('all');
     setSelectedBadge('all');
     setPriceRange({ min: 0, max: 1000000 });
-    setSort(sortOptions[0].value);
+    setSort("created_at:desc");
     setSearchParams(new URLSearchParams());
   };
 
@@ -92,16 +94,13 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Shop All Instruments | ARASOUNDS</title>
-        <meta name="description" content="Browse our full catalog of premium musical instruments. Filter by category, brand, and price." />
-      </Helmet>
+      <SEOHead path="/shop" defaultTitle={t("shop.title")} defaultDescription={t("shop.description")} />
       <Navbar />
       <main className="container py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-display text-5xl font-black uppercase tracking-tighter italic text-primary">Shop</h1>
-            <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px] mt-1">Discover Professional Instruments</p>
+            <h1 className="font-display text-5xl font-black uppercase tracking-tighter italic text-primary">{t("shop.page_title")}</h1>
+            <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px] mt-1">{t("shop.page_subtitle")}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -110,10 +109,10 @@ const Shop = () => {
               onClick={clearFilters}
               className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
             >
-              Clear Filters
+              {t("shop.clear_filters")}
             </Button>
             <div className="hidden sm:flex items-center gap-2 ml-2 border-l border-border/50 pl-4">
-              <span className="text-xs font-bold uppercase tracking-widest opacity-40">Filter View</span>
+              <span className="text-xs font-bold uppercase tracking-widest opacity-40">{t("shop.filter_view")}</span>
               <SlidersHorizontal className="h-4 w-4 opacity-40" />
             </div>
           </div>
@@ -124,7 +123,7 @@ const Shop = () => {
           <aside className="w-full shrink-0 lg:w-64 space-y-8">
             <div className="relative group">
               <Input
-                placeholder="Find your sound..."
+                placeholder={t("shop.search_placeholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="bg-card/50 border-border/50 h-11 rounded-xl pl-4 focus:ring-primary/20 transition-all font-medium"
@@ -140,7 +139,7 @@ const Shop = () => {
             </div>
 
             <section>
-              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Category</h3>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">{t("shop.filter_category")}</h3>
               <div className="flex flex-col gap-1">
                 <Button
                   variant={selectedCategory === 'all' ? "default" : "ghost"}
@@ -148,7 +147,7 @@ const Shop = () => {
                   onClick={() => handleCategoryChange('all')}
                   className={`justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg ${selectedCategory === 'all' ? 'shadow-lg shadow-primary/20' : ''}`}
                 >
-                  All Collections
+                  {t("shop.filter_all_categories")}
                 </Button>
                 {categories?.map((c) => (
                   <Button
@@ -165,7 +164,7 @@ const Shop = () => {
             </section>
 
             <section>
-              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Our Brands</h3>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">{t("shop.filter_brands_title")}</h3>
               <div className="flex flex-col gap-1">
                 <Button
                   variant={selectedBrand === 'all' ? "default" : "ghost"}
@@ -173,7 +172,7 @@ const Shop = () => {
                   onClick={() => handleBrandChange('all')}
                   className={`justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg ${selectedBrand === 'all' ? 'shadow-lg shadow-primary/20' : ''}`}
                 >
-                  All Brands
+                  {t("shop.filter_all_brands")}
                 </Button>
                 {brands?.map((b) => (
                   <Button
@@ -190,10 +189,10 @@ const Shop = () => {
             </section>
 
             <section>
-              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Price Range</h3>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">{t("shop.filter_price")}</h3>
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[9px] uppercase font-bold text-muted-foreground/50 ml-1">Min</label>
+                  <label className="text-[9px] uppercase font-bold text-muted-foreground/50 ml-1">{t("shop.filter_price_min")}</label>
                   <Input
                     type="number"
                     value={priceRange.min}
@@ -202,7 +201,7 @@ const Shop = () => {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] uppercase font-bold text-muted-foreground/50 ml-1">Max</label>
+                  <label className="text-[9px] uppercase font-bold text-muted-foreground/50 ml-1">{t("shop.filter_price_max")}</label>
                   <Input
                     type="number"
                     value={priceRange.max}
@@ -214,7 +213,7 @@ const Shop = () => {
             </section>
 
             <section>
-              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Collections</h3>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">{t("shop.filter_collections")}</h3>
               <div className="flex flex-col gap-1">
                 <Button
                   variant={selectedBadge === 'all' ? "default" : "ghost"}
@@ -222,7 +221,7 @@ const Shop = () => {
                   onClick={() => handleBadgeChange('all')}
                   className={`justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg ${selectedBadge === 'all' ? 'shadow-lg shadow-primary/20' : ''}`}
                 >
-                  All Products
+                  {t("shop.filter_all_products")}
                 </Button>
                 <Button
                   variant={selectedBadge === 'Best Seller' ? "default" : "ghost"}
@@ -230,7 +229,7 @@ const Shop = () => {
                   onClick={() => handleBadgeChange('Best Seller')}
                   className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
                 >
-                  Best Seller
+                  {t("shop.filter_best_seller")}
                 </Button>
                 <Button
                   variant={selectedBadge === 'Premium' ? "default" : "ghost"}
@@ -238,7 +237,7 @@ const Shop = () => {
                   onClick={() => handleBadgeChange('Premium')}
                   className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
                 >
-                  Premium Gear
+                  {t("shop.filter_premium")}
                 </Button>
                 <Button
                   variant={selectedBadge === 'Hot' ? "default" : "ghost"}
@@ -246,13 +245,13 @@ const Shop = () => {
                   onClick={() => handleBadgeChange('Hot')}
                   className="justify-start text-xs font-bold uppercase tracking-widest h-10 rounded-lg"
                 >
-                  Hot Item
+                  {t("shop.filter_hot")}
                 </Button>
               </div>
             </section>
 
             <section>
-              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">Sort By</h3>
+              <h3 className="mb-4 font-display text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 border-b border-border/40 pb-2">{t("shop.sort_by")}</h3>
               <div className="flex flex-col gap-1">
                 {sortOptions.map((option) => (
                   <Button
@@ -273,7 +272,7 @@ const Shop = () => {
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                Showing <span className="text-foreground">{filteredByPrice.length}</span> results
+                {t("shop.results_count", { count: filteredByPrice.length })}
               </p>
             </div>
 
@@ -288,15 +287,15 @@ const Shop = () => {
             {!isLoading && filteredByPrice.length === 0 && (
               <div className="flex flex-col items-center justify-center py-32 bg-card/10 rounded-3xl border border-dashed border-border/50">
                 <PackageSearch className="h-16 w-16 text-muted-foreground opacity-20 mb-4" />
-                <p className="text-lg font-bold uppercase tracking-tighter italic">No instruments found</p>
-                <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or search terms.</p>
+                <p className="text-lg font-bold uppercase tracking-tighter italic">{t("shop.no_results")}</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("shop.no_results_subtitle")}</p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={clearFilters}
                   className="mt-6 rounded-xl font-bold uppercase tracking-widest text-[10px]"
                 >
-                  Reset all filters
+                  {t("shop.reset_filters")}
                 </Button>
               </div>
             )}

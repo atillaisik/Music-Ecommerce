@@ -1,8 +1,40 @@
+# ARASOUNDS — robots policy
+# https://www.aramuzik.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /profile
+Disallow: /reset-password
+
+# Don't index search-result URLs (parametrized shop)
+Disallow: /shop?*
+Disallow: /*?q=*
+
+# Major bots — explicit allow (some still respect group-specific rules)
 User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /profile
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+
+User-agent: YandexBot
+Allow: /
+Disallow: /admin
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +42,15 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Block known scrapers / unhelpful bots
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: MJ12bot
+Disallow: /
+User-agent: DotBot
+Disallow: /
+
+# Sitemaps
+Sitemap: https://www.aramuzik.com/sitemap.xml

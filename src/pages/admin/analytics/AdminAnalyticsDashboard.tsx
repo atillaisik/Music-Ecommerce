@@ -60,7 +60,7 @@ import { exportToCSV } from '@/lib/exportUtils';
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 const AdminAnalyticsDashboard = () => {
-    const [timeRange, setTimeRange] = useState('7d');
+    const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d');
 
     const { data: metrics, isLoading: metricsLoading } = useAnalyticsMetrics();
     const { data: salesData, isLoading: salesLoading } = useSalesData(timeRange);
@@ -102,7 +102,7 @@ const AdminAnalyticsDashboard = () => {
                     <p className="text-muted-foreground text-sm font-medium mt-1">Comprehensive performance insights for your music store.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Select value={timeRange} onValueChange={setTimeRange}>
+                    <Select value={timeRange} onValueChange={(v) => setTimeRange(v as '7d' | '30d' | '90d')}>
                         <SelectTrigger className="w-[160px] h-10 bg-white/50 dark:bg-black/20 backdrop-blur-sm border-border/50 rounded-xl">
                             <Calendar className="h-4 w-4 mr-2 opacity-50" />
                             <SelectValue placeholder="Select Range" />

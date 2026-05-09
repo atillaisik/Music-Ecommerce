@@ -1,13 +1,14 @@
 import { supabase } from './supabaseClient';
 import { Product } from '@/types/product';
-import { Product as MockProduct } from '@/data/mock';
+import { toast } from 'sonner';
+import { mapSupabaseError } from './apiErrors';
 
 export interface WishlistItem {
     id: string;
     user_id: string;
     product_id: string;
     created_at: string;
-    product?: (Product | MockProduct);
+    product?: (Product);
 }
 
 export const wishlistAPI = {
@@ -25,19 +26,39 @@ export const wishlistAPI = {
             return [];
         }
 
-        // Format the products to match our internal Product/MockProduct type
-        return data.map((item: any) => {
-            const product = item.product;
-            if (!product) return null;
+        let droppedCount = 0;
+        const deadIds: string[] = [];
+        const items = data
+            .map((item: any) => {
+                const product = item.product;
+                if (!product) {
+                    droppedCount += 1;
+                    deadIds.push(item.product_id);
+                    return null;
+                }
+                return {
+                    ...product,
+                    images: product.product_images || [],
+                    price: Number(product.price),
+                    original_price: product.original_price ? Number(product.original_price) : undefined,
+                };
+            })
+            .filter(Boolean) as (Product)[];
 
-            return {
-                ...product,
-                images: product.product_images || [],
-                // Ensure price is a number
-                price: Number(product.price),
-                original_price: product.original_price ? Number(product.original_price) : undefined,
-            };
-        }).filter(Boolean) as (Product | MockProduct)[];
+        if (droppedCount > 0 && deadIds.length > 0) {
+            // Best-effort cleanup of orphaned wishlist rows so the toast doesn't repeat.
+            await supabase
+                .from('wishlist_items')
+                .delete()
+                .eq('user_id', session.user.id)
+                .in('product_id', deadIds);
+
+            toast.info(
+                `${droppedCount} item${droppedCount === 1 ? '' : 's'} removed from your wishlist (no longer available)`
+            );
+        }
+
+        return items;
     },
 
     async addToWishlist(productId: string) {
@@ -51,10 +72,7 @@ export const wishlistAPI = {
                 product_id: productId
             }, { onConflict: 'user_id, product_id' });
 
-        if (error) {
-            console.error('Error adding to wishlist:', error);
-            throw error;
-        }
+        if (error) throw mapSupabaseError(error);
     },
 
     async removeFromWishlist(productId: string) {
@@ -67,10 +85,7 @@ export const wishlistAPI = {
             .eq('user_id', session.user.id)
             .eq('product_id', productId);
 
-        if (error) {
-            console.error('Error removing from wishlist:', error);
-            throw error;
-        }
+        if (error) throw mapSupabaseError(error);
     },
 
     async syncWishlist(productIds: string[]) {

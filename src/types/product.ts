@@ -10,6 +10,8 @@ export interface Product {
     badge?: string;
     description?: string;
     stock_quantity: number;
+    featured: boolean;
+    on_sale: boolean;
     created_at: string;
     updated_at: string;
     is_active: boolean;
@@ -34,7 +36,7 @@ export interface Category {
     slug: string;
     description?: string;
     image_url?: string;
-    parent_id?: string;
+    parent_id?: string | null;
     display_order: number;
     is_active: boolean;
     created_at: string;

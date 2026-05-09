@@ -3,9 +3,11 @@ import { Star, ShoppingCart, Heart, ChevronLeft, ChevronRight } from "lucide-rea
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/types/product";
+import { useTranslation } from "react-i18next";
 import { useCartStore, useWishlistStore, useCarouselStore } from "@/lib/store";
 import { toast } from "sonner";
 import { optimizeImage } from "@/lib/image-utils";
+import { formatTRY } from "@/lib/currency";
 import useEmblaCarousel from "embla-carousel-react";
 import { useMemo } from "react";
 
@@ -14,6 +16,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { t } = useTranslation();
   const addToCart = useCartStore((state) => state.addToCart);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
 
@@ -76,8 +79,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleAddToCart = () => {
     addToCart(product);
-    toast.success(`${product.name} added to cart!`, {
-      description: "You can view your cart in the navigation bar.",
+    toast.success(t("product.added_to_cart", { name: product.name }), {
+      description: t("product.added_to_cart_subtitle"),
     });
   };
 
@@ -94,14 +97,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
     try {
       if (isFavorited) {
         await removeFromWishlist(product.id);
-        toast.info(`Removed ${product.name} from wishlist`);
+        toast.info(t("product.removed_from_wishlist", { name: product.name }));
       } else {
         await addToWishlist(product);
-        toast.success(`Added ${product.name} to wishlist!`);
+        toast.success(t("product.added_to_wishlist", { name: product.name }));
       }
     } catch (error) {
-      toast.error(`Failed to update wishlist`, {
-        description: "Please try again later."
+      toast.error(t("product.wishlist_error"), {
+        description: t("product.wishlist_error_subtitle"),
       });
     } finally {
       setIsWishlistPending(false);
@@ -114,7 +117,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <Link to={`/product/${product.id}`} className="block h-full w-full">
           <div className="overflow-hidden h-full w-full" ref={emblaRef}>
             <div className="flex h-full w-full touch-pan-y">
-              {images.map((imgSrc, index) => (
+              {images.map((imgSrc: string, index: number) => (
                 <div className="relative h-full w-full flex-[0_0_100%] min-w-0" key={index}>
                   <img
                     src={optimizeImage(imgSrc, 500, 500)}
@@ -144,7 +147,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               <ChevronRight className="h-4 w-4" />
             </button>
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-              {images.map((_, i) => (
+              {images.map((_: string, i: number) => (
                 <div key={i} className={`h-1.5 rounded-full transition-all ${i === currentImageIndex ? "w-4 bg-primary" : "w-1.5 bg-white/80"}`} />
               ))}
             </div>
@@ -177,18 +180,23 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <span className="text-xs text-muted-foreground">({product.reviews_count ?? product.reviews ?? 0})</span>
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-foreground">${product.price.toLocaleString()}</span>
-            {(product.original_price || product.originalPrice) && (
-              <span className="text-sm text-muted-foreground line-through">
-                ${(product.original_price || product.originalPrice).toLocaleString()}
-              </span>
-            )}
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold text-foreground">{formatTRY(product.price)}</span>
+              {(product.original_price || product.originalPrice) && (
+                <span className="text-sm text-muted-foreground line-through">
+                  {formatTRY(product.original_price || product.originalPrice)}
+                </span>
+              )}
+            </div>
+            <span className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground/70">
+              {t("common.vat_shipping_included")}
+            </span>
           </div>
           <button
             onClick={handleAddToCart}
             className="rounded-md bg-primary p-2 text-primary-foreground transition-colors hover:bg-primary/80"
-            aria-label="Add to cart"
+            aria-label={t("product.add_to_cart")}
           >
             <ShoppingCart className="h-4 w-4" />
           </button>

@@ -1,12 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Helmet } from "react-helmet-async";
+import SEOHead from "@/components/SEOHead";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { faqAPI } from "@/lib/faqAPI";
 import { FAQ } from "@/types/faq";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { faqSchema } from "@/lib/seo";
 
 const FAQs = () => {
+    const { t } = useTranslation();
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -24,12 +27,16 @@ const FAQs = () => {
         fetchFaqs();
     }, []);
 
+    const faqLd = faqs.length > 0 ? faqSchema(faqs.map((f) => ({ question: f.question, answer: f.answer }))) : undefined;
+
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <Helmet>
-                <title>FAQs - ARASOUNDS</title>
-                <meta name="description" content="Frequently asked questions about ARASOUNDS products and services." />
-            </Helmet>
+            <SEOHead
+                path="/faqs"
+                defaultTitle={t("faqs.title")}
+                defaultDescription={t("faqs.description")}
+                jsonLd={faqLd}
+            />
             <Navbar />
             <main className="pb-20">
                 {/* Hero Section */}
@@ -37,18 +44,17 @@ const FAQs = () => {
                     <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(var(--primary-rgb),0.05)_0%,transparent_100%)]" />
                     <div className="container text-center">
                         <div className="mx-auto flex w-fit items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
-                            <span>FAQs</span>
+                            <span>{t("nav.contact")}</span>
                         </div>
                         <h1 className="font-display text-5xl font-bold uppercase tracking-tight lg:text-7xl">
-                            Frequently Asked Questions
+                            {t("faqs.page_title")}
                         </h1>
                         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground lg:text-xl">
-                            Find answers to the most common questions about our instruments, orders, and support.
+                            {t("faqs.subtitle")}
                         </p>
                     </div>
                 </section>
 
-                {/* FAQ List */}
                 <div className="container mt-12 lg:mt-20">
                     <Accordion type="single" collapsible className="w-full">
                         {loading ? (
@@ -69,7 +75,7 @@ const FAQs = () => {
                                 </AccordionItem>
                             ))
                         ) : (
-                            <p className="text-muted-foreground italic">No FAQs available at the moment.</p>
+                            <p className="text-muted-foreground italic">{t("faqs.empty")}</p>
                         )}
                     </Accordion>
                 </div>

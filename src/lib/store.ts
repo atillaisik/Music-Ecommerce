@@ -1,15 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product } from '@/types/product';
-import { Product as MockProduct } from '@/data/mock';
 
-export type CartItem = (Product | MockProduct) & {
+export type CartItem = (Product) & {
     quantity: number;
 };
 
 interface CartState {
     items: CartItem[];
-    addToCart: (product: Product | MockProduct) => void;
+    addToCart: (product: Product) => void;
     removeFromCart: (productId: string) => void;
     updateQuantity: (productId: string, quantity: number) => void;
     clearCart: () => void;
@@ -21,7 +20,7 @@ export const useCartStore = create<CartState>()(
     persist(
         (set, get) => ({
             items: [],
-            addToCart: (product: Product | MockProduct) => {
+            addToCart: (product: Product) => {
                 set((state) => {
                     const existingItem = state.items.find((item) => item.id === product.id);
                     if (existingItem) {
@@ -117,8 +116,8 @@ export const useAuthStore = create<AuthState>()(
 import { wishlistAPI } from './wishlistAPI';
 
 interface WishlistState {
-    items: (Product | MockProduct)[];
-    addToWishlist: (product: Product | MockProduct) => Promise<void>;
+    items: (Product)[];
+    addToWishlist: (product: Product) => Promise<void>;
     removeFromWishlist: (productId: string) => Promise<void>;
     isInWishlist: (productId: string) => boolean;
     syncWishlist: () => Promise<void>;
@@ -130,7 +129,7 @@ export const useWishlistStore = create<WishlistState>()(
     persist(
         (set, get) => ({
             items: [],
-            addToWishlist: async (product: Product | MockProduct) => {
+            addToWishlist: async (product: Product) => {
                 const previousItems = get().items;
                 const isAuth = useAuthStore.getState().isAuthenticated;
                 

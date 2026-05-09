@@ -5,6 +5,7 @@ export interface AnalyticsMetrics {
     totalRevenue: number;
     averageOrderValue: number;
     conversionRate: number;
+    uniqueCustomers?: number;
 }
 
 export interface SalesData {

@@ -1,50 +1,47 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from './supabaseClient';
+import { mapSupabaseError } from './apiErrors';
 import {
     AnalyticsMetrics,
     SalesData,
     CategoryPerformance,
     TopProduct,
-    BrandPerformance,
-    InventoryStatus
+    InventoryStatus,
 } from '../types/analytics';
 
-// --- Analytics Hooks ---
+const startOfDay = (d: Date) => {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+};
+
+const formatDay = (d: Date) =>
+    d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 export const useAnalyticsMetrics = () => {
     return useQuery({
         queryKey: ['analytics-metrics'],
         queryFn: async (): Promise<AnalyticsMetrics> => {
-            // Fetch total products and total inventory value
-            const { data: products, error: productsError } = await supabase
-                .from('products')
-                .select('price, stock_quantity');
+            const [{ data: products, error: productsError }, { data: orders, error: ordersError }] =
+                await Promise.all([
+                    supabase.from('products').select('price, stock_quantity'),
+                    supabase.from('orders').select('total_amount, customer_email').neq('status', 'cancelled'),
+                ]);
 
-            if (productsError) throw productsError;
+            if (productsError) throw mapSupabaseError(productsError);
+            if (ordersError) throw mapSupabaseError(ordersError);
 
-            const totalProducts = products.length;
-            const totalInventoryValue = products.reduce((acc, p) => acc + (p.price * (p.stock_quantity || 0)), 0);
+            const totalProducts = products?.length ?? 0;
+            const totalInventoryValue = (products ?? []).reduce(
+                (acc, p) => acc + Number(p.price) * Number(p.stock_quantity || 0),
+                0,
+            );
 
-            // Fetch total orders and total revenue from orders table
-            const { data: orders, error: ordersError } = await supabase
-                .from('orders')
-                .select('total_amount');
-
-            if (ordersError) {
-                // Return mock data if table doesn't exist or is empty
-                return {
-                    totalProducts,
-                    totalInventoryValue,
-                    totalOrders: 154,
-                    totalRevenue: 24500.50,
-                    averageOrderValue: 159.09,
-                    conversionRate: 3.2
-                };
-            }
-
-            const totalOrders = orders.length;
-            const totalRevenue = orders.reduce((acc, o) => acc + Number(o.total_amount), 0);
+            const orderRows = orders ?? [];
+            const totalOrders = orderRows.length;
+            const totalRevenue = orderRows.reduce((acc, o) => acc + Number(o.total_amount), 0);
             const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+            const uniqueCustomers = new Set(orderRows.map((o) => o.customer_email).filter(Boolean)).size;
 
             return {
                 totalProducts,
@@ -52,34 +49,49 @@ export const useAnalyticsMetrics = () => {
                 totalOrders,
                 totalRevenue,
                 averageOrderValue,
-                conversionRate: 3.2 // Hardcoded for now
-            };
-        }
+                conversionRate: 0,
+                uniqueCustomers,
+            } as AnalyticsMetrics & { uniqueCustomers: number };
+        },
     });
 };
 
-export const useSalesData = (timeRange: string) => {
+export const useSalesData = (timeRange: '7d' | '30d' | '90d' = '7d') => {
     return useQuery({
         queryKey: ['sales-data', timeRange],
         queryFn: async (): Promise<SalesData[]> => {
-            // In a real app, you would fetch from analytics_snapshots or aggregate orders
-            // For now, returning realistic mock data based on the timeRange
             const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
-            const data: SalesData[] = [];
-            const now = new Date();
+            const since = startOfDay(new Date(Date.now() - days * 24 * 60 * 60 * 1000));
 
+            const { data, error } = await supabase
+                .from('orders')
+                .select('created_at, total_amount, status')
+                .gte('created_at', since.toISOString())
+                .neq('status', 'cancelled');
+
+            if (error) throw mapSupabaseError(error);
+
+            const buckets: Record<string, { revenue: number; orders: number }> = {};
             for (let i = days; i >= 0; i--) {
-                const date = new Date(now);
-                date.setDate(date.getDate() - i);
-                data.push({
-                    date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                    revenue: Math.floor(Math.random() * 5000) + 1000,
-                    orders: Math.floor(Math.random() * 20) + 5
-                });
+                const d = startOfDay(new Date(Date.now() - i * 24 * 60 * 60 * 1000));
+                buckets[d.toISOString()] = { revenue: 0, orders: 0 };
             }
 
-            return data;
-        }
+            (data ?? []).forEach((row) => {
+                const key = startOfDay(new Date(row.created_at)).toISOString();
+                if (!buckets[key]) buckets[key] = { revenue: 0, orders: 0 };
+                buckets[key].revenue += Number(row.total_amount);
+                buckets[key].orders += 1;
+            });
+
+            return Object.entries(buckets)
+                .sort((a, b) => a[0].localeCompare(b[0]))
+                .map(([iso, b]) => ({
+                    date: formatDay(new Date(iso)),
+                    revenue: Math.round(b.revenue * 100) / 100,
+                    orders: b.orders,
+                }));
+        },
     });
 };
 
@@ -87,19 +99,26 @@ export const useCategoryPerformance = () => {
     return useQuery({
         queryKey: ['category-performance'],
         queryFn: async (): Promise<CategoryPerformance[]> => {
-            const { data: categories, error } = await supabase
-                .from('categories')
-                .select('name, id');
+            const { data, error } = await supabase
+                .from('order_items')
+                .select(
+                    'quantity, price_at_purchase, product:products(category:categories(id, name))',
+                );
 
-            if (error) throw error;
+            if (error) throw mapSupabaseError(error);
 
-            // Generate realistic mock performance data per category
-            return categories.map(cat => ({
-                categoryName: cat.name,
-                revenue: Math.floor(Math.random() * 15000) + 2000,
-                unitsSold: Math.floor(Math.random() * 100) + 10
-            })).sort((a, b) => b.revenue - a.revenue);
-        }
+            const totals: Record<string, { categoryName: string; revenue: number; unitsSold: number }> = {};
+            (data ?? []).forEach((row: any) => {
+                const cat = row.product?.category;
+                if (!cat) return;
+                const key = cat.id;
+                if (!totals[key]) totals[key] = { categoryName: cat.name, revenue: 0, unitsSold: 0 };
+                totals[key].revenue += Number(row.price_at_purchase) * Number(row.quantity);
+                totals[key].unitsSold += Number(row.quantity);
+            });
+
+            return Object.values(totals).sort((a, b) => b.revenue - a.revenue);
+        },
     });
 };
 
@@ -107,21 +126,27 @@ export const useTopProducts = () => {
     return useQuery({
         queryKey: ['top-products'],
         queryFn: async (): Promise<TopProduct[]> => {
-            const { data: products, error } = await supabase
-                .from('products')
-                .select('id, name')
-                .limit(10);
+            const { data, error } = await supabase
+                .from('order_items')
+                .select('quantity, price_at_purchase, product:products(id, name)');
 
-            if (error) throw error;
+            if (error) throw mapSupabaseError(error);
 
-            return (products || []).map(p => ({
-                id: p.id,
-                name: p.name,
-                unitsSold: Math.floor(Math.random() * 150) + 20,
-                revenue: Math.floor(Math.random() * 20000) + 5000,
-                trend: (['up', 'down', 'stable'] as const)[Math.floor(Math.random() * 3)]
-            })).sort((a, b) => b.revenue - a.revenue);
-        }
+            const totals: Record<string, { id: string; name: string; unitsSold: number; revenue: number }> = {};
+            (data ?? []).forEach((row: any) => {
+                const product = row.product;
+                if (!product) return;
+                const key = product.id;
+                if (!totals[key]) totals[key] = { id: product.id, name: product.name, unitsSold: 0, revenue: 0 };
+                totals[key].unitsSold += Number(row.quantity);
+                totals[key].revenue += Number(row.price_at_purchase) * Number(row.quantity);
+            });
+
+            return Object.values(totals)
+                .sort((a, b) => b.revenue - a.revenue)
+                .slice(0, 10)
+                .map((p) => ({ ...p, trend: 'stable' as const }));
+        },
     });
 };
 
@@ -129,18 +154,19 @@ export const useInventoryStatus = () => {
     return useQuery({
         queryKey: ['inventory-status'],
         queryFn: async (): Promise<InventoryStatus> => {
-            const { data: products, error } = await supabase
+            const { data, error } = await supabase
                 .from('products')
                 .select('stock_quantity');
 
-            if (error) throw error;
+            if (error) throw mapSupabaseError(error);
 
-            const lowStock = products.filter(p => p.stock_quantity > 0 && p.stock_quantity <= 5).length;
-            const outOfStock = products.filter(p => (p.stock_quantity || 0) <= 0).length;
-            const wellStocked = products.filter(p => p.stock_quantity > 5).length;
+            const products = data ?? [];
+            const lowStock = products.filter((p) => p.stock_quantity > 0 && p.stock_quantity <= 5).length;
+            const outOfStock = products.filter((p) => (p.stock_quantity || 0) <= 0).length;
+            const wellStocked = products.filter((p) => p.stock_quantity > 5).length;
 
             return { lowStock, outOfStock, wellStocked };
-        }
+        },
     });
 };
 
@@ -154,8 +180,24 @@ export const useLowStockProducts = () => {
                 .lte('stock_quantity', 5)
                 .order('stock_quantity', { ascending: true });
 
-            if (error) throw error;
-            return data;
-        }
+            if (error) throw mapSupabaseError(error);
+            return data ?? [];
+        },
+    });
+};
+
+export const useRecentOrdersFeed = (limit = 5) => {
+    return useQuery({
+        queryKey: ['recent-orders-feed', limit],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('orders')
+                .select('id, customer_email, customer_name, total_amount, status, created_at')
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (error) throw mapSupabaseError(error);
+            return data ?? [];
+        },
     });
 };

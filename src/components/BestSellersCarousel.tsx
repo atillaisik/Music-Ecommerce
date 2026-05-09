@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Product } from "@/data/mock";
+import { Product } from "@/types/product";
 import ProductCard from "./ProductCard";
 
 interface BestSellersCarouselProps {
